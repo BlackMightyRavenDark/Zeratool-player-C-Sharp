@@ -6,7 +6,7 @@ using DirectShowLib;
 
 namespace Zeratool_player_C_Sharp
 {
-    public class DirectShowUtils
+    public static class DirectShowUtils
     {
         public const int S_OK = 0;
         public const int S_FALSE = 1;
