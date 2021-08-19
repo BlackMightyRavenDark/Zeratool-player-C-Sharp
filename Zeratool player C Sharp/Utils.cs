@@ -8,7 +8,30 @@ namespace Zeratool_player_C_Sharp
 {
     public static class Utils
     {
+        public delegate void PlayerAddDelegate(ZeratoolPlayerGui playerGui, bool isMaximized);
+        public static PlayerAddDelegate PlayerAdd;
+
+        public static readonly List<ZeratoolPlayerGui> players = new List<ZeratoolPlayerGui>();
+        public static ZeratoolPlayerGui activePlayer = null;
         public static List<string> videoFileTypes = new List<string>() { ".avi", ".mpg", ".mpeg", ".ts", ".mp4", ".mkv", ".webm" };
+
+
+        public static ZeratoolPlayerGui AddPlayer(Control parentControl, bool maximized)
+        {
+            return AddPlayer(parentControl, 0, 0, ZeratoolPlayerGui.MIN_WIDTH, ZeratoolPlayerGui.MIN_HEIGHT, maximized);
+        }
+
+        public static ZeratoolPlayerGui AddPlayer(Control parentControl, int x, int y, int w, int h, bool maximized)
+        {
+            ZeratoolPlayerGui z = new ZeratoolPlayerGui();
+            z.Location = new Point(x, y);
+            z.Size = new Size(w, h);
+            z.Parent = parentControl;
+
+            PlayerAdd?.Invoke(z, maximized);
+
+            return z;
+        }
 
         public static Rectangle ResizeRect(Rectangle source, Size newSize)
         {
@@ -17,9 +40,13 @@ namespace Zeratool_player_C_Sharp
             int w = newSize.Width;
             int h = newSize.Height;
             if (aspectSource > aspectDest)
+            {
                 w = (int)(newSize.Height / aspectSource);
+            }
             else if (aspectSource < aspectDest)
+            {
                 h = (int)(newSize.Width * aspectSource);
+            }
             return new Rectangle(0, 0, w, h);
         }
 

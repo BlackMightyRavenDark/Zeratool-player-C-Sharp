@@ -60,7 +60,7 @@ namespace Zeratool_player_C_Sharp
             // 
             // panelControls
             // 
-            this.panelControls.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.panelControls.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelControls.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
             this.panelControls.Controls.Add(this.btnPreviousTrack);
@@ -85,7 +85,7 @@ namespace Zeratool_player_C_Sharp
             // btnPreviousTrack
             // 
             this.btnPreviousTrack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPreviousTrack.BackgroundImage = global::Zeratool_player_C_Sharp.Properties.Resources.track_previous.ToBitmap();
+            this.btnPreviousTrack.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnPreviousTrack.BackgroundImage")));
             this.btnPreviousTrack.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnPreviousTrack.Location = new System.Drawing.Point(290, 0);
             this.btnPreviousTrack.Name = "btnPreviousTrack";
@@ -97,7 +97,7 @@ namespace Zeratool_player_C_Sharp
             // btnNextTrack
             // 
             this.btnNextTrack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnNextTrack.BackgroundImage = global::Zeratool_player_C_Sharp.Properties.Resources.track_next.ToBitmap();
+            this.btnNextTrack.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnNextTrack.BackgroundImage")));
             this.btnNextTrack.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnNextTrack.Location = new System.Drawing.Point(354, 0);
             this.btnNextTrack.Name = "btnNextTrack";
@@ -122,7 +122,7 @@ namespace Zeratool_player_C_Sharp
             // btnPlaylist
             // 
             this.btnPlaylist.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPlaylist.BackgroundImage = global::Zeratool_player_C_Sharp.Properties.Resources.list.ToBitmap();
+            this.btnPlaylist.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnPlaylist.BackgroundImage")));
             this.btnPlaylist.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnPlaylist.Location = new System.Drawing.Point(322, 0);
             this.btnPlaylist.Name = "btnPlaylist";
@@ -133,7 +133,7 @@ namespace Zeratool_player_C_Sharp
             // 
             // btnFullscreen
             // 
-            this.btnFullscreen.BackgroundImage = global::Zeratool_player_C_Sharp.Properties.Resources.fullscreen.ToBitmap();
+            this.btnFullscreen.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnFullscreen.BackgroundImage")));
             this.btnFullscreen.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnFullscreen.Location = new System.Drawing.Point(96, 0);
             this.btnFullscreen.Name = "btnFullscreen";
@@ -144,7 +144,7 @@ namespace Zeratool_player_C_Sharp
             // 
             // btnOpenFile
             // 
-            this.btnOpenFile.BackgroundImage = global::Zeratool_player_C_Sharp.Properties.Resources.eject.ToBitmap();
+            this.btnOpenFile.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnOpenFile.BackgroundImage")));
             this.btnOpenFile.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnOpenFile.Location = new System.Drawing.Point(0, 0);
             this.btnOpenFile.Name = "btnOpenFile";
@@ -155,7 +155,7 @@ namespace Zeratool_player_C_Sharp
             // 
             // btnPause
             // 
-            this.btnPause.BackgroundImage = global::Zeratool_player_C_Sharp.Properties.Resources.pause_inactive.ToBitmap();
+            this.btnPause.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnPause.BackgroundImage")));
             this.btnPause.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnPause.Location = new System.Drawing.Point(64, 0);
             this.btnPause.Name = "btnPause";
@@ -166,7 +166,7 @@ namespace Zeratool_player_C_Sharp
             // 
             // btnPlay
             // 
-            this.btnPlay.BackgroundImage = global::Zeratool_player_C_Sharp.Properties.Resources.play_inactive.ToBitmap();
+            this.btnPlay.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnPlay.BackgroundImage")));
             this.btnPlay.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnPlay.Location = new System.Drawing.Point(32, 0);
             this.btnPlay.Name = "btnPlay";
@@ -191,7 +191,7 @@ namespace Zeratool_player_C_Sharp
             // btnSettings
             // 
             this.btnSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSettings.BackgroundImage = global::Zeratool_player_C_Sharp.Properties.Resources.tools.ToBitmap();
+            this.btnSettings.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnSettings.BackgroundImage")));
             this.btnSettings.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnSettings.Location = new System.Drawing.Point(342, 53);
             this.btnSettings.Name = "btnSettings";
@@ -203,7 +203,7 @@ namespace Zeratool_player_C_Sharp
             // 
             // seekBar
             // 
-            this.seekBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.seekBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.seekBar.BackColor = System.Drawing.Color.LightSteelBlue;
             this.seekBar.Location = new System.Drawing.Point(2, 32);
@@ -243,7 +243,7 @@ namespace Zeratool_player_C_Sharp
             // 
             // lblTitleBar
             // 
-            this.lblTitleBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.lblTitleBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTitleBar.BackColor = System.Drawing.Color.Blue;
             this.lblTitleBar.ForeColor = System.Drawing.Color.White;
@@ -251,7 +251,7 @@ namespace Zeratool_player_C_Sharp
             this.lblTitleBar.Name = "lblTitleBar";
             this.lblTitleBar.Size = new System.Drawing.Size(326, 20);
             this.lblTitleBar.TabIndex = 1;
-            this.lblTitleBar.Text = "No name";
+            this.lblTitleBar.Text = "<No name>";
             this.lblTitleBar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblTitleBar.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lblTitleBar_MouseDoubleClick);
             this.lblTitleBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblTitleBar_MouseDown);
@@ -271,7 +271,7 @@ namespace Zeratool_player_C_Sharp
             // 
             // btnClose
             // 
-            this.btnClose.BackgroundImage = global::Zeratool_player_C_Sharp.Properties.Resources.close.ToBitmap();
+            this.btnClose.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnClose.BackgroundImage")));
             this.btnClose.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnClose.Location = new System.Drawing.Point(20, 0);
             this.btnClose.Name = "btnClose";
@@ -283,7 +283,7 @@ namespace Zeratool_player_C_Sharp
             // 
             // btnMinMax
             // 
-            this.btnMinMax.BackgroundImage = global::Zeratool_player_C_Sharp.Properties.Resources.min_max.ToBitmap();
+            this.btnMinMax.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnMinMax.BackgroundImage")));
             this.btnMinMax.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnMinMax.Location = new System.Drawing.Point(0, 0);
             this.btnMinMax.Name = "btnMinMax";
@@ -313,12 +313,13 @@ namespace Zeratool_player_C_Sharp
             this.panelZ.Name = "panelZ";
             this.panelZ.Size = new System.Drawing.Size(20, 20);
             this.panelZ.TabIndex = 4;
+            this.panelZ.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelZ_MouseDown);
             // 
             // panelVideoScreen
             // 
             this.panelVideoScreen.AllowDrop = true;
-            this.panelVideoScreen.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.panelVideoScreen.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelVideoScreen.BackColor = System.Drawing.Color.Black;
             this.panelVideoScreen.Location = new System.Drawing.Point(0, 20);

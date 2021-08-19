@@ -12,8 +12,6 @@ namespace Zeratool_player_C_Sharp
         private ZeratoolPlayerEngine _playerEngine;
         public ZeratoolPlayerEngine PlayerEngine => _playerEngine;
 
-
-        public List<string> List => items;
         public int Count => items.Count;
         public int PlayingIndex { get { return _playingIndex; } }
 
@@ -196,6 +194,11 @@ namespace Zeratool_player_C_Sharp
                 
             }
             IndexChanged?.Invoke(this, _playingIndex);
+        }
+
+        public override string ToString()
+        {
+            return Count == 0 ? "<Пусто>" : items.ToText();
         }
     }
 }

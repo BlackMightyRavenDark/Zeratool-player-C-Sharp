@@ -42,8 +42,10 @@ namespace Zeratool_player_C_Sharp
 
         public enum PLAYER_ACTION { Play, Pause, OpenFile, Fullscreen, OpenPlaylist, OpenSettings }
 
+        //for dragging.
         private Point oldWindowPos;
         private Point oldMousePos;
+
         public delegate void ActivatedDelegate(object sender);
         public delegate void DragStartDelegate(object sender, int x, int y);
         public delegate void DragDragDelegate(object sender, int x, int y);
@@ -88,6 +90,7 @@ namespace Zeratool_player_C_Sharp
                 _playerEngine.Clear();
                 _playerEngine = null;
             }
+            System.Diagnostics.Debug.WriteLine("Player disposed");
         }
 
         protected override bool IsInputKey(Keys keyData)
@@ -321,6 +324,16 @@ namespace Zeratool_player_C_Sharp
                 lblTitleBar.Cursor = Cursors.Default;
             }
             DragEnd?.Invoke(this);
+        }
+
+        private void lblTitleBar_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (!IsFullscreen && e.Button == MouseButtons.Left && MinMax != null)
+            {
+                _isMaximized = !_isMaximized;
+                MinMax.Invoke(this, ref _isMaximized);
+                AfterMinMax();
+            }
         }
 
         private void panelVideoScreen_DragEnter(object sender, DragEventArgs e)
@@ -704,8 +717,8 @@ namespace Zeratool_player_C_Sharp
         {
             if (!IsMaximized && e.Button == MouseButtons.Left)
             {
-                int w = Clamp(Width + e.X - oldMousePos.X, MIN_WIDTH, Parent.Width - 16);
-                int h = Clamp(Height + e.Y - oldMousePos.Y, MIN_HEIGHT, Parent.Height - 36);
+                int w = Clamp(Width + e.X - oldMousePos.X, MIN_WIDTH, Parent.Width - Left - 16);
+                int h = Clamp(Height + e.Y - oldMousePos.Y, MIN_HEIGHT, Parent.Height - Top - 36);
                 ResizePlayer(w, h);
             }
 
@@ -729,14 +742,9 @@ namespace Zeratool_player_C_Sharp
             Playlist.NextTrack();
         }
 
-        private void lblTitleBar_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void panelZ_MouseDown(object sender, MouseEventArgs e)
         {
-            if (!IsFullscreen && e.Button == MouseButtons.Left && MinMax != null)
-            {
-                _isMaximized = !_isMaximized;
-                MinMax.Invoke(this, ref _isMaximized);
-                AfterMinMax();
-            }
+            Activate();
         }
     }
 }

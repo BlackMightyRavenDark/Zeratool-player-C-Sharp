@@ -30,40 +30,28 @@ namespace Zeratool_player_C_Sharp
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.player = new Zeratool_player_C_Sharp.ZeratoolPlayerGui();
             this.SuspendLayout();
-            // 
-            // player
-            // 
-            this.player.GraphMode = Zeratool_player_C_Sharp.ZeratoolPlayerEngine.GRAPH_MODE.Manual;
-            this.player.IsControlsVisible = true;
-            this.player.IsTitleBarVisible = true;
-            this.player.Location = new System.Drawing.Point(35, 11);
-            this.player.Name = "player";
-            this.player.PrefferedGraphMode = Zeratool_player_C_Sharp.ZeratoolPlayerEngine.GRAPH_MODE.Manual;
-            this.player.Size = new System.Drawing.Size(386, 276);
-            this.player.TabIndex = 0;
-            this.player.Title = "No name";
-            this.player.TrackPosition = 0D;
-            this.player.Volume = 25;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.player);
+            this.ClientSize = new System.Drawing.Size(384, 226);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
+            this.MinimumSize = new System.Drawing.Size(400, 200);
             this.Name = "Form1";
             this.Text = "Zeratool player";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
+            this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDoubleClick);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private ZeratoolPlayerGui player;
     }
 }
 
