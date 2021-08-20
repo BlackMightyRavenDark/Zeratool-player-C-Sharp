@@ -562,6 +562,7 @@ namespace Zeratool_player_C_Sharp
                 {
                     System.Diagnostics.Debug.WriteLine($"{splitterName}: input pin not found!");
                     graphBuilder.RemoveFilter(filter);
+                    Marshal.ReleaseComObject(filter);
                     continue;
                 }
 
@@ -585,7 +586,8 @@ namespace Zeratool_player_C_Sharp
                     Marshal.ReleaseComObject(filter);
                     continue;
                 }
-                
+                Marshal.ReleaseComObject(sourcePinOut);
+
                 mediaSplitter = filter;
 
                 return errorCode;

@@ -54,6 +54,60 @@ namespace Zeratool_player_C_Sharp
                     Close();
                     return;
             }
+
+            if (activePlayer != null)
+            {
+                PlayerHandleKeyboard(activePlayer, e);
+            }
+        }
+
+        private void PlayerHandleKeyboard(ZeratoolPlayerGui controlledPlayer, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Space:
+                case Keys.Insert:
+                    PlayerPlayPause(controlledPlayer);
+                    break;
+
+                case Keys.Left:
+                    controlledPlayer.Seek(e.Modifiers == Keys.Shift ? -10.0 : -3.0);
+                    break;
+
+                case Keys.Right:
+                    double step = e.Modifiers == Keys.Shift ? 10.0 : 3.0;
+                    if (controlledPlayer.TrackDuration - controlledPlayer.TrackPosition > step)
+                    {
+                        controlledPlayer.Seek(step);
+                    }
+                    break;
+
+                case Keys.Up:
+                    controlledPlayer.Volume += 5;
+                    break;
+
+                case Keys.Down:
+                    controlledPlayer.Volume -= 5;
+                    break;
+
+                case Keys.R:
+                    double pos = controlledPlayer.TrackPosition;
+                    controlledPlayer.Clear();
+                    if (controlledPlayer.Play() == S_OK && pos > 0.0)
+                    {
+                        controlledPlayer.TrackPosition = pos;
+                    }
+                    break;
+
+                case Keys.Delete:
+                    controlledPlayer.IsControlsVisible = !controlledPlayer.IsControlsVisible;
+                    controlledPlayer.ResizeOutputWindow();
+                    break;
+
+                case Keys.PageDown:
+                    controlledPlayer.ToggleFullscreenMode();
+                    break;
+            }
         }
 
         private void OnPlayerAdd(ZeratoolPlayerGui z, bool isMaximizedToParent)
@@ -226,6 +280,23 @@ namespace Zeratool_player_C_Sharp
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             z.Activate();
+        }
+
+        private int PlayerPlayPause(ZeratoolPlayerGui playerGui)
+        {
+            switch (playerGui.State)
+            {
+                case PLAYER_STATE.Null:
+                case PLAYER_STATE.Paused:
+                case PLAYER_STATE.Stopped:
+                    return playerGui.Play();
+
+                case PLAYER_STATE.Playing:
+                    return playerGui.Pause() ? S_OK : S_FALSE;
+
+                default:
+                    return S_OK;
+            }
         }
 
         private void ShowError(ZeratoolPlayerGui playerGui, int errorCode)

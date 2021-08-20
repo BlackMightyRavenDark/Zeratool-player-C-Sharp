@@ -60,6 +60,11 @@ namespace Zeratool_player_C_Sharp
                 filter = (IBaseFilter)Activator.CreateInstance(type);
                 return S_OK;
             }
+            catch (AccessViolationException ex)
+            {
+                filter = null;
+                return ex.HResult;
+            }
             catch (Exception ex)
             {
                 filter = null;
