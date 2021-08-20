@@ -13,6 +13,7 @@ namespace Zeratool_player_C_Sharp
 {
     public partial class ZeratoolPlayerGui : UserControl
     {
+        private string _title;
         private bool _isMaximized = false;
         private bool _isFullscreenMode = false;
         public const int MIN_WIDTH = 386;
@@ -21,7 +22,6 @@ namespace Zeratool_player_C_Sharp
         public static readonly Color COLOR_INACTIVE = Color.SkyBlue;
 
         private ZeratoolPlayerEngine _playerEngine;
-
         private ZeratoolPlaylist _playlist;
 
         public ZeratoolPlayerEngine PlayerEngine => _playerEngine;
@@ -29,7 +29,7 @@ namespace Zeratool_player_C_Sharp
         public GRAPH_MODE GraphMode { get { return PlayerEngine.GraphMode; } set { SetGraphMode(value); } }
         public GRAPH_MODE PrefferedGraphMode { get; set; } = GRAPH_MODE.Manual;
         public string FileName { get { return PlayerEngine.FileName; } }
-        public string Title { get { return lblTitleBar.Text; } set { SetTitle(value); } }
+        public string Title { get { return _title; } set { SetTitle(value); } }
         public int Volume { get { return PlayerEngine.Volume; } set { PlayerEngine.Volume = value; volumeBar.Refresh(); } }
         public double TrackDuration => PlayerEngine.Duration;
         public double TrackPosition { get { return PlayerEngine.Position; } set { SetTrackPosition(value); } }
@@ -74,6 +74,7 @@ namespace Zeratool_player_C_Sharp
         {
             InitializeComponent();
 
+            _title = lblTitleBar.Text;
             _playerEngine = new ZeratoolPlayerEngine();
             _playerEngine.GraphMode = PrefferedGraphMode;
             _playlist = new ZeratoolPlaylist(_playerEngine);
@@ -90,7 +91,7 @@ namespace Zeratool_player_C_Sharp
                 _playerEngine.Clear();
                 _playerEngine = null;
             }
-            System.Diagnostics.Debug.WriteLine("Player disposed");
+            System.Diagnostics.Debug.WriteLine($"Player {Title} disposed");
         }
 
         protected override bool IsInputKey(Keys keyData)
@@ -363,8 +364,9 @@ namespace Zeratool_player_C_Sharp
         public void SetTitle(string title)
         {
             string newTitle = string.IsNullOrEmpty(title) ? "<No name>" : title;
-            if (lblTitleBar.Text != newTitle)
+            if (_title != newTitle)
             {
+                _title = newTitle;
                 lblTitleBar.Text = newTitle;
                 TitleChanged?.Invoke(this, newTitle);
             }
