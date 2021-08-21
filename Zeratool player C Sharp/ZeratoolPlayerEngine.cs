@@ -586,7 +586,7 @@ namespace Zeratool_player_C_Sharp
                     Marshal.ReleaseComObject(filter);
                     continue;
                 }
-                Marshal.ReleaseComObject(sourcePinOut);
+                Marshal.ReleaseComObject(splitterPinOut);
 
                 mediaSplitter = filter;
 
