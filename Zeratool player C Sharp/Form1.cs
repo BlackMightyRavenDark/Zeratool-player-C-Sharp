@@ -22,11 +22,17 @@ namespace Zeratool_player_C_Sharp
 
         private void OnFormCreate()
         {
+            playlistFileName = Application.StartupPath + "\\LastPlaylist.json";
+
             PlayerCreated += OnPlayerCreated;
 
             formPlaylist = new FormPlaylist();
 
             ZeratoolPlayerGui z = CreatePlayer(this, true);
+            if (File.Exists(playlistFileName))
+            {
+                z.Playlist.LoadFromFile(playlistFileName); 
+            }
             z.Activate();
         }
 
@@ -41,6 +47,18 @@ namespace Zeratool_player_C_Sharp
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
+            if (activePlayer != null && activePlayer.IsMaximized)
+            {
+                if (File.Exists(playlistFileName))
+                {
+                    File.Delete(playlistFileName);
+                }
+                if (activePlayer.Playlist.Count > 0)
+                {
+                    activePlayer.Playlist.SaveToFile(playlistFileName);
+                }
+            }
+
             foreach (ZeratoolPlayerGui z in players)
             {
                 z.Dispose();
@@ -111,6 +129,15 @@ namespace Zeratool_player_C_Sharp
                     controlledPlayer.ToggleFullscreenMode();
                     break;
             }
+        }
+
+
+        private void Form1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            int x = Clamp(e.X, 0, Width - ZeratoolPlayerGui.MIN_WIDTH - 16);
+            int y = Clamp(e.Y, 0, Height - ZeratoolPlayerGui.MIN_HEIGHT - 36);
+            ZeratoolPlayerGui z = CreatePlayer(this, x, y, ZeratoolPlayerGui.MIN_WIDTH, ZeratoolPlayerGui.MIN_HEIGHT, false);
+            z.Activate();
         }
 
         private void OnPlayerCreated(ZeratoolPlayerGui z, bool isMaximizedToParent)
@@ -329,14 +356,6 @@ namespace Zeratool_player_C_Sharp
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     break;
             }
-        }
-
-        private void Form1_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            int x = Clamp(e.X, 0, Width - ZeratoolPlayerGui.MIN_WIDTH - 16);
-            int y = Clamp(e.Y, 0, Height - ZeratoolPlayerGui.MIN_HEIGHT - 36);
-            ZeratoolPlayerGui z = CreatePlayer(this, x, y, ZeratoolPlayerGui.MIN_WIDTH, ZeratoolPlayerGui.MIN_HEIGHT, false);
-            z.Activate();
         }
 
     }

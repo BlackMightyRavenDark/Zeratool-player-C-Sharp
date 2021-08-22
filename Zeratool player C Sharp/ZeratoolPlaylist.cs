@@ -153,8 +153,8 @@ namespace Zeratool_player_C_Sharp
                 jArray.Add(str);
             }
             JObject json = new JObject();
-            json["list"] = jArray;
             json["index"] = PlayingIndex;
+            json["list"] = jArray;
             File.WriteAllText(fileName, json.ToString());
         }
 
@@ -179,8 +179,6 @@ namespace Zeratool_player_C_Sharp
                             AddRange(list);
                         }
                     }
-
-
                 }
                 if (Count > 0)
                 {

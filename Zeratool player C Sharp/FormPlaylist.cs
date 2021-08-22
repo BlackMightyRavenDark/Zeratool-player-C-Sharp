@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using static Zeratool_player_C_Sharp.Utils;
 
@@ -27,6 +26,12 @@ namespace Zeratool_player_C_Sharp
                 result.ExStyle |= WS_EX_COMPOSITED;
                 return result;
             }
+        }
+
+        private void OnFormDispose()
+        {
+
+            System.Diagnostics.Debug.WriteLine("Form playlist disposed");
         }
 
         private void FormPlaylist_FormClosing(object sender, FormClosingEventArgs e)

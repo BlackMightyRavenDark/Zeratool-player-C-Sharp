@@ -74,12 +74,9 @@ namespace Zeratool_player_C_Sharp
         {
             InitializeComponent();
 
-            _title = lblTitleBar.Text;
-            _playerEngine = new ZeratoolPlayerEngine();
-            _playerEngine.GraphMode = PrefferedGraphMode;
-            _playlist = new ZeratoolPlaylist(_playerEngine);
-
             Disposed += OnDispose;
+
+            OnCreate();
         }
 
         private void OnDispose(object sender, EventArgs e)
@@ -99,15 +96,13 @@ namespace Zeratool_player_C_Sharp
             return true;
         }
 
-        private void ZeratoolPlayerGui_Load(object sender, EventArgs e)
+        private void OnCreate()
         {
-            SetDoubleBuffered(volumeBar, true);
-            SetDoubleBuffered(seekBar, true);
+            _title = lblTitleBar.Text;
 
-            panelZ.BringToFront();
-            lblTitleBar.BringToFront();
-            panelMaxClose.BringToFront();
-            panelControls.BringToFront();
+            _playerEngine = new ZeratoolPlayerEngine();
+            _playerEngine.GraphMode = PrefferedGraphMode;
+            _playlist = new ZeratoolPlaylist(_playerEngine);
 
             Playlist.IndexChanged += (s, index) =>
             {
@@ -115,7 +110,7 @@ namespace Zeratool_player_C_Sharp
                 {
                     ZeratoolPlaylist zeratoolPlaylist = s as ZeratoolPlaylist;
                     PlayerEngine.FileName = zeratoolPlaylist[zeratoolPlaylist.PlayingIndex];
-                    SetTitle(Path.GetFileName(PlayerEngine.FileName));
+                    Title = Path.GetFileName(PlayerEngine.FileName);
                 }
                 else
                 {
@@ -166,19 +161,29 @@ namespace Zeratool_player_C_Sharp
             
             PlayerEngine.OutputWindow = panelVideoScreen;
 
+            timerSystemTime.Enabled = true;
+        }
+
+        private void ZeratoolPlayerGui_Load(object sender, EventArgs e)
+        {
+            SetDoubleBuffered(volumeBar, true);
+            SetDoubleBuffered(seekBar, true);
+
+            panelZ.BringToFront();
+            lblTitleBar.BringToFront();
+            panelMaxClose.BringToFront();
+            panelControls.BringToFront();
+
+            UpdateSystemTimeIndicator();
+
             GraphicsPath graphicsPath = new GraphicsPath();
             graphicsPath.AddPolygon(new Point[] {
                 new Point(0, panelCorner.Height),
                 new Point(panelCorner.Width, panelCorner.Height),
                 new Point(panelCorner.Width, 0)
             });
-            Region myRegion = new Region(graphicsPath);
-            panelCorner.Region = myRegion;
+            panelCorner.Region = new Region(graphicsPath);
             graphicsPath.Dispose();
-            myRegion.Dispose();
-
-            UpdateSystemTimeIndicator(); 
-            timerSystemTime.Enabled = true;
         }
 
         public int Play()
@@ -753,5 +758,6 @@ namespace Zeratool_player_C_Sharp
         {
             Activate();
         }
+
     }
 }

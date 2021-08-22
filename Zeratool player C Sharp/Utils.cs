@@ -10,14 +10,16 @@ namespace Zeratool_player_C_Sharp
     {
         public class PlayerListItem
         {
+            private string _displayName;
             private ZeratoolPlayerGui _playerObject;
+
+            public string DisplayName => _displayName;
             public ZeratoolPlayerGui Player => _playerObject;
-            public string DisplayName { get; set; }
 
             public PlayerListItem(ZeratoolPlayerGui playerGuiObject, string displayName)
             {
                 _playerObject = playerGuiObject;
-                DisplayName = displayName;
+                _displayName = displayName;
             }
 
             public override string ToString()
@@ -36,6 +38,7 @@ namespace Zeratool_player_C_Sharp
         public static ZeratoolPlayerGui activePlayer = null;
         public static List<string> videoFileTypes = new List<string>() { ".avi", ".mpg", ".mpeg", ".ts", ".mp4", ".mkv", ".webm" };
 
+        public static string playlistFileName;
 
         public static ZeratoolPlayerGui CreatePlayer(Control parentControl, bool maximized)
         {
