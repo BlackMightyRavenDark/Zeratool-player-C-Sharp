@@ -15,12 +15,12 @@ namespace Zeratool_player_C_Sharp
         public int Count => items.Count;
         public int PlayingIndex { get { return _playingIndex; } }
 
-        public delegate void ItemAddDelegate(object sender, string itemString);
-        public delegate void ItemRemoveDelegate(object sender, int index, string itemString);
+        public delegate void ItemAddedDelegate(object sender, string itemString);
+        public delegate void ItemRemovedDelegate(object sender, int index, string itemString);
         public delegate void ClearedDelegate(object sender);
         public delegate void IndexChangedDelegate(object sender, int index);
-        public ItemAddDelegate ItemAdded;
-        public ItemRemoveDelegate ItemRemoved;
+        public ItemAddedDelegate ItemAdded;
+        public ItemRemovedDelegate ItemRemoved;
         public ClearedDelegate Cleared;
         public IndexChangedDelegate IndexChanged; 
 
@@ -82,6 +82,11 @@ namespace Zeratool_player_C_Sharp
             _playingIndex = -1;
             Cleared?.Invoke(this);
             IndexChanged?.Invoke(this, -1);
+        }
+
+        public string[] ToArray()
+        {
+            return items.ToArray();
         }
 
         public bool Contains(string t)

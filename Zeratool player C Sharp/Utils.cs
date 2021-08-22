@@ -8,8 +8,29 @@ namespace Zeratool_player_C_Sharp
 {
     public static class Utils
     {
+        public class PlayerListItem
+        {
+            private ZeratoolPlayerGui _playerObject;
+            public ZeratoolPlayerGui Player => _playerObject;
+            public string DisplayName { get; set; }
+
+            public PlayerListItem(ZeratoolPlayerGui playerGuiObject, string displayName)
+            {
+                _playerObject = playerGuiObject;
+                DisplayName = displayName;
+            }
+
+            public override string ToString()
+            {
+                return DisplayName;
+            }
+        }
+
+
         public delegate void PlayerCreatedDelegate(ZeratoolPlayerGui playerGui, bool isMaximized);
         public static PlayerCreatedDelegate PlayerCreated;
+
+        public static FormPlaylist formPlaylist;
 
         public static readonly List<ZeratoolPlayerGui> players = new List<ZeratoolPlayerGui>();
         public static ZeratoolPlayerGui activePlayer = null;
@@ -75,6 +96,18 @@ namespace Zeratool_player_C_Sharp
             typeof(Control).InvokeMember("DoubleBuffered",
                 BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
                 null, control, new object[] { enabled });
+        }
+
+        public static int FindPlayerInComboBox(ComboBox comboBox, ZeratoolPlayerGui z)
+        {
+            for (int i = 0; i < comboBox.Items.Count; i++)
+            {
+                if ((comboBox.Items[i] as PlayerListItem).Player == z)
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
 
         public static List<string> GetPlayableFiles(IEnumerable<string> collection)

@@ -119,7 +119,7 @@ namespace Zeratool_player_C_Sharp
                 }
                 else
                 {
-                    SetTitle("<No name>");
+                    Title = "<No name>";
                 }
             };
 
@@ -127,8 +127,10 @@ namespace Zeratool_player_C_Sharp
             {
                 timerTrack.Enabled = false;
                 btnPlay.BackgroundImage = Resources.play_inactive.ToBitmap();
+                btnPlay.Refresh(); 
                 btnPause.BackgroundImage = Resources.pause_inactive.ToBitmap();
-
+                btnPause.Refresh();
+                
                 panelVideoScreen.Refresh();
                 volumeBar.Refresh();
                 seekBar.Refresh();
@@ -140,6 +142,7 @@ namespace Zeratool_player_C_Sharp
                 if (errorCode == S_OK)
                 {
                     ResizeOutputWindow();
+                    btnPlay.BackgroundImage = Resources.play_active.ToBitmap();
                     timerTrack.Enabled = true;
                 }
                 UpdateTrackPositionIndicator();

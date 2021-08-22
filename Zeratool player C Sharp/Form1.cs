@@ -24,6 +24,8 @@ namespace Zeratool_player_C_Sharp
         {
             PlayerCreated += OnPlayerCreated;
 
+            formPlaylist = new FormPlaylist();
+
             ZeratoolPlayerGui z = CreatePlayer(this, true);
             z.Activate();
         }
@@ -211,8 +213,11 @@ namespace Zeratool_player_C_Sharp
                         break;
 
                     case PLAYER_ACTION.OpenPlaylist:
-                        MessageBox.Show(playerGui.Playlist.ToString(), "Плейлист", 
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        if (!formPlaylist.Visible)
+                        {
+                            formPlaylist.Show();
+                        }
+                        formPlaylist.BringToFront();                         
                         break;
                     
                     case PLAYER_ACTION.Fullscreen:
