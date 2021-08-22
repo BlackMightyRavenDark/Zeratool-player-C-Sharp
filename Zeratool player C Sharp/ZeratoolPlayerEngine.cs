@@ -578,15 +578,15 @@ namespace Zeratool_player_C_Sharp
                 System.Diagnostics.Debug.WriteLine($"Connecting {splitterName}: S_OK");
                 Marshal.ReleaseComObject(pinIn);
 
-                FindPin(filter, "ideo", PinDirection.Output, out IPin splitterPinOut);
-                if (splitterPinOut == null)
+                FindPin(filter, "ideo", PinDirection.Output, out IPin splitterVideoPinOut);
+                if (splitterVideoPinOut == null)
                 {
                     System.Diagnostics.Debug.WriteLine("Video output pin not found! Skipping this bad bad filter.");
                     graphBuilder.RemoveFilter(filter);
                     Marshal.ReleaseComObject(filter);
                     continue;
                 }
-                Marshal.ReleaseComObject(splitterPinOut);
+                Marshal.ReleaseComObject(splitterVideoPinOut);
 
                 mediaSplitter = filter;
 

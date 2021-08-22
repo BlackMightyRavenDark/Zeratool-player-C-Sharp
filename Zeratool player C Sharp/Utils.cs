@@ -8,27 +8,27 @@ namespace Zeratool_player_C_Sharp
 {
     public static class Utils
     {
-        public delegate void PlayerAddDelegate(ZeratoolPlayerGui playerGui, bool isMaximized);
-        public static PlayerAddDelegate PlayerAdd;
+        public delegate void PlayerCreatedDelegate(ZeratoolPlayerGui playerGui, bool isMaximized);
+        public static PlayerCreatedDelegate PlayerCreated;
 
         public static readonly List<ZeratoolPlayerGui> players = new List<ZeratoolPlayerGui>();
         public static ZeratoolPlayerGui activePlayer = null;
         public static List<string> videoFileTypes = new List<string>() { ".avi", ".mpg", ".mpeg", ".ts", ".mp4", ".mkv", ".webm" };
 
 
-        public static ZeratoolPlayerGui AddPlayer(Control parentControl, bool maximized)
+        public static ZeratoolPlayerGui CreatePlayer(Control parentControl, bool maximized)
         {
-            return AddPlayer(parentControl, 0, 0, ZeratoolPlayerGui.MIN_WIDTH, ZeratoolPlayerGui.MIN_HEIGHT, maximized);
+            return CreatePlayer(parentControl, 0, 0, ZeratoolPlayerGui.MIN_WIDTH, ZeratoolPlayerGui.MIN_HEIGHT, maximized);
         }
 
-        public static ZeratoolPlayerGui AddPlayer(Control parentControl, int x, int y, int w, int h, bool maximized)
+        public static ZeratoolPlayerGui CreatePlayer(Control parentControl, int x, int y, int w, int h, bool maximized)
         {
             ZeratoolPlayerGui z = new ZeratoolPlayerGui();
             z.Location = new Point(x, y);
             z.Size = new Size(w, h);
             z.Parent = parentControl;
 
-            PlayerAdd?.Invoke(z, maximized);
+            PlayerCreated?.Invoke(z, maximized);
 
             return z;
         }

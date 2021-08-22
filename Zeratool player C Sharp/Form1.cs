@@ -17,13 +17,14 @@ namespace Zeratool_player_C_Sharp
         public Form1()
         {
             InitializeComponent();
+            OnFormCreate();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void OnFormCreate()
         {
-            PlayerAdd += OnPlayerAdd;
+            PlayerCreated += OnPlayerCreated;
 
-            ZeratoolPlayerGui z = AddPlayer(this, true);
+            ZeratoolPlayerGui z = CreatePlayer(this, true);
             z.Activate();
         }
 
@@ -110,7 +111,7 @@ namespace Zeratool_player_C_Sharp
             }
         }
 
-        private void OnPlayerAdd(ZeratoolPlayerGui z, bool isMaximizedToParent)
+        private void OnPlayerCreated(ZeratoolPlayerGui z, bool isMaximizedToParent)
         {
             z.DropFiles += OnPlayerDropFiles;
 
@@ -329,7 +330,7 @@ namespace Zeratool_player_C_Sharp
         {
             int x = Clamp(e.X, 0, Width - ZeratoolPlayerGui.MIN_WIDTH - 16);
             int y = Clamp(e.Y, 0, Height - ZeratoolPlayerGui.MIN_HEIGHT - 36);
-            ZeratoolPlayerGui z = AddPlayer(this, x, y, ZeratoolPlayerGui.MIN_WIDTH, ZeratoolPlayerGui.MIN_HEIGHT, false);
+            ZeratoolPlayerGui z = CreatePlayer(this, x, y, ZeratoolPlayerGui.MIN_WIDTH, ZeratoolPlayerGui.MIN_HEIGHT, false);
             z.Activate();
         }
 

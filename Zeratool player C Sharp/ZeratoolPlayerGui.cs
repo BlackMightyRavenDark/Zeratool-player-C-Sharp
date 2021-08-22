@@ -103,6 +103,7 @@ namespace Zeratool_player_C_Sharp
         {
             SetDoubleBuffered(volumeBar, true);
             SetDoubleBuffered(seekBar, true);
+
             panelZ.BringToFront();
             lblTitleBar.BringToFront();
             panelMaxClose.BringToFront();
@@ -138,6 +139,7 @@ namespace Zeratool_player_C_Sharp
             {
                 if (errorCode == S_OK)
                 {
+                    ResizeOutputWindow();
                     timerTrack.Enabled = true;
                 }
                 UpdateTrackPositionIndicator();
