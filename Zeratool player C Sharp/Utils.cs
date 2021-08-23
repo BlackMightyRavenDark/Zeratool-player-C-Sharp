@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Reflection;
 using System.IO;
+using static Zeratool_player_C_Sharp.DirectShowUtils;
 
 namespace Zeratool_player_C_Sharp
 {
@@ -32,10 +33,12 @@ namespace Zeratool_player_C_Sharp
         public delegate void PlayerCreatedDelegate(ZeratoolPlayerGui playerGui, bool isMaximized);
         public static PlayerCreatedDelegate PlayerCreated;
 
+        public static FormSettings formSettings;
         public static FormPlaylist formPlaylist;
 
         public static readonly List<ZeratoolPlayerGui> players = new List<ZeratoolPlayerGui>();
         public static ZeratoolPlayerGui activePlayer = null;
+        public static List<MonikerItem> audioOutputMonikers = new List<MonikerItem>();
         public static List<string> videoFileTypes = new List<string>() { ".avi", ".mpg", ".mpeg", ".ts", ".mp4", ".mkv", ".webm" };
 
         public static string playlistFileName;

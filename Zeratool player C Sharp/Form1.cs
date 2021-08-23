@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -24,8 +23,11 @@ namespace Zeratool_player_C_Sharp
         {
             playlistFileName = Application.StartupPath + "\\LastPlaylist.json";
 
+            ListAudioRenderers(audioOutputMonikers);
+
             PlayerCreated += OnPlayerCreated;
 
+            formSettings = new FormSettings();
             formPlaylist = new FormPlaylist();
 
             ZeratoolPlayerGui z = CreatePlayer(this, true);
@@ -235,8 +237,11 @@ namespace Zeratool_player_C_Sharp
                         break;
 
                     case PLAYER_ACTION.OpenSettings:
-                        MessageBox.Show("Настроек пока не существует!", "Ошибка!",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        if (!formSettings.Visible)
+                        {
+                            formSettings.Show();
+                        }
+                        formSettings.BringToFront();
                         break;
 
                     case PLAYER_ACTION.OpenPlaylist:
@@ -287,6 +292,14 @@ namespace Zeratool_player_C_Sharp
                     Text = $"{playerGui.Title} | {TITLE}";
                 }
             };
+
+            z.PlayerEngine.filters.audioRenderers.Clear();
+            foreach (MonikerItem monikerItem in audioOutputMonikers)
+            {
+                z.PlayerEngine.filters.audioRenderers.Add(monikerItem);
+            }
+            z.PlayerEngine.filters.prefferedAudioRendererId = audioOutputMonikers.Count == 0 ? -1 : 0;
+            z.PlayerEngine.filters.audioRendererId = z.PlayerEngine.filters.prefferedAudioRendererId;
 
             if (isMaximizedToParent)
             {
