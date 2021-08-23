@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -12,6 +13,7 @@ namespace Zeratool_player_C_Sharp
     public partial class Form1 : Form
     {
         public const string TITLE = "Zeratool player";
+        private bool firstShown = true;
 
         public Form1()
         {
@@ -31,10 +33,6 @@ namespace Zeratool_player_C_Sharp
             formPlaylist = new FormPlaylist();
 
             ZeratoolPlayerGui z = CreatePlayer(this, true);
-            if (File.Exists(playlistFileName))
-            {
-                z.Playlist.LoadFromFile(playlistFileName); 
-            }
             z.Activate();
         }
 
@@ -66,6 +64,29 @@ namespace Zeratool_player_C_Sharp
                 z.Dispose();
             }
             players.Clear();
+        }
+
+        private void Form1_Shown(object sender, EventArgs e)
+        {
+            if (firstShown)
+            {
+                firstShown = false;
+                if (activePlayer != null)
+                {
+                    if (Environment.GetCommandLineArgs().Length > 1)
+                    {
+                        string fn = Environment.GetCommandLineArgs()[1];
+                        activePlayer.PlayFile(fn);
+                    }
+                    else
+                    {
+                        if (File.Exists(playlistFileName))
+                        {
+                            activePlayer.Playlist.LoadFromFile(playlistFileName);
+                        }
+                    }
+                }
+            }
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using static Zeratool_player_C_Sharp.Utils;
 using static Zeratool_player_C_Sharp.DirectShowUtils;
