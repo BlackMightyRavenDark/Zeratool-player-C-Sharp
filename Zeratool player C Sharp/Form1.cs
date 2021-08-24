@@ -25,7 +25,7 @@ namespace Zeratool_player_C_Sharp
         {
             playlistFileName = Application.StartupPath + "\\LastPlaylist.json";
 
-            ListAudioRenderers(audioOutputMonikers);
+            //ListAudioRenderers(audioOutputMonikers);
 
             PlayerCreated += OnPlayerCreated;
 
