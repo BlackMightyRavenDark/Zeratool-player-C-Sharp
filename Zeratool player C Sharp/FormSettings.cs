@@ -17,7 +17,7 @@ namespace Zeratool_player_C_Sharp
             {
                 comboBoxAudioRenderers.Items.Add(item.DisplayName);
             }
-            comboBoxAudioRenderers.SelectedIndex = 0;
+            comboBoxAudioRenderers.SelectedIndex = audioOutputMonikers.Count == 0 ? -1 : 0;
 
             PlayerCreated += OnPlayerCreated;
         }

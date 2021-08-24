@@ -27,7 +27,7 @@ namespace Zeratool_player_C_Sharp
         public ZeratoolPlayerEngine PlayerEngine => _playerEngine;
         public PLAYER_STATE State => PlayerEngine.State;
         public GRAPH_MODE GraphMode { get { return PlayerEngine.GraphMode; } set { SetGraphMode(value); } }
-        public GRAPH_MODE PrefferedGraphMode { get; set; } = GRAPH_MODE.Manual;
+        public GRAPH_MODE PrefferedGraphMode { get; set; } = GRAPH_MODE.Intellectual;
         public string FileName { get { return PlayerEngine.FileName; } }
         public string Title { get { return _title; } set { SetTitle(value); } }
         public int Volume { get { return PlayerEngine.Volume; } set { PlayerEngine.Volume = value; volumeBar.Refresh(); } }

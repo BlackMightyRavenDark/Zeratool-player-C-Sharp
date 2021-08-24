@@ -4,11 +4,64 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.IO;
 using static Zeratool_player_C_Sharp.DirectShowUtils;
+using Newtonsoft.Json.Linq;
 
 namespace Zeratool_player_C_Sharp
 {
     public static class Utils
     {
+        public class MyConfiguration
+        {
+            public string configFileName;
+            public string selfPath;
+            public int lastVolume;
+
+            public delegate void SavingDelegate(object sender, JObject root, ref bool canceled);
+            public delegate void LoadingDelegate(object sender, JObject root, ref bool canceled);
+            public SavingDelegate Saving;
+            public LoadingDelegate Loading;
+
+            public MyConfiguration(string fileName)
+            {
+                configFileName = fileName;
+                selfPath = Path.GetDirectoryName(Application.ExecutablePath);
+                LoadDefault();
+            }
+
+            public void Save()
+            {
+                if (File.Exists(configFileName))
+                {
+                    File.Delete(configFileName);
+                }
+                JObject json = new JObject();
+                bool canceled = false;
+                Saving?.Invoke(this, json, ref canceled);
+                if (!canceled)
+                {
+                    File.WriteAllText(configFileName, json.ToString());
+                }
+            }
+
+            public void LoadDefault()
+            {
+                lastVolume = 25;
+            }
+
+            public void Load()
+            {
+                if (File.Exists(configFileName))
+                {
+                    JObject json = JObject.Parse(File.ReadAllText(configFileName));
+                    if (json != null)
+                    {
+                        bool canceled = false;
+                        Loading?.Invoke(this, json, ref canceled);
+                    }
+                }
+            }
+        }
+
         public class PlayerListItem
         {
             private string _displayName;

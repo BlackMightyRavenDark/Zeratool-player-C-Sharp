@@ -725,10 +725,44 @@ namespace Zeratool_player_C_Sharp
             return S_FALSE;
         }
 
-        private int RenderAudioStream_Manual(IPin pinOut)
+        private int RenderAudioStream_Manual(IPin splitterPinOut)
         {
             int errorCode;
-            IPin pinIn;
+
+            //processing audio renderer.        
+            string audioRendererName;
+            if (filters.audioRenderers.Count > 0)
+            {
+                int id = filters.audioRendererId;
+                if (id < 0 || id >= filters.audioRenderers.Count)
+                {
+                    id = 0;
+                }
+                MonikerItem audioRendererMoniker = filters.audioRenderers[id];
+                audioRendererName = audioRendererMoniker.DisplayName;
+                errorCode = CreateDirectShowFilter(audioRendererMoniker.Moniker, out IBaseFilter filter);
+                if (errorCode != S_OK)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Loading {audioRendererName}: {ErrorCodeToString(errorCode)}");
+                    return errorCode;
+                }
+                System.Diagnostics.Debug.WriteLine($"Loading {audioRendererName}: S_OK");
+                audioRenderer = filter;
+                graphBuilder.AddFilter(audioRenderer, audioRendererName);
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("Audio output device list is empty! Trying to use default device...");
+                errorCode = CreateDirectShowFilter(CLSID_DirectSoundAudioRenderer, out audioRenderer);
+                audioRendererName = "DirectSound audio renderer";
+                if (errorCode != S_OK)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Loading {audioRendererName}: {ErrorCodeToString(errorCode)}");
+                    return errorCode;
+                }
+                System.Diagnostics.Debug.WriteLine($"Loading {audioRendererName}: S_OK");
+                graphBuilder.AddFilter(audioRenderer, audioRendererName);
+            }
 
             //если декодер аудио выбран вручную.
             if (filters.audioDecoderId >= 0)
@@ -739,101 +773,63 @@ namespace Zeratool_player_C_Sharp
                 if (errorCode != S_OK)
                 {
                     System.Diagnostics.Debug.WriteLine($"Loading {filterItemAudioDecoder.DisplayName}: {ErrorCodeToString(errorCode)}");
+                    graphBuilder.RemoveFilter(audioRenderer);
                     return errorCode;
                 }
                 System.Diagnostics.Debug.WriteLine($"Loading {filterItemAudioDecoder.DisplayName}: S_OK");
                 graphBuilder.AddFilter(audioDecoder, filterItemAudioDecoder.DisplayName);
 
-                if (FindPin(audioDecoder, 0, PinDirection.Input, out pinIn) != S_OK)
+                if (FindPin(audioDecoder, 0, PinDirection.Input, out IPin pinIn) != S_OK)
                 {
                     System.Diagnostics.Debug.WriteLine($"{filterItemAudioDecoder.DisplayName}: input pin not found!");
+                    graphBuilder.RemoveFilter(audioRenderer);
                     graphBuilder.RemoveFilter(audioDecoder);
                     return E_POINTER;
                 }
 
-                errorCode = graphBuilder.Connect(pinOut, pinIn);
+                errorCode = graphBuilder.Connect(splitterPinOut, pinIn);
                 Marshal.ReleaseComObject(pinIn);
                 if (errorCode != S_OK)
                 {
                     System.Diagnostics.Debug.WriteLine($"Connecting {filterItemAudioDecoder.DisplayName}: {ErrorCodeToString(errorCode)}");
+                    graphBuilder.RemoveFilter(audioRenderer);
                     graphBuilder.RemoveFilter(audioDecoder);
-
                     return errorCode;
                 }
-                System.Diagnostics.Debug.WriteLine($"Connecting {filterItemAudioDecoder.DisplayName}: {ErrorCodeToString(errorCode)}");
-              
+                System.Diagnostics.Debug.WriteLine($"Connecting {filterItemAudioDecoder.DisplayName}: S_OK");
             }
             else
             {
                 //автоматический перебор декодеров аудио.
                 System.Diagnostics.Debug.WriteLine("Automatic audio decoder selection mode.");
-                errorCode = FindAndConnectAudioDecoder_Manual(pinOut);
-
+                errorCode = FindAndConnectAudioDecoder_Manual(splitterPinOut);
                 if (errorCode != S_OK)
                 {
+                    graphBuilder.RemoveFilter(audioRenderer);
                     return errorCode;
                 }
             }
 
-            //processing audio renderer.        
-            string audioRendererName;
-            if (filters.audioRenderers.Count > 0)
-            {
-                MonikerItem audioRendererMoniker = filters.audioRenderers[filters.audioRendererId];
-                audioRendererName = audioRendererMoniker.DisplayName;
-                errorCode = CreateDirectShowFilter(audioRendererMoniker.Moniker, out IBaseFilter filter);
-                if (errorCode == S_OK)
-                {
-                    audioRenderer = filter;
-                    graphBuilder.AddFilter(audioRenderer, audioRendererName);
-                    
-                    System.Diagnostics.Debug.WriteLine($"Loading {audioRendererName}: S_OK");
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine($"Loading {audioRendererName}: {ErrorCodeToString(errorCode)}");
-                }
-            }
-            else
-            {
-                errorCode = CreateDirectShowFilter(CLSID_DirectSoundAudioRenderer, out audioRenderer);
-                audioRendererName = "DirectSound audio renderer";
-                if (errorCode == S_OK)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Loading {audioRendererName}: S_OK");
-                    
-                    graphBuilder.AddFilter(audioRenderer, audioRendererName);
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine($"Loading {audioRendererName}: {ErrorCodeToString(errorCode)}");
-                }
-            }
-            if (errorCode != S_OK)
-            {
-                graphBuilder.RemoveFilter(audioDecoder);
-                return errorCode;
-            }
-            
-            if (FindPin(audioDecoder, 0, PinDirection.Output, out pinOut) != S_OK)
+            if (FindPin(audioDecoder, 0, PinDirection.Output, out IPin decoderPinOut) != S_OK)
             {
                 System.Diagnostics.Debug.WriteLine("Audio decoder: Output pin not found!");
                 graphBuilder.RemoveFilter(audioRenderer);
                 graphBuilder.RemoveFilter(audioDecoder);
                 return E_POINTER;
             }
-            if (FindPin(audioRenderer, 0, PinDirection.Input, out pinIn) != S_OK)
+
+            if (FindPin(audioRenderer, 0, PinDirection.Input, out IPin rendererPinIn) != S_OK)
             {
                 System.Diagnostics.Debug.WriteLine($"{audioRendererName}: Input pin not found!");
                 graphBuilder.RemoveFilter(audioRenderer);
                 graphBuilder.RemoveFilter(audioDecoder);
-                Marshal.ReleaseComObject(pinOut);
+                Marshal.ReleaseComObject(decoderPinOut);
                 return E_POINTER;
             }
 
-            errorCode = graphBuilder.Connect(pinOut, pinIn);
-            Marshal.ReleaseComObject(pinIn);
-            Marshal.ReleaseComObject(pinOut);
+            errorCode = graphBuilder.Connect(decoderPinOut, rendererPinIn);
+            Marshal.ReleaseComObject(rendererPinIn);
+            Marshal.ReleaseComObject(decoderPinOut);
             if (errorCode != S_OK)
             {
                 System.Diagnostics.Debug.WriteLine($"Connecting {audioRendererName}: {ErrorCodeToString(errorCode)}"); 
@@ -1070,15 +1066,37 @@ namespace Zeratool_player_C_Sharp
 
         private int RenderAudioStream_Intellectual()
         {
-            MonikerItem audioRendererMoniker = filters.audioRenderers[filters.audioRendererId];
-            int errorCode = CreateDirectShowFilter(audioRendererMoniker.Moniker, out audioRenderer);
-            if (errorCode != S_OK)
+            int errorCode;
+            if (filters.audioRenderers.Count > 0)
             {
-                System.Diagnostics.Debug.WriteLine($"Loading {audioRendererMoniker.DisplayName}: {ErrorCodeToString(errorCode)}");
-                return errorCode;
+                int id = filters.audioRendererId;
+                if (id < 0 || id >= filters.audioRenderers.Count)
+                {
+                    id = 0;
+                }
+                MonikerItem audioRendererMoniker = filters.audioRenderers[id];
+                errorCode = CreateDirectShowFilter(audioRendererMoniker.Moniker, out audioRenderer);
+                if (errorCode != S_OK)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Loading {audioRendererMoniker.DisplayName}: {ErrorCodeToString(errorCode)}");
+                    return errorCode;
+                }
+                System.Diagnostics.Debug.WriteLine($"Loading {audioRendererMoniker.DisplayName}: S_OK");
+                graphBuilder.AddFilter(audioRenderer, audioRendererMoniker.DisplayName);
             }
-            System.Diagnostics.Debug.WriteLine($"Loading {audioRendererMoniker.DisplayName}: S_OK");
-            graphBuilder.AddFilter(audioRenderer, audioRendererMoniker.DisplayName);
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("Audio output device list is empty! Trying to use default device...");
+                errorCode = CreateDirectShowFilter(CLSID_DirectSoundAudioRenderer, out audioRenderer);
+                string audioRendererName = "DirectSound audio renderer";
+                if (errorCode != S_OK)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Loading {audioRendererName}: {ErrorCodeToString(errorCode)}");
+                    return errorCode;
+                }
+                System.Diagnostics.Debug.WriteLine($"Loading {audioRendererName}: S_OK");
+                graphBuilder.AddFilter(audioRenderer, audioRendererName);
+            }
 
             if (filters.audioDecoderId < 0)
             {
