@@ -7,6 +7,7 @@ using static Zeratool_player_C_Sharp.Utils;
 using static Zeratool_player_C_Sharp.ZeratoolPlayerEngine;
 using static Zeratool_player_C_Sharp.ZeratoolPlayerGui;
 using static Zeratool_player_C_Sharp.DirectShowUtils;
+using Newtonsoft.Json.Linq;
 
 namespace Zeratool_player_C_Sharp
 {
@@ -23,16 +24,34 @@ namespace Zeratool_player_C_Sharp
 
         private void OnFormCreate()
         {
-            playlistFileName = Application.StartupPath + "\\LastPlaylist.json";
-
             ListAudioRenderers(audioOutputMonikers);
 
             PlayerCreated += OnPlayerCreated;
 
+            config = new MainConfiguration(Application.StartupPath + "\\zeratool.json");
+            config.Saving += (s, json) =>
+            {
+                if (activePlayer != null && activePlayer.IsMaximized)
+                {
+                    json["volume"] = activePlayer.Volume;
+                }
+            };
+            config.Loading += (s, json) =>
+            {
+                JToken jt = json.Value<JToken>("volume");
+                if (jt != null)
+                {
+                    config.lastVolume = Clamp(jt.Value<int>(), 0, 100);
+                }
+            };
+
             formSettings = new FormSettings();
             formPlaylist = new FormPlaylist();
 
+            config.Load();
+
             ZeratoolPlayerGui z = CreatePlayer(this, true);
+            z.Volume = config.lastVolume;
             z.Activate();
         }
 
@@ -47,15 +66,17 @@ namespace Zeratool_player_C_Sharp
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
+            config.Save();
+
             if (activePlayer != null && activePlayer.IsMaximized)
             {
-                if (File.Exists(playlistFileName))
+                if (File.Exists(config.playlistFileName))
                 {
-                    File.Delete(playlistFileName);
+                    File.Delete(config.playlistFileName);
                 }
                 if (activePlayer.Playlist.Count > 0)
                 {
-                    activePlayer.Playlist.SaveToFile(playlistFileName);
+                    activePlayer.Playlist.SaveToFile(config.playlistFileName);
                 }
             }
 
@@ -80,9 +101,9 @@ namespace Zeratool_player_C_Sharp
                     }
                     else
                     {
-                        if (File.Exists(playlistFileName))
+                        if (!string.IsNullOrEmpty(config.playlistFileName) && File.Exists(config.playlistFileName))
                         {
-                            activePlayer.Playlist.LoadFromFile(playlistFileName);
+                            activePlayer.Playlist.LoadFromFile(config.playlistFileName);
                         }
                     }
                 }

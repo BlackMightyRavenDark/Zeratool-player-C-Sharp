@@ -3,12 +3,63 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Reflection;
 using System.IO;
+using Newtonsoft.Json.Linq;
 using static Zeratool_player_C_Sharp.DirectShowUtils;
 
 namespace Zeratool_player_C_Sharp
 {
     public static class Utils
     {
+        public class MainConfiguration
+        {
+            public string configFileName;
+            public string selfPath;
+            public int lastVolume;
+            public string playlistFileName;
+
+            public delegate void SavingDelegate(object sender, JObject root);
+            public delegate void LoadingDelegate(object sender, JObject root);
+            public SavingDelegate Saving;
+            public LoadingDelegate Loading;
+
+            public MainConfiguration(string fileName)
+            {
+                configFileName = fileName;
+                selfPath = Application.StartupPath;
+
+                LoadDefaults();
+            }
+
+            public void Save()
+            {
+                if (File.Exists(configFileName))
+                {
+                    File.Delete(configFileName);
+                }
+                JObject json = new JObject();
+                Saving?.Invoke(this, json);
+                File.WriteAllText(configFileName, json.ToString());
+            }
+
+            public void LoadDefaults()
+            {
+                lastVolume = 25;
+                playlistFileName = selfPath + "\\LastPlaylist.json";
+            }
+
+            public void Load()
+            {
+                if (File.Exists(configFileName))
+                {
+                    JObject json = JObject.Parse(File.ReadAllText(configFileName));
+                    if (json != null)
+                    {
+                        Loading?.Invoke(this, json);
+                    }
+                }
+            }
+        }
+
         public class PlayerListItem
         {
             private string _displayName;
@@ -41,7 +92,7 @@ namespace Zeratool_player_C_Sharp
         public static List<MonikerItem> audioOutputMonikers = new List<MonikerItem>();
         public static List<string> videoFileTypes = new List<string>() { ".avi", ".mpg", ".mpeg", ".ts", ".mp4", ".mkv", ".webm" };
 
-        public static string playlistFileName;
+        public static MainConfiguration config;
 
         public static ZeratoolPlayerGui CreatePlayer(Control parentControl, bool maximized)
         {
