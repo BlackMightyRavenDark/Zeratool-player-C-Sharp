@@ -270,6 +270,10 @@ namespace Zeratool_player_C_Sharp
                     }
                     break;
 
+                case MouseButtons.Middle:
+                    ToggleFullscreenMode();
+                    break;
+
                 case MouseButtons.Right:
                     if (e.Y < panelVideoScreen.Height / 2)
                     {
