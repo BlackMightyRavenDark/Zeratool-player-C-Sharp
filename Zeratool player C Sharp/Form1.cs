@@ -3,17 +3,17 @@ using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Newtonsoft.Json.Linq;
 using static Zeratool_player_C_Sharp.Utils;
 using static Zeratool_player_C_Sharp.ZeratoolPlayerEngine;
 using static Zeratool_player_C_Sharp.ZeratoolPlayerGui;
 using static Zeratool_player_C_Sharp.DirectShowUtils;
-using Newtonsoft.Json.Linq;
 
 namespace Zeratool_player_C_Sharp
 {
     public partial class Form1 : Form
     {
-        public const string TITLE = "Zeratool player";
+        public const string TITLE = "Zeratool player 0.1.0-alpha";
         private bool firstShown = true;
 
         public Form1()
