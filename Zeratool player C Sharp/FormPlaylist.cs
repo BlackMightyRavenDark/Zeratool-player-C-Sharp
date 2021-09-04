@@ -3,17 +3,79 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using Newtonsoft.Json.Linq;
 using static Zeratool_player_C_Sharp.Utils;
 
 namespace Zeratool_player_C_Sharp
 {
     public partial class FormPlaylist : Form
     {
+        private Point oldPos;
+        private Size oldSize;
+
         public FormPlaylist()
         {
             InitializeComponent();
 
+            //force to create a window to access its position.
+            IntPtr hwnd = Handle;
+
+            OnFormCreate();
+        }
+
+        private void OnFormCreate()
+        {
             PlayerCreated += OnPlayerCreated;
+
+            config.Saving += (object s, JObject json) =>
+            {
+                if (WindowState == FormWindowState.Normal)
+                {
+                    json["playlistLeft"] = Left;
+                    json["playlistTop"] = Top;
+                    json["playlistWidth"] = Width;
+                    json["playlistHeight"] = Height;
+                }
+                else
+                {
+                    json["playlistLeft"] = oldPos.X;
+                    json["playlistTop"] = oldPos.Y;
+                    json["playlistWidth"] = oldSize.Width;
+                    json["playlistHeight"] = oldSize.Height;
+                }
+            };
+
+            config.Loading += (object s, JObject json) =>
+            {
+                JToken jt = json.Value<JToken>("playlistLeft");
+                if (jt != null)
+                {
+                    Left = jt.Value<int>();
+                }
+                jt = json.Value<JToken>("playlistTop");
+                if (jt != null)
+                {
+                    Top = jt.Value<int>();
+                }
+                jt = json.Value<JToken>("playlistWidth");
+                if (jt != null)
+                {
+                    Width = jt.Value<int>();
+                }
+                jt = json.Value<JToken>("playlistHeight");
+                if (jt != null)
+                {
+                    Height = jt.Value<int>();
+                }
+
+                if (!this.IsOnScreen())
+                {
+                    this.Center(Screen.PrimaryScreen.WorkingArea);
+                }
+
+                oldPos = new Point(Left, Top);
+                oldSize = new Size(Width, Height);
+            };
         }
 
         //To proper ListBox repaint
@@ -26,12 +88,6 @@ namespace Zeratool_player_C_Sharp
                 result.ExStyle |= WS_EX_COMPOSITED;
                 return result;
             }
-        }
-
-        private void OnFormDispose()
-        {
-
-            System.Diagnostics.Debug.WriteLine("Form playlist disposed");
         }
 
         private void FormPlaylist_FormClosing(object sender, FormClosingEventArgs e)

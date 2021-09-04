@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace Zeratool_player_C_Sharp
 {
@@ -19,6 +20,29 @@ namespace Zeratool_player_C_Sharp
         {
             int halfRadius = radius / 2;
             graphics.FillEllipse(brush, x - halfRadius, y - halfRadius, radius, radius);
+        }
+
+        public static bool IsOnScreen(this Form form)
+        {
+            Screen[] screens = Screen.AllScreens;
+
+            foreach (Screen screen in screens)
+            {
+                Rectangle formRectangle = new Rectangle(form.Left, form.Top, form.Width, form.Height);
+                if (screen.WorkingArea.IntersectsWith(formRectangle))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static void Center(this Form form, Rectangle rectangle)
+        {
+            int x = rectangle.Width / 2 - form.Width / 2;
+            int y = rectangle.Height / 2 - form.Height / 2;
+            form.Location = new Point(x, y);
         }
     }
 }

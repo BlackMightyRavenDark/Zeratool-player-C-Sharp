@@ -13,12 +13,18 @@ namespace Zeratool_player_C_Sharp
 {
     public partial class Form1 : Form
     {
-        public const string TITLE = "Zeratool player 0.1.0-alpha";
+        public const string TITLE = "Zeratool player";
         private bool firstShown = true;
+        private Point oldPos;
+        private Size oldSize;
 
         public Form1()
         {
             InitializeComponent();
+
+            //force to create a window to access its position.
+            IntPtr hwnd = Handle;
+
             OnFormCreate();
         }
 
@@ -35,7 +41,23 @@ namespace Zeratool_player_C_Sharp
                 {
                     json["volume"] = activePlayer.Volume;
                 }
+
+                if (WindowState == FormWindowState.Normal)
+                {
+                    json["mainLeft"] = Left;
+                    json["mainTop"] = Top;
+                    json["mainWidth"] = Width;
+                    json["mainHeight"] = Height;
+                }
+                else
+                {
+                    json["mainLeft"] = oldPos.X;
+                    json["mainTop"] = oldPos.Y;
+                    json["mainWidth"] = oldSize.Width;
+                    json["mainHeight"] = oldSize.Height;
+                }
             };
+
             config.Loading += (s, json) =>
             {
                 JToken jt = json.Value<JToken>("volume");
@@ -43,12 +65,39 @@ namespace Zeratool_player_C_Sharp
                 {
                     config.lastVolume = Clamp(jt.Value<int>(), 0, 100);
                 }
+
+                jt = json.Value<JToken>("mainLeft");
+                if (jt != null)
+                {
+                    Left = jt.Value<int>();
+                }
+                jt = json.Value<JToken>("mainTop");
+                if (jt != null)
+                {
+                    Top = jt.Value<int>();
+                }
+                jt = json.Value<JToken>("mainWidth");
+                if (jt != null)
+                {
+                    Width = jt.Value<int>();
+                }
+                jt = json.Value<JToken>("mainHeight");
+                if (jt != null)
+                {
+                    Height = jt.Value<int>();
+                }
             };
 
             formSettings = new FormSettings();
             formPlaylist = new FormPlaylist();
 
             config.Load();
+            if (!this.IsOnScreen())
+            {
+                this.Center(Screen.PrimaryScreen.WorkingArea);
+            }
+            oldPos = new Point(Left, Top);
+            oldSize = new Size(Width, Height);
 
             ZeratoolPlayerGui z = CreatePlayer(this, true);
             z.Volume = config.lastVolume;

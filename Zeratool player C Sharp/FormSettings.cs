@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Newtonsoft.Json.Linq;
 using static Zeratool_player_C_Sharp.Utils;
 using static Zeratool_player_C_Sharp.DirectShowUtils;
 
@@ -12,6 +13,14 @@ namespace Zeratool_player_C_Sharp
         {
             InitializeComponent();
 
+            //force to create a window to access its position.
+            IntPtr hwnd = Handle;
+
+            OnFormCreate();
+        }
+
+        private void OnFormCreate()
+        {
             comboBoxAudioRenderers.Items.Clear();
             foreach (MonikerItem item in audioOutputMonikers)
             {
@@ -20,12 +29,34 @@ namespace Zeratool_player_C_Sharp
             comboBoxAudioRenderers.SelectedIndex = audioOutputMonikers.Count == 0 ? -1 : 0;
 
             PlayerCreated += OnPlayerCreated;
-        }
 
+            config.Saving += (object s, JObject json) =>
+            {
+                if (WindowState == FormWindowState.Normal)
+                {
+                    json["settingsLeft"] = Left;
+                    json["settingsTop"] = Top;
+                }
+            };
 
-        private void OnDispose()
-        {
-            System.Diagnostics.Debug.WriteLine("settings dispose");
+            config.Loading += (object s, JObject json) =>
+            {
+                JToken jt = json.Value<JToken>("settingsLeft");
+                if (jt != null)
+                {
+                    Left = jt.Value<int>();
+                }
+                jt = json.Value<JToken>("settingsTop");
+                if (jt != null)
+                {
+                    Top = jt.Value<int>();
+                }
+
+                if (!this.IsOnScreen())
+                {
+                    this.Center(Screen.PrimaryScreen.WorkingArea);
+                }
+            };
         }
 
         private void FormSettings_FormClosing(object sender, FormClosingEventArgs e)
