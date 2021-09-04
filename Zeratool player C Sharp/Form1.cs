@@ -40,6 +40,7 @@ namespace Zeratool_player_C_Sharp
                 if (activePlayer != null && activePlayer.IsMaximized)
                 {
                     json["volume"] = activePlayer.Volume;
+                    json["titleBarVisible"] = activePlayer.IsTitleBarVisible;
                 }
 
                 if (WindowState == FormWindowState.Normal)
@@ -64,6 +65,12 @@ namespace Zeratool_player_C_Sharp
                 if (jt != null)
                 {
                     config.lastVolume = Clamp(jt.Value<int>(), 0, 100);
+                }
+
+                jt = json.Value<JToken>("titleBarVisible");
+                if (jt != null)
+                {
+                    config.titleBarVisible = jt.Value<bool>();
                 }
 
                 jt = json.Value<JToken>("mainLeft");
@@ -101,11 +108,13 @@ namespace Zeratool_player_C_Sharp
 
             ZeratoolPlayerGui z = CreatePlayer(this, true);
             z.Volume = config.lastVolume;
+            z.IsTitleBarVisible = config.titleBarVisible;
             z.Activate();
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            config.Save();
             Hide();
             foreach (ZeratoolPlayerGui z in players)
             {
@@ -115,8 +124,6 @@ namespace Zeratool_player_C_Sharp
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            config.Save();
-
             if (activePlayer != null && activePlayer.IsMaximized)
             {
                 if (File.Exists(config.playlistFileName))
