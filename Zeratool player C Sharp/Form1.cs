@@ -13,7 +13,7 @@ namespace Zeratool_player_C_Sharp
 {
     public partial class Form1 : Form
     {
-        public const string TITLE = "Zeratool player 0.1.1-alpha";
+        public const string TITLE = "Zeratool player";
         private bool firstShown = true;
         private Point oldPos;
         private Size oldSize;
@@ -309,20 +309,20 @@ namespace Zeratool_player_C_Sharp
                 }
             };
 
-            z.ActionTriggered += (object s, PLAYER_ACTION action, int errorCode) =>
+            z.ActionTriggered += (object s, PlayerAction action, int errorCode) =>
             {
                 System.Diagnostics.Debug.WriteLine($"Main form received player action: {action}");
                 ZeratoolPlayerGui playerGui = s as ZeratoolPlayerGui;
                 switch (action)
                 {
-                    case PLAYER_ACTION.Play:
+                    case PlayerAction.Play:
                         if (errorCode != S_OK)
                         {
                             ShowError(playerGui, errorCode);
                         }
                         break;
 
-                    case PLAYER_ACTION.OpenFile:
+                    case PlayerAction.OpenFile:
                         OpenFileDialog ofd = new OpenFileDialog();
                         ofd.Title = "Select a file to play with it";
                         ofd.InitialDirectory = Path.GetDirectoryName(Application.StartupPath);
@@ -334,7 +334,7 @@ namespace Zeratool_player_C_Sharp
                         ofd.Dispose();
                         break;
 
-                    case PLAYER_ACTION.OpenSettings:
+                    case PlayerAction.OpenSettings:
                         if (!formSettings.Visible)
                         {
                             formSettings.Show();
@@ -342,7 +342,7 @@ namespace Zeratool_player_C_Sharp
                         formSettings.BringToFront();
                         break;
 
-                    case PLAYER_ACTION.OpenPlaylist:
+                    case PlayerAction.OpenPlaylist:
                         if (!formPlaylist.Visible)
                         {
                             formPlaylist.Show();
@@ -350,7 +350,7 @@ namespace Zeratool_player_C_Sharp
                         formPlaylist.BringToFront();                         
                         break;
                     
-                    case PLAYER_ACTION.Fullscreen:
+                    case PlayerAction.Fullscreen:
                         if (playerGui.IsMaximized)
                         {
                             if (playerGui.IsFullscreen)
@@ -430,12 +430,12 @@ namespace Zeratool_player_C_Sharp
         {
             switch (playerGui.State)
             {
-                case PLAYER_STATE.Null:
-                case PLAYER_STATE.Paused:
-                case PLAYER_STATE.Stopped:
+                case PlayerState.Null:
+                case PlayerState.Paused:
+                case PlayerState.Stopped:
                     return playerGui.Play();
 
-                case PLAYER_STATE.Playing:
+                case PlayerState.Playing:
                     return playerGui.Pause() ? S_OK : S_FALSE;
 
                 default:
@@ -468,6 +468,5 @@ namespace Zeratool_player_C_Sharp
                     break;
             }
         }
-
     }
 }

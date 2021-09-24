@@ -223,7 +223,7 @@ namespace Zeratool_player_C_Sharp
             if (comboBoxPlayers.Items.Count > 0)
             {
                 ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
-                z.PrefferedGraphMode = ZeratoolPlayerEngine.GRAPH_MODE.Automatic;
+                z.PrefferedGraphMode = ZeratoolPlayerEngine.DirectShowGraphMode.Automatic;
             }
         }
 
@@ -232,7 +232,7 @@ namespace Zeratool_player_C_Sharp
             if (comboBoxPlayers.Items.Count > 0)
             {
                 ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
-                z.PrefferedGraphMode = ZeratoolPlayerEngine.GRAPH_MODE.Intellectual;
+                z.PrefferedGraphMode = ZeratoolPlayerEngine.DirectShowGraphMode.Intellectual;
             }
         }
 
@@ -241,7 +241,7 @@ namespace Zeratool_player_C_Sharp
             if (comboBoxPlayers.Items.Count > 0)
             {
                 ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
-                z.PrefferedGraphMode = ZeratoolPlayerEngine.GRAPH_MODE.Manual;
+                z.PrefferedGraphMode = ZeratoolPlayerEngine.DirectShowGraphMode.Manual;
             }
         }
 
@@ -262,19 +262,19 @@ namespace Zeratool_player_C_Sharp
         {
             switch (z.GraphMode)
             {
-                case ZeratoolPlayerEngine.GRAPH_MODE.Automatic:
+                case ZeratoolPlayerEngine.DirectShowGraphMode.Automatic:
                     rbGraphModeAutomatic.ForeColor = Color.Red;
                     rbGraphModeIntellectual.ForeColor = Color.Black;
                     rbGraphModeManual.ForeColor = Color.Black;
                     break;
 
-                case ZeratoolPlayerEngine.GRAPH_MODE.Intellectual:
+                case ZeratoolPlayerEngine.DirectShowGraphMode.Intellectual:
                     rbGraphModeAutomatic.ForeColor = Color.Black;
                     rbGraphModeIntellectual.ForeColor = Color.Red;
                     rbGraphModeManual.ForeColor = Color.Black;
                     break;
 
-                case ZeratoolPlayerEngine.GRAPH_MODE.Manual:
+                case ZeratoolPlayerEngine.DirectShowGraphMode.Manual:
                     rbGraphModeAutomatic.ForeColor = Color.Black;
                     rbGraphModeIntellectual.ForeColor = Color.Black;
                     rbGraphModeManual.ForeColor = Color.Red;
@@ -283,15 +283,15 @@ namespace Zeratool_player_C_Sharp
 
             switch (z.PrefferedGraphMode)
             {
-                case ZeratoolPlayerEngine.GRAPH_MODE.Automatic:
+                case ZeratoolPlayerEngine.DirectShowGraphMode.Automatic:
                     rbGraphModeAutomatic.Checked = true;
                     break;
 
-                case ZeratoolPlayerEngine.GRAPH_MODE.Intellectual:
+                case ZeratoolPlayerEngine.DirectShowGraphMode.Intellectual:
                     rbGraphModeIntellectual.Checked = true;
                     break;
 
-                case ZeratoolPlayerEngine.GRAPH_MODE.Manual:
+                case ZeratoolPlayerEngine.DirectShowGraphMode.Manual:
                     rbGraphModeManual.Checked = true;
                     break;
             }

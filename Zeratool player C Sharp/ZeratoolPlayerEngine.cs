@@ -144,18 +144,18 @@ namespace Zeratool_player_C_Sharp
         public const int ERROR_NOTHING_RENDERED = -102;
 
 
-        public enum GRAPH_MODE { Automatic, Intellectual, Manual };
-        public enum PLAYER_STATE { Null, Playing, Paused, Stopped };
+        public enum DirectShowGraphMode { Automatic, Intellectual, Manual };
+        public enum PlayerState { Null, Playing, Paused, Stopped };
 
-        private GRAPH_MODE _graphMode = GRAPH_MODE.Manual;
-        private PLAYER_STATE _state = PLAYER_STATE.Null;
+        private DirectShowGraphMode _graphMode = DirectShowGraphMode.Manual;
+        private PlayerState _state = PlayerState.Null;
         private int _videoWidth = 0;
         private int _videoHeight = 0;
         private int _volume = 25;
         private Rectangle _outputScreenRect = new Rectangle(0, 0, 0, 0);
 
         public string FileName { get; set; }
-        public GRAPH_MODE GraphMode 
+        public DirectShowGraphMode GraphMode 
         {
             get
             {
@@ -163,16 +163,16 @@ namespace Zeratool_player_C_Sharp
             }
             set
             {
-                if (State == PLAYER_STATE.Null)
+                if (State == PlayerState.Null)
                 {
                     _graphMode = value;
                 }
             } 
         }
-        public PLAYER_STATE State { get { return _state; } }
+        public PlayerState State => _state;
         public Control OutputWindow { get; set; }
         public Rectangle OutputScreenRect { get { return _outputScreenRect; } set { SetScreenRect(value); } }
-        public Size VideoSize { get { return new Size(_videoWidth, _videoHeight); } }
+        public Size VideoSize => new Size(_videoWidth, _videoHeight);
         public double Duration
         {
             get
@@ -258,7 +258,7 @@ namespace Zeratool_player_C_Sharp
                     out EventCode eventCode, out IntPtr param1, out IntPtr param2, 1) == S_OK)
                 {
                     mediaEventEx.FreeEventParams(eventCode, param1, param2);
-                    if (eventCode == EventCode.Complete && State == PLAYER_STATE.Playing)
+                    if (eventCode == EventCode.Complete && State == PlayerState.Playing)
                     {
                         System.Diagnostics.Debug.WriteLine("Player engine event: Track finished");
 
@@ -300,7 +300,7 @@ namespace Zeratool_player_C_Sharp
 
             switch (GraphMode)
             {
-                case GRAPH_MODE.Automatic:
+                case DirectShowGraphMode.Automatic:
                     System.Diagnostics.Debug.WriteLine("Building graph in automatic mode.");
                     errorCode = CreateComObject<FilterGraph, IGraphBuilder>(out graphBuilder); 
                     if (errorCode != S_OK)
@@ -326,18 +326,18 @@ namespace Zeratool_player_C_Sharp
                         mediaEventEx.SetNotifyWindow(Handle, DIRECTSHOW_EVENTS_MESSAGE, new IntPtr(0));
                     }
 
-                    _state = PLAYER_STATE.Stopped;
+                    _state = PlayerState.Stopped;
                     TrackRendered?.Invoke(this, errorCode);
 
                     return errorCode;
 
-                case GRAPH_MODE.Intellectual:
+                case DirectShowGraphMode.Intellectual:
                     System.Diagnostics.Debug.WriteLine("Building graph in intellectual mode.");
                     errorCode = BuildGraphIntellectual();
                     TrackRendered?.Invoke(this, errorCode);
                     return errorCode;
 
-                case GRAPH_MODE.Manual:
+                case DirectShowGraphMode.Manual:
                     System.Diagnostics.Debug.WriteLine("Building graph in manual mode.");
                     errorCode = BuildGraphManual();
                     TrackRendered?.Invoke(this, errorCode);
@@ -433,7 +433,6 @@ namespace Zeratool_player_C_Sharp
                 System.Diagnostics.Debug.WriteLine("Media splitter can't find audio output pin!");
             }
 
-
             if (errorCodeAudio != S_OK && errorCodeVideo != S_OK)
             {
                 Clear();
@@ -454,11 +453,10 @@ namespace Zeratool_player_C_Sharp
 
             mediaPosition = (IMediaPosition)graphBuilder;
 
-            _state = PLAYER_STATE.Stopped;
+            _state = PlayerState.Stopped;
 
             return S_OK;
         }
-
 
         private int ConnectMediaSplitter_Manual(IPin sourcePinOut)
         {
@@ -948,7 +946,7 @@ namespace Zeratool_player_C_Sharp
 
             mediaPosition = (IMediaPosition)graphBuilder;
 
-            _state = PLAYER_STATE.Stopped;
+            _state = PlayerState.Stopped;
 
             return S_OK;
         }
@@ -1173,13 +1171,13 @@ namespace Zeratool_player_C_Sharp
         public int Play()
         {
             int res = S_OK;
-            if (State == PLAYER_STATE.Null)
+            if (State == PlayerState.Null)
             {
                 res = BuildGraph();
             }
             if (res == S_OK)
             {
-                _state = PLAYER_STATE.Playing;
+                _state = PlayerState.Playing;
                 mediaControl.Run();
                 return S_OK;
             }
@@ -1188,10 +1186,10 @@ namespace Zeratool_player_C_Sharp
        
         public bool Pause()
         {
-            if (State != PLAYER_STATE.Null && mediaControl != null)
+            if (State != PlayerState.Null && mediaControl != null)
             {
                 mediaControl.Pause();
-                _state = PLAYER_STATE.Paused;
+                _state = PlayerState.Paused;
                 return true;
             }
             return false;
@@ -1199,10 +1197,10 @@ namespace Zeratool_player_C_Sharp
 
         public bool Stop()
         {
-            if (State != PLAYER_STATE.Null && mediaControl != null)
+            if (State != PlayerState.Null && mediaControl != null)
             {
                 mediaControl.Stop();
-                _state = PLAYER_STATE.Stopped;
+                _state = PlayerState.Stopped;
                 return true;
             }
             return false;
@@ -1323,7 +1321,7 @@ namespace Zeratool_player_C_Sharp
                 graphBuilder = null;
             }
 
-            _state = PLAYER_STATE.Null;
+            _state = PlayerState.Null;
 
             Cleared?.Invoke(this);
         }

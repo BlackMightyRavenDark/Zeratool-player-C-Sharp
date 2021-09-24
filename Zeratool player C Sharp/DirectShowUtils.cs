@@ -93,7 +93,6 @@ namespace Zeratool_player_C_Sharp
             }
         }
 
-
         public static bool GetComInterface<T>(IGraphBuilder graphBuilder, out T obj)
         {
             obj = (T)graphBuilder;
@@ -254,7 +253,6 @@ namespace Zeratool_player_C_Sharp
             public string DisplayName => _displayName;
 
             public IMoniker Moniker => _moniker;
-            public IPropertyBag PropertyBag => _propertyBag;
 
             public MonikerItem(IMoniker moniker, IPropertyBag propertyBag, string displayName)
             {
