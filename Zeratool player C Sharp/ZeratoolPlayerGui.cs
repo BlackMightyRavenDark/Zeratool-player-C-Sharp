@@ -159,7 +159,7 @@ namespace Zeratool_player_C_Sharp
                 }
             };
             
-            PlayerEngine.OutputWindow = panelVideoScreen;
+            PlayerEngine.VideoOutputWindow = panelVideoScreen;
 
             timerSystemTime.Enabled = true;
         }

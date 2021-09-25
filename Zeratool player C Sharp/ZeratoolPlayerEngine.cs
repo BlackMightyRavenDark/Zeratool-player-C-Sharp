@@ -170,7 +170,7 @@ namespace Zeratool_player_C_Sharp
             } 
         }
         public PlayerState State => _state;
-        public Control OutputWindow { get; set; }
+        public Control VideoOutputWindow { get; set; }
         public Rectangle OutputScreenRect { get { return _outputScreenRect; } set { SetScreenRect(value); } }
         public Size VideoSize => new Size(_videoWidth, _videoHeight);
         public double Duration
@@ -316,7 +316,8 @@ namespace Zeratool_player_C_Sharp
                     }
                     if (GetComInterface<IBasicAudio>(graphBuilder, out basicAudio))
                     {
-                        basicAudio.put_Volume(GetDecibelsVolume(Volume));
+                        int db = GetDecibelsVolume(Volume);
+                        basicAudio.put_Volume(db);
                     }
 
                     mediaPosition = (IMediaPosition)graphBuilder;
@@ -421,7 +422,8 @@ namespace Zeratool_player_C_Sharp
                 Marshal.ReleaseComObject(pinOut);
                 if (errorCodeAudio == S_OK && GetComInterface<IBasicAudio>(graphBuilder, out basicAudio))
                 {
-                    basicAudio.put_Volume(GetDecibelsVolume(Volume));
+                    int db = GetDecibelsVolume(Volume);
+                    basicAudio.put_Volume(db);
                 }
                 else
                 {
@@ -904,7 +906,7 @@ namespace Zeratool_player_C_Sharp
             }
             graphBuilder.AddSourceFilter(FileName, "Source filter", out fileSourceFilter);
 
-            //render video chain
+            //render video chain.
             int errorCodeVideo = RenderVideoStream_Intellectual();
             if (errorCodeVideo != S_OK || !GetVideoInterfaces() || !ConfigureVideoOutput())
             {
@@ -912,14 +914,16 @@ namespace Zeratool_player_C_Sharp
                 ClearVideoChain();
             }
 
-            //render audio chain
+            //render audio chain.
             int errorCodeAudio = RenderAudioStream_Intellectual();
             if (errorCodeAudio == S_OK)
             {
                 if (GetComInterface<IBasicAudio>(graphBuilder, out basicAudio))
                 {
-                    basicAudio.put_Volume(GetDecibelsVolume(Volume));
+                    int db = GetDecibelsVolume(Volume);
+                    basicAudio.put_Volume(db);
                 }
+                //TODO: Add ELSE here
             }
             else
             {
@@ -1134,34 +1138,31 @@ namespace Zeratool_player_C_Sharp
 
         private bool GetVideoInterfaces()
         {
-            basicVideo = (IBasicVideo)graphBuilder;
-            if (basicVideo != null)
+            if (GetComInterface<IVideoWindow>(graphBuilder, out videoWindow) && 
+                GetComInterface<IBasicVideo>(graphBuilder, out basicVideo))
             {
-                videoWindow = (IVideoWindow)graphBuilder;
-                if (videoWindow != null)
-                {
-                    return true;
-                }
+                return true;
             }
             return false;
         }
 
         public bool ConfigureVideoOutput()
         {
-            if (OutputWindow == null || videoWindow == null || basicVideo == null || 
+            if (VideoOutputWindow == null || videoWindow == null || basicVideo == null || 
                 basicVideo.GetVideoSize(out int w, out int h) != S_OK)
             {
                 return false;
             }
 
-            videoWindow.put_Owner(OutputWindow.Handle);
-            videoWindow.put_MessageDrain(OutputWindow.Handle);
+            videoWindow.put_Owner(VideoOutputWindow.Handle);
+            videoWindow.put_MessageDrain(VideoOutputWindow.Handle);
             videoWindow.put_WindowStyle(WindowStyle.Child | WindowStyle.ClipChildren | WindowStyle.ClipSiblings);
 
             _videoWidth = w;
             _videoHeight = h;
 
-            Rectangle r = CenterRect(ResizeRect(new Rectangle(0, 0, _videoWidth, _videoHeight), OutputWindow.Size), OutputWindow.ClientRectangle);
+            Rectangle videoRect = new Rectangle(0, 0, _videoWidth, _videoHeight);
+            Rectangle r = CenterRect(ResizeRect(videoRect, VideoOutputWindow.Size), VideoOutputWindow.ClientRectangle);
             SetScreenRect(r);
             videoWindow.put_Visible(OABool.True);
 
