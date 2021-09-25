@@ -671,16 +671,17 @@ namespace Zeratool_player_C_Sharp
         {
             if (e.Button == MouseButtons.Left && State != PlayerState.Null)
             {
-                //TODO: Rewrite this
-                double pos = TrackDuration / seekBar.Width * e.X;
+                double dur = TrackDuration;
+                double pos = dur / seekBar.Width * e.X;
+                if (pos > dur)
+                {
+                    pos = dur - 5.0;
+                }
                 if (pos < 0.0)
                 {
                     pos = 0.0;
                 }
-                else if (pos > TrackDuration)
-                {
-                    pos = TrackDuration > 5.0 ? TrackDuration - 5.0 : 0.0;
-                }
+
                 TrackPosition = pos;
 
                 UpdateTrackIndicators();
