@@ -572,7 +572,7 @@ namespace Zeratool_player_C_Sharp
 
                 if (FindPin(filter, 0, PinDirection.Input, out IPin pinIn) != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"{splitterName}: input pin not found!");
+                    System.Diagnostics.Debug.WriteLine($"{splitterName}: input pin not found! Skip it.");
                     graphBuilder.RemoveFilter(filter);
                     Marshal.ReleaseComObject(filter);
                     continue;
@@ -712,7 +712,7 @@ namespace Zeratool_player_C_Sharp
                 
                 if (FindPin(filter, 0, PinDirection.Input, out IPin pinIn) != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"{item.DisplayName}: input pin not found!");
+                    System.Diagnostics.Debug.WriteLine($"{item.DisplayName}: input pin not found! Skip it.");
                     graphBuilder.RemoveFilter(filter);
                     continue;
                 }
@@ -733,7 +733,7 @@ namespace Zeratool_player_C_Sharp
                 return errorCode;
             }
 
-            System.Diagnostics.Debug.WriteLine("Failed to find video decoder!");
+            System.Diagnostics.Debug.WriteLine("No one valid video decoder found!");
             return S_FALSE;
         }
 
@@ -793,7 +793,7 @@ namespace Zeratool_player_C_Sharp
 
                 if (FindPin(audioDecoder, 0, PinDirection.Input, out IPin pinIn) != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"{filterItemAudioDecoder.DisplayName}: input pin not found!");
+                    System.Diagnostics.Debug.WriteLine($"{filterItemAudioDecoder.DisplayName}: input pin not found! Skip it.");
                     graphBuilder.RemoveFilter(audioRenderer);
                     graphBuilder.RemoveFilter(audioDecoder);
                     return E_POINTER;
@@ -991,7 +991,7 @@ namespace Zeratool_player_C_Sharp
                 errorCode = captureGraphBuilder2.RenderStream(null, MediaType.Video, fileSourceFilter, filter, videoRenderer);
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Rendering with {item.DisplayName}: {ErrorCodeToString(errorCode)}");
+                    System.Diagnostics.Debug.WriteLine($"{item.DisplayName}: Video stream rendering failed! {ErrorCodeToString(errorCode)}");
                     graphBuilder.RemoveFilter(filter);
                     Marshal.ReleaseComObject(filter);
                     continue;
