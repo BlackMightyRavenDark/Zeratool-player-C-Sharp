@@ -312,6 +312,10 @@ namespace Zeratool_player_C_Sharp
                         !GetVideoInterfaces() || !ConfigureVideoOutput())
                     {
                         Clear();
+                        if (errorCode == S_OK)
+                        {
+                            errorCode = E_POINTER;
+                        }
                         return errorCode;
                     }
                     if (GetComInterface<IBasicAudio>(graphBuilder, out basicAudio))
@@ -407,6 +411,10 @@ namespace Zeratool_player_C_Sharp
                 if (errorCodeVideo != S_OK || !GetVideoInterfaces() || !ConfigureVideoOutput())
                 {
                     ClearVideoChain();
+                    if (errorCodeVideo == S_OK)
+                    {
+                        errorCodeVideo = E_POINTER;
+                    }
                 }
             }
             else
@@ -428,6 +436,10 @@ namespace Zeratool_player_C_Sharp
                 else
                 {
                     ClearAudioChain();
+                    if (errorCodeAudio == S_OK)
+                    {
+                        errorCodeAudio = E_POINTER;
+                    }
                 }
             }
             else
@@ -912,6 +924,10 @@ namespace Zeratool_player_C_Sharp
             {
                 System.Diagnostics.Debug.WriteLine($"Video rendering error: {ErrorCodeToString(errorCodeVideo)}");
                 ClearVideoChain();
+                if (errorCodeVideo == S_OK)
+                {
+                    errorCodeVideo = E_POINTER;
+                }
             }
 
             //render audio chain.
@@ -923,7 +939,11 @@ namespace Zeratool_player_C_Sharp
                     int db = GetDecibelsVolume(Volume);
                     basicAudio.put_Volume(db);
                 }
-                //TODO: Add ELSE here
+                else
+                {
+                    ClearAudioChain();
+                    errorCodeAudio = E_POINTER;
+                }
             }
             else
             {
