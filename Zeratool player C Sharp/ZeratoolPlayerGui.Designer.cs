@@ -53,6 +53,7 @@ namespace Zeratool_player_C_Sharp
             this.timerTrack = new System.Windows.Forms.Timer(this.components);
             this.panelZ = new System.Windows.Forms.Panel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.btnLog = new System.Windows.Forms.Panel();
             this.panelVideoScreen = new Zeratool_player_C_Sharp.CustomPanel();
             this.panelControls.SuspendLayout();
             this.panelMaxClose.SuspendLayout();
@@ -63,6 +64,7 @@ namespace Zeratool_player_C_Sharp
             this.panelControls.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelControls.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
+            this.panelControls.Controls.Add(this.btnLog);
             this.panelControls.Controls.Add(this.btnPreviousTrack);
             this.panelControls.Controls.Add(this.btnNextTrack);
             this.panelControls.Controls.Add(this.panelCorner);
@@ -315,6 +317,18 @@ namespace Zeratool_player_C_Sharp
             this.panelZ.TabIndex = 4;
             this.panelZ.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelZ_MouseDown);
             // 
+            // btnLog
+            // 
+            this.btnLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLog.BackgroundImage = global::Zeratool_player_C_Sharp.Properties.Resources.log;
+            this.btnLog.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnLog.Location = new System.Drawing.Point(235, 55);
+            this.btnLog.Name = "btnLog";
+            this.btnLog.Size = new System.Drawing.Size(24, 24);
+            this.btnLog.TabIndex = 13;
+            this.toolTip1.SetToolTip(this.btnLog, "Открыть лог");
+            this.btnLog.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnLog_MouseDown);
+            // 
             // panelVideoScreen
             // 
             this.panelVideoScreen.AllowDrop = true;
@@ -376,5 +390,6 @@ namespace Zeratool_player_C_Sharp
         private System.Windows.Forms.Panel btnPreviousTrack;
         private System.Windows.Forms.Panel panelZ;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Panel btnLog;
     }
 }

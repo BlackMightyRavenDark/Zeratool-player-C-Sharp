@@ -97,6 +97,7 @@ namespace Zeratool_player_C_Sharp
 
             formSettings = new FormSettings();
             formPlaylist = new FormPlaylist();
+            formLog = new FormLog();
 
             config.Load();
             if (!this.IsOnScreen())
@@ -348,6 +349,14 @@ namespace Zeratool_player_C_Sharp
                             formPlaylist.Show();
                         }
                         formPlaylist.BringToFront();                         
+                        break;
+
+                    case PlayerAction.OpenLog:
+                        if (!formLog.Visible)
+                        {
+                            formLog.Show();
+                        }
+                        formLog.BringToFront();
                         break;
                     
                     case PlayerAction.Fullscreen:

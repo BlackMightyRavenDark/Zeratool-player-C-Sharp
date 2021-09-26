@@ -40,7 +40,7 @@ namespace Zeratool_player_C_Sharp
         public bool IsControlsVisible { get { return panelControls.Visible; } set { SetPanelControlsVisible(value); } }
      
 
-        public enum PlayerAction { Play, Pause, OpenFile, Fullscreen, OpenPlaylist, OpenSettings }
+        public enum PlayerAction { Play, Pause, OpenFile, Fullscreen, OpenPlaylist, OpenSettings, OpenLog }
 
         //for dragging.
         private Point oldWindowPos;
@@ -508,6 +508,7 @@ namespace Zeratool_player_C_Sharp
                 toolTip1.SetToolTip(btnMinMax, "Развернуть");
             }
             lblSystemTime.Left = btnSettings.Left - lblSystemTime.Width - 4;
+            btnLog.Left = lblSystemTime.Left - btnLog.Width - 4;
         }
 
         public void Maximize()
@@ -765,5 +766,10 @@ namespace Zeratool_player_C_Sharp
             Activate();
         }
 
+        private void btnLog_MouseDown(object sender, MouseEventArgs e)
+        {
+            Activate();
+            ActionTriggered?.Invoke(this, PlayerAction.OpenLog, 0);
+        }
     }
 }

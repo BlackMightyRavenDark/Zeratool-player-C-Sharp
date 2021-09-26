@@ -88,6 +88,7 @@ namespace Zeratool_player_C_Sharp
 
         public static FormSettings formSettings;
         public static FormPlaylist formPlaylist;
+        public static FormLog formLog;
 
         public static readonly List<ZeratoolPlayerGui> players = new List<ZeratoolPlayerGui>();
         public static ZeratoolPlayerGui activePlayer = null;
