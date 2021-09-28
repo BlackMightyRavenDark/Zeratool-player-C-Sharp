@@ -120,6 +120,23 @@ namespace Zeratool_player_C_Sharp
             }
         }
 
+        public class ZeratoolLogItem
+        {
+            private DateTime _dateTime;
+            private string _event;
+            private string _result;
+            public DateTime DateTime => _dateTime;
+            public string Event => _event;
+            public string Result => _result;
+
+            public ZeratoolLogItem(DateTime dateTime, string eventDescription, string resultDescription)
+            {
+                _dateTime = dateTime;
+                _event = eventDescription;
+                _result = resultDescription;
+            }
+        }
+
         private IGraphBuilder graphBuilder = null;
         private ICaptureGraphBuilder2 captureGraphBuilder2 = null;
         private IVideoWindow videoWindow = null;
@@ -153,6 +170,7 @@ namespace Zeratool_player_C_Sharp
         private int _videoHeight = 0;
         private int _volume = 25;
         private Rectangle _outputScreenRect = new Rectangle(0, 0, 0, 0);
+        private List<ZeratoolLogItem> _log = new List<ZeratoolLogItem>();
 
         public string FileName { get; set; }
         public DirectShowGraphMode GraphMode 
@@ -237,6 +255,8 @@ namespace Zeratool_player_C_Sharp
 
         public readonly FiltersConfiguraion filters = new FiltersConfiguraion();
 
+        public List<ZeratoolLogItem> Log => _log;
+
         public delegate void ClearedDelegate(object sender);
         public delegate void TrackRenderedDelegate(object sender, int errorCode);
         public delegate void TrackFinishedDelegate(object sender);
@@ -276,6 +296,10 @@ namespace Zeratool_player_C_Sharp
             base.WndProc(ref m);
         }
 
+        public void AddToLog(string eventDescription, string resultDescription)
+        {
+            Log.Add(new ZeratoolLogItem(DateTime.Now, eventDescription, resultDescription));
+        }
 
         private int BuildGraph()
         {
@@ -301,10 +325,11 @@ namespace Zeratool_player_C_Sharp
             switch (GraphMode)
             {
                 case DirectShowGraphMode.Automatic:
-                    System.Diagnostics.Debug.WriteLine("Building graph in automatic mode.");
+                    AddToLog("Building graph in automatic mode", null);
                     errorCode = CreateComObject<FilterGraph, IGraphBuilder>(out graphBuilder); 
                     if (errorCode != S_OK)
                     {
+                        AddToLog("Graph build", ErrorCodeToString(errorCode));
                         return errorCode;
                     }
                     errorCode = graphBuilder.RenderFile(FileName, null);
@@ -316,6 +341,7 @@ namespace Zeratool_player_C_Sharp
                         {
                             errorCode = E_POINTER;
                         }
+                        AddToLog("Graph build", ErrorCodeToString(errorCode));
                         return errorCode;
                     }
                     if (GetComInterface<IBasicAudio>(graphBuilder, out basicAudio))
@@ -334,18 +360,22 @@ namespace Zeratool_player_C_Sharp
                     _state = PlayerState.Stopped;
                     TrackRendered?.Invoke(this, errorCode);
 
+                    AddToLog("Graph build", ErrorCodeToString(errorCode));
+
                     return errorCode;
 
                 case DirectShowGraphMode.Intellectual:
-                    System.Diagnostics.Debug.WriteLine("Building graph in intellectual mode.");
+                    AddToLog("Building graph in intellectual mode", null);
                     errorCode = BuildGraphIntellectual();
                     TrackRendered?.Invoke(this, errorCode);
+                    AddToLog("Graph build", ErrorCodeToString(errorCode));
                     return errorCode;
 
                 case DirectShowGraphMode.Manual:
-                    System.Diagnostics.Debug.WriteLine("Building graph in manual mode.");
+                    AddToLog("Building graph in manual mode", null);
                     errorCode = BuildGraphManual();
                     TrackRendered?.Invoke(this, errorCode);
+                    AddToLog("Graph build", ErrorCodeToString(errorCode));
                     return errorCode;
             }
 
@@ -357,21 +387,26 @@ namespace Zeratool_player_C_Sharp
             int errorCode = CreateComObject<FilterGraph, IGraphBuilder>(out graphBuilder);
             if (errorCode != S_OK)
             {
+                AddToLog("Creating IGraphBuilder", ErrorCodeToString(errorCode));
                 Clear();
                 return errorCode;
             }
+            AddToLog("Creating IGraphBuilder", "S_OK");
 
             errorCode = CreateDirectShowFilter(CLSID_FileSourceAsync, out fileSourceFilter);
             if (errorCode != S_OK)
             {
+                AddToLog("Creating source filter", ErrorCodeToString(errorCode));
                 Clear();
                 return errorCode;
             }
+            AddToLog("Creating source filter", "S_OK");
             graphBuilder.AddFilter(fileSourceFilter, "Source filter");
 
             fileSource = (IFileSourceFilter)fileSourceFilter;
             if (fileSource == null)
             {
+                AddToLog("Getting interface for source filter", "null");
                 graphBuilder.RemoveFilter(fileSourceFilter);
                 Clear();
                 return E_POINTER;
@@ -380,14 +415,16 @@ namespace Zeratool_player_C_Sharp
             errorCode = fileSource.Load(FileName, null);
             if (errorCode != S_OK)
             {
+                AddToLog("Loading source file", ErrorCodeToString(errorCode));
                 graphBuilder.RemoveFilter(fileSourceFilter);
                 Clear();
                 return errorCode;
             }
+            AddToLog("Loading source file", "S_OK");
 
             if (FindPin(fileSourceFilter, 0, PinDirection.Output, out IPin pinOut) != S_OK)
             {
-                System.Diagnostics.Debug.WriteLine("Source filter's output pin not found!");
+                AddToLog("Source filter's output pin not found!", "E_POINTER");
                 Clear();
                 return E_POINTER;
             }
@@ -395,6 +432,7 @@ namespace Zeratool_player_C_Sharp
             errorCode = ConnectMediaSplitter_Manual(pinOut);
             if (errorCode != S_OK)
             {
+                AddToLog("Connecting media splitter", ErrorCodeToString(errorCode));
                 graphBuilder.RemoveFilter(fileSourceFilter);
                 Marshal.ReleaseComObject(pinOut);
                 Clear();
@@ -408,6 +446,7 @@ namespace Zeratool_player_C_Sharp
             {
                 errorCodeVideo = RenderVideoStream_Manual(pinOut);
                 Marshal.ReleaseComObject(pinOut);
+                //TODO: Fix this shit!
                 if (errorCodeVideo != S_OK || !GetVideoInterfaces() || !ConfigureVideoOutput())
                 {
                     ClearVideoChain();
@@ -415,11 +454,16 @@ namespace Zeratool_player_C_Sharp
                     {
                         errorCodeVideo = E_POINTER;
                     }
+                    AddToLog("Video stream rendering", ErrorCodeToString(errorCodeVideo));
+                }
+                else if (errorCodeVideo == S_OK)
+                {
+                    AddToLog("Video stream rendering", "S_OK");
                 }
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine("Media splitter can't find video output pin!");
+                AddToLog("Media splitter can't find video output pin!", ErrorCodeToString(errorCode));
             }
 
             //render audio chain.
@@ -430,6 +474,7 @@ namespace Zeratool_player_C_Sharp
                 Marshal.ReleaseComObject(pinOut);
                 if (errorCodeAudio == S_OK && GetComInterface<IBasicAudio>(graphBuilder, out basicAudio))
                 {
+                    AddToLog("Audio stream rendering", "S_OK");
                     int db = GetDecibelsVolume(Volume);
                     basicAudio.put_Volume(db);
                 }
@@ -440,22 +485,26 @@ namespace Zeratool_player_C_Sharp
                     {
                         errorCodeAudio = E_POINTER;
                     }
+                    AddToLog("Audio stream rendering", ErrorCodeToString(errorCodeAudio));
                 }
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine("Media splitter can't find audio output pin!");
+                AddToLog("Media splitter can't find audio output pin!", "null");
             }
 
             if (errorCodeAudio != S_OK && errorCodeVideo != S_OK)
             {
+                AddToLog("Graph build", "ERROR_NOTHING_RENDERED");
                 Clear();
-                System.Diagnostics.Debug.WriteLine("Error: ERROR_NOTHING_RENDERED");
                 return ERROR_NOTHING_RENDERED;
             }
 
             if (!GetComInterface<IMediaControl>(graphBuilder, out mediaControl))
             {
+                AddToLog("Getting IMediaControl", "null");
+                AddToLog("Graph build", "FAIL");
+
                 Clear();
                 return E_POINTER;
             }
@@ -517,15 +566,15 @@ namespace Zeratool_player_C_Sharp
                 errorCode = CreateDirectShowFilter(filterItem.GetGuid(), out mediaSplitter);
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Loading {filterItem.DisplayName}: {ErrorCodeToString(errorCode)}");
+                    AddToLog($"Loading {filterItem.DisplayName}", ErrorCodeToString(errorCode));
                     return errorCode;
                 }
-                System.Diagnostics.Debug.WriteLine($"Loading {filterItem.DisplayName}: S_OK");
+                AddToLog($"Loading {filterItem.DisplayName}", "S_OK");
                 graphBuilder.AddFilter(mediaSplitter, filterItem.DisplayName);
 
                 if (FindPin(mediaSplitter, 0, PinDirection.Input, out IPin pinIn) != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"{filterItem.DisplayName}: input pin not found!");
+                    AddToLog($"{filterItem.DisplayName}: input pin not found!", "null");
                     graphBuilder.RemoveFilter(mediaSplitter);
                     return E_POINTER;
                 }
@@ -533,19 +582,19 @@ namespace Zeratool_player_C_Sharp
                 errorCode = graphBuilder.Connect(sourcePinOut, pinIn);
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Connecting {filterItem.DisplayName}: {ErrorCodeToString(errorCode)}");
+                    AddToLog($"Connecting {filterItem.DisplayName}", ErrorCodeToString(errorCode));
                     graphBuilder.RemoveFilter(mediaSplitter);
                     Marshal.ReleaseComObject(pinIn);
                     Marshal.ReleaseComObject(mediaSplitter);
                     return errorCode;
                 }
+                AddToLog($"Connecting {filterItem.DisplayName}", "S_OK");
 
-                System.Diagnostics.Debug.WriteLine($"Connecting {filterItem.DisplayName}: S_OK");
                 return errorCode;
             }
 
             //автоматический перебор сплиттеров.
-            System.Diagnostics.Debug.WriteLine("Automatic media splitter selection mode.");
+            AddToLog("Automatic media splitter selection mode", null);
             return FindAndConnectMediaSplitter_Manual(splitters, sourcePinOut);
         }
 
@@ -564,15 +613,15 @@ namespace Zeratool_player_C_Sharp
                 int errorCode = CreateDirectShowFilter(splitterGuid, out IBaseFilter filter);
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Loading {splitterName}: {ErrorCodeToString(errorCode)}");                    
+                    AddToLog($"Loading {splitterName}", ErrorCodeToString(errorCode));                    
                     continue;
                 }
-                System.Diagnostics.Debug.WriteLine($"Loading {splitterName}: S_OK");
+                AddToLog($"Loading {splitterName}", "S_OK");
                 graphBuilder.AddFilter(filter, splitterName);
 
                 if (FindPin(filter, 0, PinDirection.Input, out IPin pinIn) != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"{splitterName}: input pin not found! Skip it.");
+                    AddToLog($"{splitterName}: input pin not found! Skip it.", "E_POINTER");
                     graphBuilder.RemoveFilter(filter);
                     Marshal.ReleaseComObject(filter);
                     continue;
@@ -581,19 +630,19 @@ namespace Zeratool_player_C_Sharp
                 errorCode = graphBuilder.Connect(sourcePinOut, pinIn);
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Connecting {splitterName}: {ErrorCodeToString(errorCode)}");
+                    AddToLog($"Connecting {splitterName}", ErrorCodeToString(errorCode));
                     graphBuilder.RemoveFilter(filter);
                     Marshal.ReleaseComObject(pinIn);
                     Marshal.ReleaseComObject(filter);
                     continue;
                 }
-                System.Diagnostics.Debug.WriteLine($"Connecting {splitterName}: S_OK");
+                AddToLog($"Connecting {splitterName}", "S_OK");
                 Marshal.ReleaseComObject(pinIn);
 
                 FindPin(filter, "ideo", PinDirection.Output, out IPin splitterVideoPinOut);
                 if (splitterVideoPinOut == null)
                 {
-                    System.Diagnostics.Debug.WriteLine("Video output pin not found! Skipping this bad bad filter.");
+                    AddToLog("Video output pin not found! Skipping this bad bad filter", "null");
                     graphBuilder.RemoveFilter(filter);
                     Marshal.ReleaseComObject(filter);
                     continue;
@@ -605,7 +654,7 @@ namespace Zeratool_player_C_Sharp
                 return errorCode;
             }
 
-            System.Diagnostics.Debug.WriteLine("No one valid media splitter found!");
+            AddToLog("No one valid media splitter found!", null);
             return S_FALSE;
         }
 
@@ -622,15 +671,15 @@ namespace Zeratool_player_C_Sharp
                 errorCode = CreateDirectShowFilter(filterItem.GetGuid(), out videoDecoder);
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Loading {filterItem.DisplayName}: {ErrorCodeToString(errorCode)}");
+                    AddToLog($"Loading {filterItem.DisplayName}", ErrorCodeToString(errorCode));
                     return errorCode;
                 }
-                System.Diagnostics.Debug.WriteLine($"Loading {filterItem.DisplayName}: S_OK");
+                AddToLog($"Loading {filterItem.DisplayName}", "S_OK");
                 graphBuilder.AddFilter(videoDecoder, filterItem.DisplayName);
 
                 if (FindPin(videoDecoder, 0, PinDirection.Input, out pinIn) != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"{filterItem.DisplayName}: input pin not found!");
+                    AddToLog($"{filterItem.DisplayName}: input pin not found!", "null");
                     graphBuilder.RemoveFilter(videoDecoder);
                     return E_POINTER;
                 }
@@ -638,17 +687,17 @@ namespace Zeratool_player_C_Sharp
                 errorCode = graphBuilder.Connect(pinOut, pinIn);
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Connecting {filterItem.DisplayName}: {ErrorCodeToString(errorCode)}");
+                    AddToLog($"Connecting {filterItem.DisplayName}", ErrorCodeToString(errorCode));
                     graphBuilder.RemoveFilter(videoDecoder);
                     return errorCode;
                 }
-                System.Diagnostics.Debug.WriteLine($"Connecting {filterItem.DisplayName}: S_OK");
+                AddToLog($"Connecting {filterItem.DisplayName}", "S_OK");
 
             }
             else
             {
                 //автоматический перебор декодеров видео.
-                System.Diagnostics.Debug.WriteLine("Automatic video decoder selection mode.");
+                AddToLog("Automatic video decoder selection mode", null);
                 errorCode = FindAndConnectVideoDecoder_Manual(pinOut);
 
                 if (errorCode != S_OK)
@@ -662,21 +711,23 @@ namespace Zeratool_player_C_Sharp
             errorCode = CreateDirectShowFilter(filterItem.GetGuid(), out videoRenderer);
             if (errorCode != S_OK)
             {
-                System.Diagnostics.Debug.WriteLine($"Loading {filterItem.DisplayName}: {ErrorCodeToString(errorCode)}");
+                AddToLog($"Loading {filterItem.DisplayName}", ErrorCodeToString(errorCode));
                 graphBuilder.RemoveFilter(videoRenderer);
                 return errorCode;
             }
-            System.Diagnostics.Debug.WriteLine($"Loading {filterItem.DisplayName}: S_OK");
+            AddToLog($"Loading {filterItem.DisplayName}", "S_OK");
             graphBuilder.AddFilter(videoRenderer, filterItem.DisplayName);
 
             if (FindPin(videoDecoder, 0, PinDirection.Output, out pinOut) != S_OK)
             {
+                AddToLog($"{filterItem.DisplayName}: Output pin not found!", "null");
                 graphBuilder.RemoveFilter(videoRenderer);
                 graphBuilder.RemoveFilter(videoDecoder);
                 return E_POINTER;
             }
             if (FindPin(videoRenderer, 0, PinDirection.Input, out pinIn) != S_OK)
             {
+                AddToLog($"{filterItem.DisplayName}: Input pin not found!", "null");
                 Marshal.ReleaseComObject(pinOut);
                 graphBuilder.RemoveFilter(videoRenderer);
                 graphBuilder.RemoveFilter(videoDecoder);
@@ -686,11 +737,11 @@ namespace Zeratool_player_C_Sharp
             errorCode = graphBuilder.Connect(pinOut, pinIn);
             if (errorCode != S_OK)
             {
-                System.Diagnostics.Debug.WriteLine($"Connecting {filterItem.DisplayName}: {ErrorCodeToString(errorCode)}");
+                AddToLog($"Connecting {filterItem.DisplayName}", ErrorCodeToString(errorCode));
                 graphBuilder.RemoveFilter(videoDecoder);
                 graphBuilder.RemoveFilter(videoRenderer);
             }
-            System.Diagnostics.Debug.WriteLine($"Connecting {filterItem.DisplayName}: S_OK");
+            AddToLog($"Connecting {filterItem.DisplayName}", "S_OK");
             Marshal.ReleaseComObject(pinOut);
             Marshal.ReleaseComObject(pinIn);
 
@@ -704,15 +755,15 @@ namespace Zeratool_player_C_Sharp
                 int errorCode = CreateDirectShowFilter(item.GetGuid(), out IBaseFilter filter);
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Loading {item.DisplayName}: {ErrorCodeToString(errorCode)}");
+                    AddToLog($"Loading {item.DisplayName}", ErrorCodeToString(errorCode));
                     continue;
                 }
-                System.Diagnostics.Debug.WriteLine($"Loading {item.DisplayName}: S_OK");
+                AddToLog($"Loading {item.DisplayName}", "S_OK");
                 graphBuilder.AddFilter(filter, item.DisplayName);
                 
                 if (FindPin(filter, 0, PinDirection.Input, out IPin pinIn) != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"{item.DisplayName}: input pin not found! Skip it.");
+                    AddToLog($"{item.DisplayName}: input pin not found! Skip it.", "null");
                     graphBuilder.RemoveFilter(filter);
                     continue;
                 }
@@ -720,20 +771,20 @@ namespace Zeratool_player_C_Sharp
                 errorCode = graphBuilder.Connect(pinOut, pinIn);
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Connecting {item.DisplayName}: {ErrorCodeToString(errorCode)}");
+                    AddToLog($"Connecting {item.DisplayName}", ErrorCodeToString(errorCode));
                     graphBuilder.RemoveFilter(filter);
                     Marshal.ReleaseComObject(pinIn);
                     Marshal.ReleaseComObject(filter);
                     continue;
                 }
-                System.Diagnostics.Debug.WriteLine($"Connecting {item.DisplayName}: S_OK");
+                AddToLog($"Connecting {item.DisplayName}", "S_OK");
 
                 Marshal.ReleaseComObject(pinIn);
                 videoDecoder = filter;
                 return errorCode;
             }
 
-            System.Diagnostics.Debug.WriteLine("No one valid video decoder found!");
+            AddToLog("No one valid video decoder found!", null);
             return S_FALSE;
         }
 
@@ -755,24 +806,24 @@ namespace Zeratool_player_C_Sharp
                 errorCode = CreateDirectShowFilter(audioRendererMoniker.Moniker, out IBaseFilter filter);
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Loading {audioRendererName}: {ErrorCodeToString(errorCode)}");
+                    AddToLog($"Loading {audioRendererName}", ErrorCodeToString(errorCode));
                     return errorCode;
                 }
-                System.Diagnostics.Debug.WriteLine($"Loading {audioRendererName}: S_OK");
+                AddToLog($"Loading {audioRendererName}", "S_OK");
                 audioRenderer = filter;
                 graphBuilder.AddFilter(audioRenderer, audioRendererName);
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine("Audio output device list is empty! Trying to use default device...");
+                AddToLog("Audio output device list is empty! Trying to use default device...", null);
                 errorCode = CreateDirectShowFilter(CLSID_DirectSoundAudioRenderer, out audioRenderer);
                 audioRendererName = "DirectSound audio renderer";
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Loading {audioRendererName}: {ErrorCodeToString(errorCode)}");
+                    AddToLog($"Loading {audioRendererName}", ErrorCodeToString(errorCode));
                     return errorCode;
                 }
-                System.Diagnostics.Debug.WriteLine($"Loading {audioRendererName}: S_OK");
+                AddToLog($"Loading {audioRendererName}", "S_OK");
                 graphBuilder.AddFilter(audioRenderer, audioRendererName);
             }
 
@@ -784,16 +835,16 @@ namespace Zeratool_player_C_Sharp
                 errorCode = CreateDirectShowFilter(filterItemAudioDecoder.GetGuid(), out audioDecoder);
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Loading {filterItemAudioDecoder.DisplayName}: {ErrorCodeToString(errorCode)}");
+                    AddToLog($"Loading {filterItemAudioDecoder.DisplayName}", ErrorCodeToString(errorCode));
                     graphBuilder.RemoveFilter(audioRenderer);
                     return errorCode;
                 }
-                System.Diagnostics.Debug.WriteLine($"Loading {filterItemAudioDecoder.DisplayName}: S_OK");
+                AddToLog($"Loading {filterItemAudioDecoder.DisplayName}", "S_OK");
                 graphBuilder.AddFilter(audioDecoder, filterItemAudioDecoder.DisplayName);
 
                 if (FindPin(audioDecoder, 0, PinDirection.Input, out IPin pinIn) != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"{filterItemAudioDecoder.DisplayName}: input pin not found! Skip it.");
+                    AddToLog($"{filterItemAudioDecoder.DisplayName}: input pin not found! Skip it.", "null");
                     graphBuilder.RemoveFilter(audioRenderer);
                     graphBuilder.RemoveFilter(audioDecoder);
                     return E_POINTER;
@@ -803,17 +854,17 @@ namespace Zeratool_player_C_Sharp
                 Marshal.ReleaseComObject(pinIn);
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Connecting {filterItemAudioDecoder.DisplayName}: {ErrorCodeToString(errorCode)}");
+                    AddToLog($"Connecting {filterItemAudioDecoder.DisplayName}", ErrorCodeToString(errorCode));
                     graphBuilder.RemoveFilter(audioRenderer);
                     graphBuilder.RemoveFilter(audioDecoder);
                     return errorCode;
                 }
-                System.Diagnostics.Debug.WriteLine($"Connecting {filterItemAudioDecoder.DisplayName}: S_OK");
+                AddToLog($"Connecting {filterItemAudioDecoder.DisplayName}", "S_OK");
             }
             else
             {
                 //автоматический перебор декодеров аудио.
-                System.Diagnostics.Debug.WriteLine("Automatic audio decoder selection mode.");
+                AddToLog("Automatic audio decoder selection mode", null);
                 errorCode = FindAndConnectAudioDecoder_Manual(splitterPinOut);
                 if (errorCode != S_OK)
                 {
@@ -824,7 +875,7 @@ namespace Zeratool_player_C_Sharp
 
             if (FindPin(audioDecoder, 0, PinDirection.Output, out IPin decoderPinOut) != S_OK)
             {
-                System.Diagnostics.Debug.WriteLine("Audio decoder: Output pin not found!");
+                AddToLog("Audio decoder: Output pin not found!", "null");
                 graphBuilder.RemoveFilter(audioRenderer);
                 graphBuilder.RemoveFilter(audioDecoder);
                 return E_POINTER;
@@ -832,7 +883,7 @@ namespace Zeratool_player_C_Sharp
 
             if (FindPin(audioRenderer, 0, PinDirection.Input, out IPin rendererPinIn) != S_OK)
             {
-                System.Diagnostics.Debug.WriteLine($"{audioRendererName}: Input pin not found!");
+                AddToLog($"{audioRendererName}: Input pin not found!", "null");
                 graphBuilder.RemoveFilter(audioRenderer);
                 graphBuilder.RemoveFilter(audioDecoder);
                 Marshal.ReleaseComObject(decoderPinOut);
@@ -844,12 +895,12 @@ namespace Zeratool_player_C_Sharp
             Marshal.ReleaseComObject(decoderPinOut);
             if (errorCode != S_OK)
             {
-                System.Diagnostics.Debug.WriteLine($"Connecting {audioRendererName}: {ErrorCodeToString(errorCode)}"); 
+                AddToLog($"Connecting {audioRendererName}", ErrorCodeToString(errorCode));
                 graphBuilder.RemoveFilter(audioDecoder);
                 graphBuilder.RemoveFilter(audioRenderer);
                 return errorCode;
             }
-            System.Diagnostics.Debug.WriteLine($"Connecting {audioRendererName}: S_OK");
+            AddToLog($"Connecting {audioRendererName}", "S_OK");
 
             return S_OK;
         }
@@ -861,15 +912,15 @@ namespace Zeratool_player_C_Sharp
                 int errorCode = CreateDirectShowFilter(item.GetGuid(), out IBaseFilter filter);
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Loading {item.DisplayName}: {ErrorCodeToString(errorCode)}");
+                    AddToLog($"Loading {item.DisplayName}", ErrorCodeToString(errorCode));
                     continue;
                 }
-                System.Diagnostics.Debug.WriteLine($"Loading {item.DisplayName}: S_OK");
+                AddToLog($"Loading {item.DisplayName}", "S_OK");
                 graphBuilder.AddFilter(filter, item.DisplayName);
 
                 if (FindPin(filter, 0, PinDirection.Input, out IPin pinIn) != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"{item.DisplayName}: Input pin not found! Skip it.");
+                    AddToLog($"{item.DisplayName}: Input pin not found! Skip it.", "null");
                     graphBuilder.RemoveFilter(filter);
                     Marshal.ReleaseComObject(filter);
                     continue;
@@ -879,18 +930,18 @@ namespace Zeratool_player_C_Sharp
                 Marshal.ReleaseComObject(pinIn);
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Connecting {item.DisplayName}: {ErrorCodeToString(errorCode)}");
+                    AddToLog($"Connecting {item.DisplayName}", ErrorCodeToString(errorCode));
                     graphBuilder.RemoveFilter(filter);
                     Marshal.ReleaseComObject(filter);
                     continue;
                 }
-                System.Diagnostics.Debug.WriteLine($"Connecting {item.DisplayName}: S_OK");
+                AddToLog($"Connecting {item.DisplayName}", "S_OK");
 
                 audioDecoder = filter;
                 return errorCode;
             }
 
-            System.Diagnostics.Debug.WriteLine("No valid audio decoder found!");
+            AddToLog("No valid audio decoder found!", null);
             return S_FALSE;
         }
 
@@ -920,14 +971,15 @@ namespace Zeratool_player_C_Sharp
 
             //render video chain.
             int errorCodeVideo = RenderVideoStream_Intellectual();
+            //TODO: Fix this shit!
             if (errorCodeVideo != S_OK || !GetVideoInterfaces() || !ConfigureVideoOutput())
             {
-                System.Diagnostics.Debug.WriteLine($"Video rendering error: {ErrorCodeToString(errorCodeVideo)}");
                 ClearVideoChain();
                 if (errorCodeVideo == S_OK)
                 {
                     errorCodeVideo = E_POINTER;
                 }
+                AddToLog($"Video stream rendering", ErrorCodeToString(errorCodeVideo));
             }
 
             //render audio chain.
@@ -941,24 +993,29 @@ namespace Zeratool_player_C_Sharp
                 }
                 else
                 {
+                    AddToLog("Getting IBasicAudio", "FAIL");
                     ClearAudioChain();
                     errorCodeAudio = E_POINTER;
                 }
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine($"Audio rendering error: {ErrorCodeToString(errorCodeAudio)}");
+                AddToLog($"Audio stream rendering", ErrorCodeToString(errorCodeAudio));
                 ClearAudioChain();
             }
 
             if (errorCodeAudio != S_OK && errorCodeVideo != S_OK)
             {
+                AddToLog("Graph build", "ERROR_NOTHING_RENDERED");
                 Clear();
                 return ERROR_NOTHING_RENDERED;
             }
 
             if (!GetComInterface<IMediaControl>(graphBuilder, out mediaControl))
             {
+                AddToLog("Getting IMediaControl", "null");
+                AddToLog("Graph build", "FAIL");
+
                 Clear();
                 return E_POINTER;
             }
@@ -982,27 +1039,27 @@ namespace Zeratool_player_C_Sharp
                 int errorCode = CreateDirectShowFilter(item.GetGuid(), out IBaseFilter filter);
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Loading {item.DisplayName}: {ErrorCodeToString(errorCode)}");
+                    AddToLog($"Loading {item.DisplayName}", ErrorCodeToString(errorCode));
                     continue;
                 }
-                System.Diagnostics.Debug.WriteLine($"Loading {item.DisplayName}: S_OK");
+                AddToLog($"Loading {item.DisplayName}", "S_OK");
                 graphBuilder.AddFilter(filter, item.DisplayName);
 
                 errorCode = captureGraphBuilder2.RenderStream(null, MediaType.Video, fileSourceFilter, filter, videoRenderer);
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"{item.DisplayName}: Video stream rendering failed! {ErrorCodeToString(errorCode)}");
+                    AddToLog($"{item.DisplayName}: Video stream rendering", ErrorCodeToString(errorCode));
                     graphBuilder.RemoveFilter(filter);
                     Marshal.ReleaseComObject(filter);
                     continue;
                 }
 
-                System.Diagnostics.Debug.WriteLine($"{item.DisplayName}: Successfully rendered video stream!");
+                AddToLog($"{item.DisplayName}: Video stream rendering", "S_OK");
                 videoDecoder = filter;
                 return S_OK;
             }
 
-            System.Diagnostics.Debug.WriteLine("No valid video decoder found!");
+            AddToLog("No valid video decoder found!", null);
             return S_FALSE;
         }
 
@@ -1012,15 +1069,15 @@ namespace Zeratool_player_C_Sharp
             int errorCode = CreateDirectShowFilter(filterItem.GetGuid(), out videoRenderer);
             if (errorCode != S_OK)
             {
-                System.Diagnostics.Debug.WriteLine($"Loading {filterItem.DisplayName}: {ErrorCodeToString(errorCode)}");
+                AddToLog($"Loading {filterItem.DisplayName}", ErrorCodeToString(errorCode));
                 return errorCode;
             }
-            System.Diagnostics.Debug.WriteLine($"Loading {filterItem.DisplayName}: S_OK");
+            AddToLog($"Loading {filterItem.DisplayName}", "S_OK");
             graphBuilder.AddFilter(videoRenderer, filterItem.DisplayName);
 
             if (filters.videoDecoderId < 0)
             {
-                System.Diagnostics.Debug.WriteLine("Automatic video decoder selection mode.");
+                AddToLog("Automatic video decoder selection mode", null);
                 errorCode = RenderVideoStream_Intellectual_Enumeration();
                 if (errorCode != S_OK)
                 {
@@ -1033,25 +1090,25 @@ namespace Zeratool_player_C_Sharp
             errorCode = CreateDirectShowFilter(filterItem.GetGuid(), out videoDecoder);
             if (errorCode != S_OK)
             {
-                System.Diagnostics.Debug.WriteLine($"Loading {filterItem.DisplayName}: {ErrorCodeToString(errorCode)}");
+                AddToLog($"Loading {filterItem.DisplayName}", ErrorCodeToString(errorCode));
                 graphBuilder.RemoveFilter(videoRenderer);
                 return errorCode;
             }
-            System.Diagnostics.Debug.WriteLine($"Loading {filterItem.DisplayName}: S_OK");
+            AddToLog($"Loading {filterItem.DisplayName}", "S_OK");
 
             graphBuilder.AddFilter(videoDecoder, filterItem.DisplayName);
 
             errorCode = captureGraphBuilder2.RenderStream(null, MediaType.Video, fileSourceFilter, videoDecoder, videoRenderer);
             if (errorCode != S_OK)
             {
-                System.Diagnostics.Debug.WriteLine($"Rendering with {filterItem.DisplayName} failed! {ErrorCodeToString(errorCode)}");
+                AddToLog($"{filterItem.DisplayName}: Video stream rendering", ErrorCodeToString(errorCode));
 
                 graphBuilder.RemoveFilter(videoDecoder);
                 graphBuilder.RemoveFilter(videoRenderer);
                 return errorCode;
             }
 
-            System.Diagnostics.Debug.WriteLine($"{filterItem.DisplayName}: Successfully rendered video stream!");
+            AddToLog($"{filterItem.DisplayName}: Video stream rendering", "S_OK");
 
             return S_OK;
         }
@@ -1063,26 +1120,26 @@ namespace Zeratool_player_C_Sharp
                 int errorCode = CreateDirectShowFilter(item.GetGuid(), out IBaseFilter filter);
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Loading {item.DisplayName}: {ErrorCodeToString(errorCode)}");
+                    AddToLog($"Loading {item.DisplayName}", ErrorCodeToString(errorCode));
                     continue;
                 }
-                System.Diagnostics.Debug.WriteLine($"Loading {item.DisplayName}: S_OK");
+                AddToLog($"Loading {item.DisplayName}", "S_OK");
                 graphBuilder.AddFilter(filter, item.DisplayName);
 
                 errorCode = captureGraphBuilder2.RenderStream(null, MediaType.Audio, fileSourceFilter, filter, audioRenderer);
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"{item.DisplayName}: Audio stream rendering failed! {ErrorCodeToString(errorCode)}");
+                    AddToLog($"{item.DisplayName}: Audio stream rendering", ErrorCodeToString(errorCode));
                     graphBuilder.RemoveFilter(filter);
                     continue;
                 }
 
-                System.Diagnostics.Debug.WriteLine($"{item.DisplayName}: Successfully rendered audio stream!");
+                AddToLog($"{item.DisplayName}: Audio stream rendering", "S_OK");
                 audioRenderer = filter;
                 return S_OK;
             }
 
-            System.Diagnostics.Debug.WriteLine("No valid audio decoder found!");
+            AddToLog("No valid audio decoder found!", null);
             return S_FALSE;
         }
 
@@ -1100,29 +1157,29 @@ namespace Zeratool_player_C_Sharp
                 errorCode = CreateDirectShowFilter(audioRendererMoniker.Moniker, out audioRenderer);
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Loading {audioRendererMoniker.DisplayName}: {ErrorCodeToString(errorCode)}");
+                    AddToLog($"Loading {audioRendererMoniker.DisplayName}", ErrorCodeToString(errorCode));
                     return errorCode;
                 }
-                System.Diagnostics.Debug.WriteLine($"Loading {audioRendererMoniker.DisplayName}: S_OK");
+                AddToLog($"Loading {audioRendererMoniker.DisplayName}", "S_OK");
                 graphBuilder.AddFilter(audioRenderer, audioRendererMoniker.DisplayName);
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine("Audio output device list is empty! Trying to use default device...");
+                AddToLog("Audio output device list is empty! Trying to use default device...", null);
                 errorCode = CreateDirectShowFilter(CLSID_DirectSoundAudioRenderer, out audioRenderer);
                 string audioRendererName = "DirectSound audio renderer";
                 if (errorCode != S_OK)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Loading {audioRendererName}: {ErrorCodeToString(errorCode)}");
+                    AddToLog($"Loading {audioRendererName}", ErrorCodeToString(errorCode));
                     return errorCode;
                 }
-                System.Diagnostics.Debug.WriteLine($"Loading {audioRendererName}: S_OK");
+                AddToLog($"Loading {audioRendererName}", "S_OK");
                 graphBuilder.AddFilter(audioRenderer, audioRendererName);
             }
 
             if (filters.audioDecoderId < 0)
             {
-                System.Diagnostics.Debug.WriteLine("Automatic audio decoder selection mode.");
+                AddToLog("Automatic audio decoder selection mode", null);
                 errorCode = RenderAudioStream_Intellectual_Enumeration();
                 if (errorCode != S_OK)
                 {
@@ -1135,23 +1192,23 @@ namespace Zeratool_player_C_Sharp
             errorCode = CreateDirectShowFilter(filterItem.GetGuid(), out audioDecoder);
             if (errorCode != S_OK)
             {
-                System.Diagnostics.Debug.WriteLine($"Loading {filterItem.DisplayName}: {ErrorCodeToString(errorCode)}");
+                AddToLog($"Loading {filterItem.DisplayName}", ErrorCodeToString(errorCode));
                 graphBuilder.RemoveFilter(audioRenderer);
                 return errorCode;
             }
-            System.Diagnostics.Debug.WriteLine($"Loading {filterItem.DisplayName}: S_OK");
+            AddToLog($"Loading {filterItem.DisplayName}", "S_OK");
             graphBuilder.AddFilter(audioDecoder, filterItem.DisplayName);
 
             errorCode = captureGraphBuilder2.RenderStream(null, MediaType.Audio, fileSourceFilter, audioDecoder, audioRenderer);
             if (errorCode != S_OK)
             {
-                System.Diagnostics.Debug.WriteLine($"Rendering with {filterItem.DisplayName} failed! {ErrorCodeToString(errorCode)}");
+                AddToLog($"{filterItem.DisplayName}: Audio stream rendering", ErrorCodeToString(errorCode));
                 graphBuilder.RemoveFilter(audioDecoder);
                 graphBuilder.RemoveFilter(audioRenderer);
                 return errorCode;
             }
 
-            System.Diagnostics.Debug.WriteLine($"{filterItem.DisplayName}: Successfully rendered audio stream!");
+            AddToLog($"{filterItem.DisplayName}: Audio stream rendering", "S_OK");
 
             return S_OK;
         }
