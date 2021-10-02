@@ -260,9 +260,13 @@ namespace Zeratool_player_C_Sharp
         public delegate void ClearedDelegate(object sender);
         public delegate void TrackRenderedDelegate(object sender, int errorCode);
         public delegate void TrackFinishedDelegate(object sender);
+        public delegate void LogAddedDelegate(object sender, ZeratoolLogItem logItem);
+        public delegate void LogClearedDelegate(object sender);
         public ClearedDelegate Cleared;
         public TrackRenderedDelegate TrackRendered;
         public TrackFinishedDelegate TrackFinished;
+        public LogAddedDelegate LogAdded;
+        public LogClearedDelegate logCleared;
 
 
         public ZeratoolPlayerEngine()
@@ -298,7 +302,15 @@ namespace Zeratool_player_C_Sharp
 
         public void AddToLog(string eventDescription, string resultDescription)
         {
-            Log.Add(new ZeratoolLogItem(DateTime.Now, eventDescription, resultDescription));
+            ZeratoolLogItem item = new ZeratoolLogItem(DateTime.Now, eventDescription, resultDescription);
+            Log.Add(item);
+            LogAdded?.Invoke(this, item);
+        }
+
+        public void ClearLog()
+        {
+            Log.Clear();
+            logCleared?.Invoke(this);
         }
 
         private int BuildGraph()

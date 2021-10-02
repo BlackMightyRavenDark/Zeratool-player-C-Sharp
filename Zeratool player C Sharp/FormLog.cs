@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Newtonsoft.Json.Linq;
 using static Zeratool_player_C_Sharp.Utils;
+using static Zeratool_player_C_Sharp.ZeratoolPlayerEngine;
 
 namespace Zeratool_player_C_Sharp
 {
@@ -122,6 +123,7 @@ namespace Zeratool_player_C_Sharp
             z.Activated += OnPlayerActivated;
             z.Closing += OnPlayerClosing;
             z.TitleChanged += OnPlayerTitleChanged;
+            z.PlayerEngine.LogAdded += OnPlayerLogItemAdded;
 
             string t = $"Player [{players.Count - 1}]: {z.Title}";
             comboBoxPlayers.Items.Add(new PlayerListItem(z, t));
@@ -140,6 +142,8 @@ namespace Zeratool_player_C_Sharp
             if (comboBoxPlayers.SelectedIndex != id)
             {
                 comboBoxPlayers.SelectedIndex = id;
+
+                ListLog(z.PlayerEngine);
             }
         }
 
@@ -149,6 +153,35 @@ namespace Zeratool_player_C_Sharp
             int id = FindPlayerInComboBox(comboBoxPlayers, z);
             string t = $"Player [{id}]: {title}";
             comboBoxPlayers.Items[id] = new PlayerListItem(z, t);
+        }
+
+        private void OnPlayerLogItemAdded(object sender, ZeratoolLogItem logItem)
+        {
+            if (comboBoxPlayers.SelectedIndex >= 0)
+            {
+                ZeratoolPlayerGui playerGui = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
+
+                if (sender as ZeratoolPlayerEngine == playerGui.PlayerEngine)
+                {
+                    ListViewItem item = new ListViewItem(logItem.DateTime.ToString("yyyy.MM.dd, HH:mm:ss"));
+                    item.SubItems.Add(logItem.Event);
+                    item.SubItems.Add(logItem.Result);
+                    lvLog.Items.Add(item);
+                }
+            }
+        }
+
+        private void ListLog(ZeratoolPlayerEngine playerEngine)
+        {
+            lvLog.Items.Clear();
+
+            foreach (ZeratoolLogItem logItem in playerEngine.Log)
+            {
+                ListViewItem item = new ListViewItem(logItem.DateTime.ToString("yyyy.MM.dd, HH:mm:ss"));
+                item.SubItems.Add(logItem.Event);
+                item.SubItems.Add(logItem.Result);
+                lvLog.Items.Add(item);
+            }
         }
 
     }

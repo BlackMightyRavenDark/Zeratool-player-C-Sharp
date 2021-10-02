@@ -72,10 +72,10 @@ namespace Zeratool_player_C_Sharp
             this.lvLog.ForeColor = System.Drawing.Color.Lime;
             this.lvLog.FullRowSelect = true;
             this.lvLog.HideSelection = false;
-            this.lvLog.Location = new System.Drawing.Point(0, 26);
+            this.lvLog.Location = new System.Drawing.Point(-1, 27);
             this.lvLog.MultiSelect = false;
             this.lvLog.Name = "lvLog";
-            this.lvLog.Size = new System.Drawing.Size(676, 277);
+            this.lvLog.Size = new System.Drawing.Size(676, 281);
             this.lvLog.TabIndex = 2;
             this.lvLog.UseCompatibleStateImageBehavior = false;
             this.lvLog.View = System.Windows.Forms.View.Details;
@@ -83,17 +83,17 @@ namespace Zeratool_player_C_Sharp
             // columnHeader1
             // 
             this.columnHeader1.Text = "Время";
-            this.columnHeader1.Width = 120;
+            this.columnHeader1.Width = 111;
             // 
             // columnHeader2
             // 
             this.columnHeader2.Text = "Событие";
-            this.columnHeader2.Width = 400;
+            this.columnHeader2.Width = 452;
             // 
             // columnHeader3
             // 
             this.columnHeader3.Text = "Результат";
-            this.columnHeader3.Width = 150;
+            this.columnHeader3.Width = 104;
             // 
             // FormLog
             // 
