@@ -17,6 +17,7 @@ namespace Zeratool_player_C_Sharp
             public int lastVolume;
             public bool titleBarVisible;
             public string playlistFileName;
+            public bool playlistCycleCurrentTrack;
 
             public delegate void SavingDelegate(object sender, JObject root);
             public delegate void LoadingDelegate(object sender, JObject root);
@@ -46,6 +47,7 @@ namespace Zeratool_player_C_Sharp
             {
                 lastVolume = 25;
                 titleBarVisible = true;
+                playlistCycleCurrentTrack = false;
                 playlistFileName = selfPath + "\\LastPlaylist.json";
             }
 

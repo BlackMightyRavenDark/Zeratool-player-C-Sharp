@@ -33,6 +33,7 @@ namespace Zeratool_player_C_Sharp
             this.comboBoxPlayers = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.lbPlaylist = new System.Windows.Forms.ListBox();
+            this.chkCycleCurrentTrack = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // comboBoxPlayers
@@ -69,7 +70,7 @@ namespace Zeratool_player_C_Sharp
             this.lbPlaylist.FormattingEnabled = true;
             this.lbPlaylist.Location = new System.Drawing.Point(2, 30);
             this.lbPlaylist.Name = "lbPlaylist";
-            this.lbPlaylist.Size = new System.Drawing.Size(655, 319);
+            this.lbPlaylist.Size = new System.Drawing.Size(655, 293);
             this.lbPlaylist.TabIndex = 2;
             this.lbPlaylist.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lbPlaylist_DrawItem);
             this.lbPlaylist.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.lbPlaylist_MeasureItem);
@@ -77,11 +78,24 @@ namespace Zeratool_player_C_Sharp
             this.lbPlaylist.DragEnter += new System.Windows.Forms.DragEventHandler(this.lbPlaylist_DragEnter);
             this.lbPlaylist.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lbPlaylist_MouseDoubleClick);
             // 
+            // chkCycleCurrentTrack
+            // 
+            this.chkCycleCurrentTrack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkCycleCurrentTrack.AutoSize = true;
+            this.chkCycleCurrentTrack.Location = new System.Drawing.Point(7, 329);
+            this.chkCycleCurrentTrack.Name = "chkCycleCurrentTrack";
+            this.chkCycleCurrentTrack.Size = new System.Drawing.Size(155, 17);
+            this.chkCycleCurrentTrack.TabIndex = 3;
+            this.chkCycleCurrentTrack.Text = "Зациклить текущий файл";
+            this.chkCycleCurrentTrack.UseVisualStyleBackColor = true;
+            this.chkCycleCurrentTrack.CheckedChanged += new System.EventHandler(this.chkCycleCurrentTrack_CheckedChanged);
+            // 
             // FormPlaylist
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(660, 350);
+            this.Controls.Add(this.chkCycleCurrentTrack);
             this.Controls.Add(this.lbPlaylist);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBoxPlayers);
@@ -100,5 +114,6 @@ namespace Zeratool_player_C_Sharp
         private System.Windows.Forms.ComboBox comboBoxPlayers;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ListBox lbPlaylist;
+        private System.Windows.Forms.CheckBox chkCycleCurrentTrack;
     }
 }

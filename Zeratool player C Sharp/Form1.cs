@@ -43,6 +43,8 @@ namespace Zeratool_player_C_Sharp
                     json["titleBarVisible"] = activePlayer.IsTitleBarVisible;
                 }
 
+                json["cycleCurrentTrack"] = config.playlistCycleCurrentTrack;
+
                 if (WindowState == FormWindowState.Normal)
                 {
                     json["mainLeft"] = Left;
@@ -71,6 +73,12 @@ namespace Zeratool_player_C_Sharp
                 if (jt != null)
                 {
                     config.titleBarVisible = jt.Value<bool>();
+                }
+
+                jt = json.Value<JToken>("cycleCurrentTrack");
+                if (jt != null)
+                {
+                    config.playlistCycleCurrentTrack = jt.Value<bool>();
                 }
 
                 jt = json.Value<JToken>("mainLeft");
@@ -299,6 +307,12 @@ namespace Zeratool_player_C_Sharp
             z.TrackFinished += (s) =>
             {
                 ZeratoolPlayerGui playerGui = s as ZeratoolPlayerGui;
+                if (config.playlistCycleCurrentTrack)
+                {
+                    playerGui.TrackPosition = 0;
+                    return;
+                }
+
                 if (playerGui.Playlist.PlayingIndex < playerGui.Playlist.Count - 1)
                 {
                     playerGui.Play(playerGui.Playlist.PlayingIndex + 1);

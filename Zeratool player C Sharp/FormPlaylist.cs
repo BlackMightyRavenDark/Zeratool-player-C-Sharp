@@ -68,6 +68,8 @@ namespace Zeratool_player_C_Sharp
                     Height = jt.Value<int>();
                 }
 
+                chkCycleCurrentTrack.Checked = config.playlistCycleCurrentTrack;
+
                 if (!this.IsOnScreen())
                 {
                     this.Center(Screen.PrimaryScreen.WorkingArea);
@@ -235,7 +237,6 @@ namespace Zeratool_player_C_Sharp
                     z.Activate();
                 }
             }
-
         }
 
         private void lbPlaylist_DragEnter(object sender, DragEventArgs e)
@@ -294,5 +295,9 @@ namespace Zeratool_player_C_Sharp
             }
         }
 
+        private void chkCycleCurrentTrack_CheckedChanged(object sender, EventArgs e)
+        {
+            config.playlistCycleCurrentTrack = chkCycleCurrentTrack.Checked;
+        }
     }
 }
