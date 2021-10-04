@@ -32,6 +32,7 @@ namespace Zeratool_player_C_Sharp
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ZeratoolPlayerGui));
             this.panelControls = new System.Windows.Forms.Panel();
+            this.btnLog = new System.Windows.Forms.Panel();
             this.btnPreviousTrack = new System.Windows.Forms.Panel();
             this.btnNextTrack = new System.Windows.Forms.Panel();
             this.panelCorner = new System.Windows.Forms.Panel();
@@ -53,7 +54,6 @@ namespace Zeratool_player_C_Sharp
             this.timerTrack = new System.Windows.Forms.Timer(this.components);
             this.panelZ = new System.Windows.Forms.Panel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.btnLog = new System.Windows.Forms.Panel();
             this.panelVideoScreen = new Zeratool_player_C_Sharp.CustomPanel();
             this.panelControls.SuspendLayout();
             this.panelMaxClose.SuspendLayout();
@@ -78,11 +78,23 @@ namespace Zeratool_player_C_Sharp
             this.panelControls.Controls.Add(this.seekBar);
             this.panelControls.Controls.Add(this.volumeBar);
             this.panelControls.Controls.Add(this.lblSystemTime);
-            this.panelControls.Location = new System.Drawing.Point(0, 199);
+            this.panelControls.Location = new System.Drawing.Point(0, 192);
             this.panelControls.Name = "panelControls";
-            this.panelControls.Size = new System.Drawing.Size(386, 77);
+            this.panelControls.Size = new System.Drawing.Size(386, 84);
             this.panelControls.TabIndex = 0;
             this.panelControls.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelControls_MouseDown);
+            // 
+            // btnLog
+            // 
+            this.btnLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLog.BackgroundImage = global::Zeratool_player_C_Sharp.Properties.Resources.log;
+            this.btnLog.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnLog.Location = new System.Drawing.Point(235, 54);
+            this.btnLog.Name = "btnLog";
+            this.btnLog.Size = new System.Drawing.Size(24, 24);
+            this.btnLog.TabIndex = 13;
+            this.toolTip1.SetToolTip(this.btnLog, "Открыть лог");
+            this.btnLog.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnLog_MouseDown);
             // 
             // btnPreviousTrack
             // 
@@ -113,7 +125,7 @@ namespace Zeratool_player_C_Sharp
             this.panelCorner.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.panelCorner.BackColor = System.Drawing.Color.Lime;
             this.panelCorner.Cursor = System.Windows.Forms.Cursors.SizeAll;
-            this.panelCorner.Location = new System.Drawing.Point(374, 64);
+            this.panelCorner.Location = new System.Drawing.Point(374, 72);
             this.panelCorner.Name = "panelCorner";
             this.panelCorner.Size = new System.Drawing.Size(11, 11);
             this.panelCorner.TabIndex = 10;
@@ -192,10 +204,10 @@ namespace Zeratool_player_C_Sharp
             // 
             // btnSettings
             // 
-            this.btnSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSettings.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnSettings.BackgroundImage")));
             this.btnSettings.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnSettings.Location = new System.Drawing.Point(342, 53);
+            this.btnSettings.Location = new System.Drawing.Point(342, 54);
             this.btnSettings.Name = "btnSettings";
             this.btnSettings.Size = new System.Drawing.Size(24, 24);
             this.btnSettings.TabIndex = 3;
@@ -205,7 +217,7 @@ namespace Zeratool_player_C_Sharp
             // 
             // seekBar
             // 
-            this.seekBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.seekBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.seekBar.BackColor = System.Drawing.Color.LightSteelBlue;
             this.seekBar.Location = new System.Drawing.Point(2, 32);
@@ -220,7 +232,7 @@ namespace Zeratool_player_C_Sharp
             // 
             this.volumeBar.BackColor = System.Drawing.SystemColors.Control;
             this.volumeBar.ForeColor = System.Drawing.Color.Black;
-            this.volumeBar.Location = new System.Drawing.Point(0, 54);
+            this.volumeBar.Location = new System.Drawing.Point(0, 56);
             this.volumeBar.Name = "volumeBar";
             this.volumeBar.Size = new System.Drawing.Size(100, 20);
             this.volumeBar.TabIndex = 1;
@@ -231,12 +243,12 @@ namespace Zeratool_player_C_Sharp
             // 
             // lblSystemTime
             // 
-            this.lblSystemTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblSystemTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblSystemTime.AutoSize = true;
             this.lblSystemTime.BackColor = System.Drawing.Color.Black;
             this.lblSystemTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.lblSystemTime.ForeColor = System.Drawing.Color.Lime;
-            this.lblSystemTime.Location = new System.Drawing.Point(265, 55);
+            this.lblSystemTime.Location = new System.Drawing.Point(265, 56);
             this.lblSystemTime.Name = "lblSystemTime";
             this.lblSystemTime.Size = new System.Drawing.Size(71, 20);
             this.lblSystemTime.TabIndex = 0;
@@ -317,18 +329,6 @@ namespace Zeratool_player_C_Sharp
             this.panelZ.TabIndex = 4;
             this.panelZ.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelZ_MouseDown);
             // 
-            // btnLog
-            // 
-            this.btnLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnLog.BackgroundImage = global::Zeratool_player_C_Sharp.Properties.Resources.log;
-            this.btnLog.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnLog.Location = new System.Drawing.Point(235, 55);
-            this.btnLog.Name = "btnLog";
-            this.btnLog.Size = new System.Drawing.Size(24, 24);
-            this.btnLog.TabIndex = 13;
-            this.toolTip1.SetToolTip(this.btnLog, "Открыть лог");
-            this.btnLog.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnLog_MouseDown);
-            // 
             // panelVideoScreen
             // 
             this.panelVideoScreen.AllowDrop = true;
@@ -338,7 +338,7 @@ namespace Zeratool_player_C_Sharp
             this.panelVideoScreen.BackColor = System.Drawing.Color.Black;
             this.panelVideoScreen.Location = new System.Drawing.Point(0, 20);
             this.panelVideoScreen.Name = "panelVideoScreen";
-            this.panelVideoScreen.Size = new System.Drawing.Size(386, 179);
+            this.panelVideoScreen.Size = new System.Drawing.Size(386, 172);
             this.panelVideoScreen.TabIndex = 3;
             this.panelVideoScreen.MouseSingleDown += new Zeratool_player_C_Sharp.CustomPanel.MouseSingleDownDelegate(this.panelVideoScreen_MouseDown);
             this.panelVideoScreen.MouseDoubleDown += new Zeratool_player_C_Sharp.CustomPanel.MouseDoubleDownDelegate(this.panelVideoScreen_MouseDoubleClick);
@@ -349,11 +349,11 @@ namespace Zeratool_player_C_Sharp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.panelControls);
             this.Controls.Add(this.panelZ);
             this.Controls.Add(this.panelVideoScreen);
             this.Controls.Add(this.lblTitleBar);
             this.Controls.Add(this.panelMaxClose);
-            this.Controls.Add(this.panelControls);
             this.Name = "ZeratoolPlayerGui";
             this.Size = new System.Drawing.Size(386, 276);
             this.Load += new System.EventHandler(this.ZeratoolPlayerGui_Load);
