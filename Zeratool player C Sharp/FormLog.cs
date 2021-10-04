@@ -124,6 +124,7 @@ namespace Zeratool_player_C_Sharp
             z.Closing += OnPlayerClosing;
             z.TitleChanged += OnPlayerTitleChanged;
             z.PlayerEngine.LogAdded += OnPlayerLogItemAdded;
+            z.PlayerEngine.LogCleared += OnPlayerLogCleared;
 
             string t = $"Player [{players.Count - 1}]: {z.Title}";
             comboBoxPlayers.Items.Add(new PlayerListItem(z, t));
@@ -153,6 +154,19 @@ namespace Zeratool_player_C_Sharp
             int id = FindPlayerInComboBox(comboBoxPlayers, z);
             string t = $"Player [{id}]: {title}";
             comboBoxPlayers.Items[id] = new PlayerListItem(z, t);
+        }
+
+        private void OnPlayerLogCleared(object sender)
+        {
+            if (comboBoxPlayers.SelectedIndex >= 0)
+            {
+                ZeratoolPlayerGui playerGui = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
+
+                if (sender as ZeratoolPlayerEngine == playerGui.PlayerEngine)
+                {
+                    ListLog(playerGui.PlayerEngine);
+                }
+            }
         }
 
         private void OnPlayerLogItemAdded(object sender, ZeratoolLogItem logItem)

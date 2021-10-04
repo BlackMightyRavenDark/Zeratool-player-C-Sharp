@@ -109,8 +109,8 @@ namespace Zeratool_player_C_Sharp
                 videoDecoders.Add(new FilterItem(CLSID_LAV_VideoDecoder, "LAV video decoder"));
 
                 audioDecoders.Add(new FilterItem(CLSID_FFDShowAudioDecoder, "FFDShow audio decoder"));
-                audioDecoders.Add(new FilterItem(CLSID_AC3Filter, "AC3Filter"));
                 audioDecoders.Add(new FilterItem(CLSID_LAV_AudioDecoder, "LAV audio decoder"));
+                audioDecoders.Add(new FilterItem(CLSID_AC3Filter, "AC3Filter"));
 
                 videoRenderers.Add(new FilterItem(CLSID_DefaultVideoRenderer, "Default video renderer"));
                 videoRenderers.Add(new FilterItem(CLSID_VideoRenderer, "Video renderer"));
@@ -267,7 +267,7 @@ namespace Zeratool_player_C_Sharp
         public TrackRenderedDelegate TrackRendered;
         public TrackFinishedDelegate TrackFinished;
         public LogAddedDelegate LogAdded;
-        public LogClearedDelegate logCleared;
+        public LogClearedDelegate LogCleared;
 
 
         public ZeratoolPlayerEngine()
@@ -316,7 +316,7 @@ namespace Zeratool_player_C_Sharp
 
             Log.Add(new ZeratoolLogItem(creationDate, "The player has been created", null));
 
-            logCleared?.Invoke(this);
+            LogCleared?.Invoke(this);
         }
 
         private int BuildGraph()
