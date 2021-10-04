@@ -164,6 +164,7 @@ namespace Zeratool_player_C_Sharp
         public enum DirectShowGraphMode { Automatic, Intellectual, Manual };
         public enum PlayerState { Null, Playing, Paused, Stopped };
 
+        private DateTime creationDate;
         private DirectShowGraphMode _graphMode = DirectShowGraphMode.Manual;
         private PlayerState _state = PlayerState.Null;
         private int _videoWidth = 0;
@@ -271,6 +272,8 @@ namespace Zeratool_player_C_Sharp
 
         public ZeratoolPlayerEngine()
         {
+            creationDate = DateTime.Now;
+            ClearLog();
             filters.SetDefaults();
         }
 
@@ -310,27 +313,34 @@ namespace Zeratool_player_C_Sharp
         public void ClearLog()
         {
             Log.Clear();
+
+            Log.Add(new ZeratoolLogItem(creationDate, "The player has been created", null));
+
             logCleared?.Invoke(this);
         }
 
         private int BuildGraph()
         {
+            ClearLog();
+
             if (string.IsNullOrEmpty(FileName) || string.IsNullOrWhiteSpace(FileName))
             {
+                AddToLog($"File name not defined", null);
                 return ERROR_FILE_NAME_NOT_DEFINED;
             }
 
             if (!File.Exists(FileName))
             {
+                AddToLog($"File name: {FileName}", "Not found");
                 return ERROR_FILE_NOT_FOUND;
             }
+
+            AddToLog($"File name: {FileName}", "OK");
 
             filters.videoDecoderId = filters.prefferedVideoDecoderId; 
             filters.videoRendererId = filters.prefferedVideoRendererId;
             filters.audioDecoderId = filters.prefferedAudioDecoderId;
             filters.audioRendererId = filters.prefferedAudioRendererId;
-
-            System.Diagnostics.Debug.WriteLine($"File name: {FileName}");
 
             int errorCode;
 
