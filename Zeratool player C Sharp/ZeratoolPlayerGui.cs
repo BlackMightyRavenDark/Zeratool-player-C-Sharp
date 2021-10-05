@@ -623,22 +623,30 @@ namespace Zeratool_player_C_Sharp
 
         private void btnClose_MouseUp(object sender, MouseEventArgs e)
         {
-            if (!IsMaximized && e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left)
             {  
                 if (e.X >= 0 && e.X <= btnClose.Width && e.Y >= 0 && e.Y <= btnClose.Height)
                 {
                     Closing?.Invoke(this);
-                    Dispose();
+                    if (!IsDisposed)
+                    {
+                        Dispose();
+                    }
                 }
             }
         }
 
         private void btnMinMax_MouseUp(object sender, MouseEventArgs e)
         {
-            if (!IsFullscreen && e.Button == MouseButtons.Left && MinMax != null)
+            if (e.Button == MouseButtons.Left && MinMax != null)
             {
                 if (e.X >= 0 && e.X <= btnMinMax.Width && e.Y >= 0 && e.Y <= btnMinMax.Height)
                 {
+                    if (IsFullscreen)
+                    {
+                        ToggleFullscreenMode();
+                        return;
+                    }
                     _isMaximized = !_isMaximized;
                     MinMax.Invoke(this, ref _isMaximized);
                     AfterMinMax();

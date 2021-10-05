@@ -288,6 +288,10 @@ namespace Zeratool_player_C_Sharp
                     }
                 }
                 System.Diagnostics.Debug.WriteLine($"Player {playerGui.Title} closed");
+                if (playerGui.IsFullscreen)
+                {
+                    Close();
+                }
             };
 
             z.MinMax += (object sender, ref bool isMaximized) =>
