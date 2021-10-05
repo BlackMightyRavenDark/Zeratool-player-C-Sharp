@@ -13,7 +13,7 @@ namespace Zeratool_player_C_Sharp
 {
     public partial class Form1 : Form
     {
-        public const string TITLE = "Zeratool player";
+        public const string TITLE = "Zeratool player 0.2.0-alpha";
         private bool firstShown = true;
         private Point oldPos;
         private Size oldSize;
