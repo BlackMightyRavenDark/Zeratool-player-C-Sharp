@@ -377,7 +377,7 @@ namespace Zeratool_player_C_Sharp
             Activated?.Invoke(this);
         }
 
-        public void SetTitle(string title)
+        private void SetTitle(string title)
         {
             string newTitle = string.IsNullOrEmpty(title) ? "<No name>" : title;
             if (_title != newTitle)
