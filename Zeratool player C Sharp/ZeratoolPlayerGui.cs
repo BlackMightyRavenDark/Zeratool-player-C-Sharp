@@ -30,7 +30,7 @@ namespace Zeratool_player_C_Sharp
         public DirectShowGraphMode PrefferedGraphMode { get; set; } = DirectShowGraphMode.Intellectual;
         public string FileName { get { return PlayerEngine.FileName; } }
         public string Title { get { return _title; } set { SetTitle(value); } }
-        public int Volume { get { return PlayerEngine.Volume; } set { PlayerEngine.Volume = value; volumeBar.Refresh(); } }
+        public int Volume { get { return PlayerEngine.Volume; } set { SetVolume(value); } }
         public double TrackDuration => PlayerEngine.Duration;
         public double TrackPosition { get { return PlayerEngine.Position; } set { SetTrackPosition(value); } }
         public ZeratoolPlaylist Playlist => _playlist;
@@ -57,6 +57,7 @@ namespace Zeratool_player_C_Sharp
         public delegate void TrackRenderedDelegate(object sender, int errorCode);
         public delegate void TrackFinishedDelegate(object sender);
         public delegate void TitleChangedDelegate(object sender, string title);
+        public delegate void VolumeChangedDelegate(object sender);
         public ActivatedDelegate Activated;
         public DragStartDelegate DragStart;
         public DragDragDelegate DragDrag;
@@ -68,6 +69,7 @@ namespace Zeratool_player_C_Sharp
         public TrackRenderedDelegate TrackRendered;
         public TrackFinishedDelegate TrackFinished;
         public TitleChangedDelegate TitleChanged;
+        public VolumeChangedDelegate VolumeChanged;
 
 
         public ZeratoolPlayerGui()
@@ -385,6 +387,16 @@ namespace Zeratool_player_C_Sharp
                 TitleChanged?.Invoke(this, newTitle);
             }
             lblTitleBar.TextAlign = ContentAlignment.MiddleCenter;
+        }
+
+        private void SetVolume(int newVolume)
+        {
+            if (newVolume != PlayerEngine.Volume)
+            {
+                PlayerEngine.Volume = newVolume;
+                volumeBar.Refresh();
+                VolumeChanged?.Invoke(this);
+            }
         }
 
         private void SetTitleBarVisible(bool flag)

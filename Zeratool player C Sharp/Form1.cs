@@ -42,6 +42,10 @@ namespace Zeratool_player_C_Sharp
                     json["volume"] = activePlayer.Volume;
                     json["titleBarVisible"] = activePlayer.IsTitleBarVisible;
                 }
+                else
+                {
+                    json["volume"] = config.lastVolume;
+                }
 
                 json["cycleCurrentTrack"] = config.playlistCycleCurrentTrack;
 
@@ -406,6 +410,15 @@ namespace Zeratool_player_C_Sharp
                 if (playerGui == activePlayer)
                 {
                     Text = $"{title} | {TITLE}";
+                }
+            };
+
+            z.VolumeChanged += (s) =>
+            {
+                ZeratoolPlayerGui playerGui = s as ZeratoolPlayerGui;
+                if (playerGui.IsMaximized)
+                {
+                    config.lastVolume = playerGui.Volume;
                 }
             };
 
