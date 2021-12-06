@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using static Zeratool_player_C_Sharp.ZeratoolPlayerEngine;
 using static Zeratool_player_C_Sharp.DirectShowUtils;
 
 namespace Zeratool_player_C_Sharp
@@ -18,6 +19,7 @@ namespace Zeratool_player_C_Sharp
             public bool titleBarVisible;
             public string playlistFileName;
             public bool playlistCycleCurrentTrack;
+            public DirectShowGraphMode graphMode;
 
             public delegate void SavingDelegate(object sender, JObject root);
             public delegate void LoadingDelegate(object sender, JObject root);
@@ -48,6 +50,7 @@ namespace Zeratool_player_C_Sharp
                 lastVolume = 25;
                 titleBarVisible = true;
                 playlistCycleCurrentTrack = false;
+                graphMode = DirectShowGraphMode.Manual;
                 playlistFileName = selfPath + "\\LastPlaylist.json";
             }
 

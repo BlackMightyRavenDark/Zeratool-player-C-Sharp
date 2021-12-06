@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Newtonsoft.Json.Linq;
 using static Zeratool_player_C_Sharp.Utils;
+using static Zeratool_player_C_Sharp.ZeratoolPlayerEngine;
 using static Zeratool_player_C_Sharp.DirectShowUtils;
 
 namespace Zeratool_player_C_Sharp
@@ -50,6 +51,12 @@ namespace Zeratool_player_C_Sharp
                 if (jt != null)
                 {
                     Top = jt.Value<int>();
+                }
+
+                jt = json.Value<JToken>("graphMode");
+                if (jt == null || !Enum.TryParse<DirectShowGraphMode>(jt.Value<string>(), out config.graphMode))
+                {
+                    config.graphMode = DirectShowGraphMode.Manual;
                 }
 
                 if (!this.IsOnScreen())

@@ -13,7 +13,7 @@ namespace Zeratool_player_C_Sharp
 {
     public partial class Form1 : Form
     {
-        public const string TITLE = "Zeratool player 0.2.0-alpha";
+        public const string TITLE = "Zeratool player";
         private bool firstShown = true;
         private Point oldPos;
         private Size oldSize;
@@ -41,14 +41,16 @@ namespace Zeratool_player_C_Sharp
                 {
                     json["volume"] = activePlayer.Volume;
                     json["titleBarVisible"] = activePlayer.IsTitleBarVisible;
+                    json["graphMode"] = activePlayer.PrefferedGraphMode.ToString();
                 }
                 else
                 {
                     json["volume"] = config.lastVolume;
+                    json["graphMode"] = config.graphMode.ToString();
                 }
 
                 json["cycleCurrentTrack"] = config.playlistCycleCurrentTrack;
-
+              
                 if (WindowState == FormWindowState.Normal)
                 {
                     json["mainLeft"] = Left;
@@ -122,6 +124,8 @@ namespace Zeratool_player_C_Sharp
             ZeratoolPlayerGui z = CreatePlayer(this, true);
             z.Volume = config.lastVolume;
             z.IsTitleBarVisible = config.titleBarVisible;
+            z.PrefferedGraphMode = config.graphMode;
+            z.GraphMode = config.graphMode;
             z.Activate();
         }
 
