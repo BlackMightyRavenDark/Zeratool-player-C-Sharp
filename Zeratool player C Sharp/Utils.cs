@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Reflection;
 using System.IO;
+using Shell32;
 using Newtonsoft.Json.Linq;
 using static Zeratool_player_C_Sharp.ZeratoolPlayerEngine;
 using static Zeratool_player_C_Sharp.DirectShowUtils;
@@ -175,6 +177,36 @@ namespace Zeratool_player_C_Sharp
             return -1;
         }
 
+        public static string GetShortcutTarget(string shortcutFileName)
+        {
+            if (string.IsNullOrEmpty(shortcutFileName) || string.IsNullOrWhiteSpace(shortcutFileName) ||
+                !shortcutFileName.ToLower().EndsWith(".lnk"))
+            {
+                return null;
+            }
+
+            //using Shell32
+            try
+            {
+                Shell shell = new Shell();
+
+                string shortcut_path = shortcutFileName.Substring(0, shortcutFileName.LastIndexOf("\\"));
+                string shortcut_name = shortcutFileName.Substring(shortcutFileName.LastIndexOf("\\") + 1);
+
+                Folder shortcut_folder = shell.NameSpace(shortcut_path);
+                FolderItem folder_item = shortcut_folder.Items().Item(shortcut_name);
+                ShellLinkObject lnk = (ShellLinkObject)folder_item.GetLink;
+
+                string target = lnk.Path;
+                return target;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
         public static List<string> GetPlayableFiles(IEnumerable<string> collection)
         {
             List<string> files = new List<string>();
@@ -201,6 +233,10 @@ namespace Zeratool_player_C_Sharp
                 string ext = Path.GetExtension(fn);
                 if (!string.IsNullOrEmpty(ext))
                 {
+                    if (ext.ToLower() == ".lnk")
+                    {
+                        fn = GetShortcutTarget(fn);
+                    }
                     if (!string.IsNullOrEmpty(fn) && IsPlayableFile(fn) && File.Exists(fn))
                     {
                         resList.Add(fn);
