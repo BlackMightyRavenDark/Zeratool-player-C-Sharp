@@ -248,8 +248,8 @@ namespace Zeratool_player_C_Sharp
 
         public static bool IsPlayableFile(string fn)
         {
-            string ext = Path.GetExtension(fn).ToLower();
-            return videoFileTypes.Contains(ext);
+            string ext = Path.GetExtension(fn);
+            return !string.IsNullOrEmpty(ext) && videoFileTypes.Contains(ext.ToLower());
         }
 
     }
