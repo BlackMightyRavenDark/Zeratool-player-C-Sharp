@@ -318,16 +318,16 @@ namespace Zeratool_player_C_Sharp
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxVideoRenderers.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxVideoRenderers.FormattingEnabled = true;
-            this.comboBoxVideoRenderers.Location = new System.Drawing.Point(104, 36);
+            this.comboBoxVideoRenderers.Location = new System.Drawing.Point(98, 34);
             this.comboBoxVideoRenderers.Name = "comboBoxVideoRenderers";
-            this.comboBoxVideoRenderers.Size = new System.Drawing.Size(426, 21);
+            this.comboBoxVideoRenderers.Size = new System.Drawing.Size(432, 21);
             this.comboBoxVideoRenderers.TabIndex = 3;
             this.comboBoxVideoRenderers.SelectedIndexChanged += new System.EventHandler(this.comboBoxVideoRenderers_SelectedIndexChanged);
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 39);
+            this.label6.Location = new System.Drawing.Point(6, 37);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(92, 13);
             this.label6.TabIndex = 2;
@@ -336,7 +336,7 @@ namespace Zeratool_player_C_Sharp
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 12);
+            this.label5.Location = new System.Drawing.Point(6, 10);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(88, 13);
             this.label5.TabIndex = 1;
@@ -348,9 +348,9 @@ namespace Zeratool_player_C_Sharp
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxVideoDecoders.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxVideoDecoders.FormattingEnabled = true;
-            this.comboBoxVideoDecoders.Location = new System.Drawing.Point(104, 9);
+            this.comboBoxVideoDecoders.Location = new System.Drawing.Point(98, 7);
             this.comboBoxVideoDecoders.Name = "comboBoxVideoDecoders";
-            this.comboBoxVideoDecoders.Size = new System.Drawing.Size(426, 21);
+            this.comboBoxVideoDecoders.Size = new System.Drawing.Size(432, 21);
             this.comboBoxVideoDecoders.TabIndex = 0;
             this.comboBoxVideoDecoders.SelectedIndexChanged += new System.EventHandler(this.comboBoxVideoDecoders_SelectedIndexChanged);
             // 
@@ -374,9 +374,9 @@ namespace Zeratool_player_C_Sharp
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxAudioRenderers.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxAudioRenderers.FormattingEnabled = true;
-            this.comboBoxAudioRenderers.Location = new System.Drawing.Point(103, 36);
+            this.comboBoxAudioRenderers.Location = new System.Drawing.Point(98, 34);
             this.comboBoxAudioRenderers.Name = "comboBoxAudioRenderers";
-            this.comboBoxAudioRenderers.Size = new System.Drawing.Size(419, 21);
+            this.comboBoxAudioRenderers.Size = new System.Drawing.Size(432, 21);
             this.comboBoxAudioRenderers.TabIndex = 3;
             this.comboBoxAudioRenderers.SelectedIndexChanged += new System.EventHandler(this.comboBoxAudioRenderers_SelectedIndexChanged);
             // 
@@ -386,16 +386,16 @@ namespace Zeratool_player_C_Sharp
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxAudioDecoders.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxAudioDecoders.FormattingEnabled = true;
-            this.comboBoxAudioDecoders.Location = new System.Drawing.Point(103, 9);
+            this.comboBoxAudioDecoders.Location = new System.Drawing.Point(98, 7);
             this.comboBoxAudioDecoders.Name = "comboBoxAudioDecoders";
-            this.comboBoxAudioDecoders.Size = new System.Drawing.Size(419, 21);
+            this.comboBoxAudioDecoders.Size = new System.Drawing.Size(432, 21);
             this.comboBoxAudioDecoders.TabIndex = 2;
             this.comboBoxAudioDecoders.SelectedIndexChanged += new System.EventHandler(this.comboBoxAudioDecoders_SelectedIndexChanged);
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(6, 39);
+            this.label8.Location = new System.Drawing.Point(6, 37);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(91, 13);
             this.label8.TabIndex = 1;
@@ -404,7 +404,7 @@ namespace Zeratool_player_C_Sharp
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(6, 12);
+            this.label7.Location = new System.Drawing.Point(6, 10);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(87, 13);
             this.label7.TabIndex = 0;
