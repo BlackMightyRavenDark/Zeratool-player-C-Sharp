@@ -138,7 +138,10 @@ namespace Zeratool_player_C_Sharp
             {
                 if (errorCode == S_OK)
                 {
-                    ResizeOutputWindow();
+                    if (PlayerEngine.VideoRendered)
+                    {
+                        ResizeOutputWindow();
+                    }
                     btnPlay.BackgroundImage = Resources.play_active.ToBitmap();
                     timerTrack.Enabled = true;
                 }
@@ -494,7 +497,7 @@ namespace Zeratool_player_C_Sharp
         {
             panelVideoScreen.Top = lblTitleBar.Visible ? lblTitleBar.Height : 0;
             panelVideoScreen.Height = panelControls.Visible ? panelControls.Top - panelVideoScreen.Top : Height - panelVideoScreen.Top;
-            if (State != PlayerState.Null)
+            if (PlayerEngine.VideoRendered)
             {
                 Size size = PlayerEngine.VideoSize;
                 Rectangle videoRect = new Rectangle(0, 0, size.Width, size.Height);
