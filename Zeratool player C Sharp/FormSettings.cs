@@ -172,7 +172,7 @@ namespace Zeratool_player_C_Sharp
             {
                 comboBoxAudioRenderers.Items.Add(item.DisplayName);
             }
-            comboBoxAudioRenderers.SelectedIndex = playerEngine.filters.audioRendererId;
+            comboBoxAudioRenderers.SelectedIndex = playerEngine.filters.prefferedAudioRendererId;
         }
 
         private void OnPlayerCreated(ZeratoolPlayerGui z, bool maximized)
@@ -410,6 +410,31 @@ namespace Zeratool_player_C_Sharp
                 ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
                 z.PlayerEngine.filters.prefferedAudioRendererId = comboBoxAudioRenderers.SelectedIndex;
             }
+        }
+
+        private void btnSaveFilters_Click(object sender, EventArgs e)
+        {
+            if (comboBoxPlayers.SelectedIndex >= 0)
+            {
+                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
+                if (z != null)
+                {
+                    if (z.IsMaximized)
+                    {
+                        z.PlayerEngine.filters.SaveToJsonFile(config.filtersConfigFileName);
+                        MessageBox.Show("Настройки сохранены!", "Zeratool player",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Можно сохранить настройки только главного плеера!", "Ошибка!",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    return;
+                }
+            }
+            MessageBox.Show("Не выбран плеер!", "Ошибка!",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }

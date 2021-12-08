@@ -34,6 +34,7 @@ namespace Zeratool_player_C_Sharp
             this.tabPageDirectShow = new System.Windows.Forms.TabPage();
             this.btnRebuildGraph = new System.Windows.Forms.Button();
             this.groupBoxFilters = new System.Windows.Forms.GroupBox();
+            this.btnSaveFilters = new System.Windows.Forms.Button();
             this.tabControlFilters = new System.Windows.Forms.TabControl();
             this.tabPageSplitters = new System.Windows.Forms.TabPage();
             this.comboBoxSplittersMKV = new System.Windows.Forms.ComboBox();
@@ -83,7 +84,7 @@ namespace Zeratool_player_C_Sharp
             this.tabControlSettings.Location = new System.Drawing.Point(0, 29);
             this.tabControlSettings.Name = "tabControlSettings";
             this.tabControlSettings.SelectedIndex = 0;
-            this.tabControlSettings.Size = new System.Drawing.Size(606, 317);
+            this.tabControlSettings.Size = new System.Drawing.Size(584, 348);
             this.tabControlSettings.TabIndex = 0;
             // 
             // tabPageDirectShow
@@ -95,7 +96,7 @@ namespace Zeratool_player_C_Sharp
             this.tabPageDirectShow.Location = new System.Drawing.Point(4, 22);
             this.tabPageDirectShow.Name = "tabPageDirectShow";
             this.tabPageDirectShow.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageDirectShow.Size = new System.Drawing.Size(598, 291);
+            this.tabPageDirectShow.Size = new System.Drawing.Size(576, 322);
             this.tabPageDirectShow.TabIndex = 0;
             this.tabPageDirectShow.Text = "DirectShow";
             // 
@@ -114,13 +115,25 @@ namespace Zeratool_player_C_Sharp
             this.groupBoxFilters.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxFilters.Controls.Add(this.btnSaveFilters);
             this.groupBoxFilters.Controls.Add(this.tabControlFilters);
             this.groupBoxFilters.Location = new System.Drawing.Point(10, 61);
             this.groupBoxFilters.Name = "groupBoxFilters";
-            this.groupBoxFilters.Size = new System.Drawing.Size(580, 222);
+            this.groupBoxFilters.Size = new System.Drawing.Size(558, 253);
             this.groupBoxFilters.TabIndex = 1;
             this.groupBoxFilters.TabStop = false;
             this.groupBoxFilters.Text = "Декодеры и фильтры";
+            // 
+            // btnSaveFilters
+            // 
+            this.btnSaveFilters.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSaveFilters.Location = new System.Drawing.Point(467, 224);
+            this.btnSaveFilters.Name = "btnSaveFilters";
+            this.btnSaveFilters.Size = new System.Drawing.Size(75, 23);
+            this.btnSaveFilters.TabIndex = 12;
+            this.btnSaveFilters.Text = "Сохранить";
+            this.btnSaveFilters.UseVisualStyleBackColor = true;
+            this.btnSaveFilters.Click += new System.EventHandler(this.btnSaveFilters_Click);
             // 
             // tabControlFilters
             // 
@@ -133,7 +146,7 @@ namespace Zeratool_player_C_Sharp
             this.tabControlFilters.Location = new System.Drawing.Point(8, 16);
             this.tabControlFilters.Name = "tabControlFilters";
             this.tabControlFilters.SelectedIndex = 0;
-            this.tabControlFilters.Size = new System.Drawing.Size(566, 200);
+            this.tabControlFilters.Size = new System.Drawing.Size(544, 202);
             this.tabControlFilters.TabIndex = 0;
             // 
             // tabPageSplitters
@@ -155,7 +168,7 @@ namespace Zeratool_player_C_Sharp
             this.tabPageSplitters.Location = new System.Drawing.Point(4, 22);
             this.tabPageSplitters.Name = "tabPageSplitters";
             this.tabPageSplitters.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageSplitters.Size = new System.Drawing.Size(558, 174);
+            this.tabPageSplitters.Size = new System.Drawing.Size(536, 176);
             this.tabPageSplitters.TabIndex = 0;
             this.tabPageSplitters.Text = "Сплиттеры";
             // 
@@ -167,7 +180,7 @@ namespace Zeratool_player_C_Sharp
             this.comboBoxSplittersMKV.FormattingEnabled = true;
             this.comboBoxSplittersMKV.Location = new System.Drawing.Point(117, 115);
             this.comboBoxSplittersMKV.Name = "comboBoxSplittersMKV";
-            this.comboBoxSplittersMKV.Size = new System.Drawing.Size(435, 21);
+            this.comboBoxSplittersMKV.Size = new System.Drawing.Size(413, 21);
             this.comboBoxSplittersMKV.TabIndex = 11;
             this.comboBoxSplittersMKV.SelectedIndexChanged += new System.EventHandler(this.comboBoxSplittersMKV_SelectedIndexChanged);
             // 
@@ -188,7 +201,7 @@ namespace Zeratool_player_C_Sharp
             this.comboBoxSplittersMPG.FormattingEnabled = true;
             this.comboBoxSplittersMPG.Location = new System.Drawing.Point(116, 34);
             this.comboBoxSplittersMPG.Name = "comboBoxSplittersMPG";
-            this.comboBoxSplittersMPG.Size = new System.Drawing.Size(436, 21);
+            this.comboBoxSplittersMPG.Size = new System.Drawing.Size(414, 21);
             this.comboBoxSplittersMPG.TabIndex = 9;
             this.comboBoxSplittersMPG.SelectedIndexChanged += new System.EventHandler(this.comboBoxSplittersMPG_SelectedIndexChanged);
             // 
@@ -200,7 +213,7 @@ namespace Zeratool_player_C_Sharp
             this.comboBoxSplittersTS.FormattingEnabled = true;
             this.comboBoxSplittersTS.Location = new System.Drawing.Point(116, 61);
             this.comboBoxSplittersTS.Name = "comboBoxSplittersTS";
-            this.comboBoxSplittersTS.Size = new System.Drawing.Size(436, 21);
+            this.comboBoxSplittersTS.Size = new System.Drawing.Size(414, 21);
             this.comboBoxSplittersTS.TabIndex = 8;
             this.comboBoxSplittersTS.SelectedIndexChanged += new System.EventHandler(this.comboBoxSplittersTS_SelectedIndexChanged);
             // 
@@ -230,7 +243,7 @@ namespace Zeratool_player_C_Sharp
             this.comboBoxSplittersMP4.FormattingEnabled = true;
             this.comboBoxSplittersMP4.Location = new System.Drawing.Point(116, 88);
             this.comboBoxSplittersMP4.Name = "comboBoxSplittersMP4";
-            this.comboBoxSplittersMP4.Size = new System.Drawing.Size(436, 21);
+            this.comboBoxSplittersMP4.Size = new System.Drawing.Size(414, 21);
             this.comboBoxSplittersMP4.TabIndex = 5;
             this.comboBoxSplittersMP4.SelectedIndexChanged += new System.EventHandler(this.comboBoxSplittersMP4_SelectedIndexChanged);
             // 
@@ -260,7 +273,7 @@ namespace Zeratool_player_C_Sharp
             this.comboBoxSplittersAVI.FormattingEnabled = true;
             this.comboBoxSplittersAVI.Location = new System.Drawing.Point(116, 7);
             this.comboBoxSplittersAVI.Name = "comboBoxSplittersAVI";
-            this.comboBoxSplittersAVI.Size = new System.Drawing.Size(436, 21);
+            this.comboBoxSplittersAVI.Size = new System.Drawing.Size(414, 21);
             this.comboBoxSplittersAVI.TabIndex = 2;
             this.comboBoxSplittersAVI.SelectedIndexChanged += new System.EventHandler(this.comboBoxSplittersAVI_SelectedIndexChanged);
             // 
@@ -272,7 +285,7 @@ namespace Zeratool_player_C_Sharp
             this.comboBoxSplittersOther.FormattingEnabled = true;
             this.comboBoxSplittersOther.Location = new System.Drawing.Point(116, 143);
             this.comboBoxSplittersOther.Name = "comboBoxSplittersOther";
-            this.comboBoxSplittersOther.Size = new System.Drawing.Size(436, 21);
+            this.comboBoxSplittersOther.Size = new System.Drawing.Size(414, 21);
             this.comboBoxSplittersOther.TabIndex = 1;
             this.comboBoxSplittersOther.SelectedIndexChanged += new System.EventHandler(this.comboBoxSplittersOther_SelectedIndexChanged);
             // 
@@ -295,7 +308,7 @@ namespace Zeratool_player_C_Sharp
             this.tabPageVideo.Location = new System.Drawing.Point(4, 22);
             this.tabPageVideo.Name = "tabPageVideo";
             this.tabPageVideo.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageVideo.Size = new System.Drawing.Size(558, 174);
+            this.tabPageVideo.Size = new System.Drawing.Size(536, 176);
             this.tabPageVideo.TabIndex = 1;
             this.tabPageVideo.Text = "Видео";
             // 
@@ -307,7 +320,7 @@ namespace Zeratool_player_C_Sharp
             this.comboBoxVideoRenderers.FormattingEnabled = true;
             this.comboBoxVideoRenderers.Location = new System.Drawing.Point(104, 36);
             this.comboBoxVideoRenderers.Name = "comboBoxVideoRenderers";
-            this.comboBoxVideoRenderers.Size = new System.Drawing.Size(448, 21);
+            this.comboBoxVideoRenderers.Size = new System.Drawing.Size(426, 21);
             this.comboBoxVideoRenderers.TabIndex = 3;
             this.comboBoxVideoRenderers.SelectedIndexChanged += new System.EventHandler(this.comboBoxVideoRenderers_SelectedIndexChanged);
             // 
@@ -337,7 +350,7 @@ namespace Zeratool_player_C_Sharp
             this.comboBoxVideoDecoders.FormattingEnabled = true;
             this.comboBoxVideoDecoders.Location = new System.Drawing.Point(104, 9);
             this.comboBoxVideoDecoders.Name = "comboBoxVideoDecoders";
-            this.comboBoxVideoDecoders.Size = new System.Drawing.Size(448, 21);
+            this.comboBoxVideoDecoders.Size = new System.Drawing.Size(426, 21);
             this.comboBoxVideoDecoders.TabIndex = 0;
             this.comboBoxVideoDecoders.SelectedIndexChanged += new System.EventHandler(this.comboBoxVideoDecoders_SelectedIndexChanged);
             // 
@@ -351,7 +364,7 @@ namespace Zeratool_player_C_Sharp
             this.tabPageAudio.Controls.Add(this.label7);
             this.tabPageAudio.Location = new System.Drawing.Point(4, 22);
             this.tabPageAudio.Name = "tabPageAudio";
-            this.tabPageAudio.Size = new System.Drawing.Size(558, 174);
+            this.tabPageAudio.Size = new System.Drawing.Size(536, 176);
             this.tabPageAudio.TabIndex = 2;
             this.tabPageAudio.Text = "Аудио";
             // 
@@ -363,7 +376,7 @@ namespace Zeratool_player_C_Sharp
             this.comboBoxAudioRenderers.FormattingEnabled = true;
             this.comboBoxAudioRenderers.Location = new System.Drawing.Point(103, 36);
             this.comboBoxAudioRenderers.Name = "comboBoxAudioRenderers";
-            this.comboBoxAudioRenderers.Size = new System.Drawing.Size(441, 21);
+            this.comboBoxAudioRenderers.Size = new System.Drawing.Size(419, 21);
             this.comboBoxAudioRenderers.TabIndex = 3;
             this.comboBoxAudioRenderers.SelectedIndexChanged += new System.EventHandler(this.comboBoxAudioRenderers_SelectedIndexChanged);
             // 
@@ -375,7 +388,7 @@ namespace Zeratool_player_C_Sharp
             this.comboBoxAudioDecoders.FormattingEnabled = true;
             this.comboBoxAudioDecoders.Location = new System.Drawing.Point(103, 9);
             this.comboBoxAudioDecoders.Name = "comboBoxAudioDecoders";
-            this.comboBoxAudioDecoders.Size = new System.Drawing.Size(441, 21);
+            this.comboBoxAudioDecoders.Size = new System.Drawing.Size(419, 21);
             this.comboBoxAudioDecoders.TabIndex = 2;
             this.comboBoxAudioDecoders.SelectedIndexChanged += new System.EventHandler(this.comboBoxAudioDecoders_SelectedIndexChanged);
             // 
@@ -453,7 +466,7 @@ namespace Zeratool_player_C_Sharp
             this.comboBoxPlayers.FormattingEnabled = true;
             this.comboBoxPlayers.Location = new System.Drawing.Point(46, 2);
             this.comboBoxPlayers.Name = "comboBoxPlayers";
-            this.comboBoxPlayers.Size = new System.Drawing.Size(556, 21);
+            this.comboBoxPlayers.Size = new System.Drawing.Size(534, 21);
             this.comboBoxPlayers.TabIndex = 1;
             this.comboBoxPlayers.SelectedIndexChanged += new System.EventHandler(this.comboBoxPlayers_SelectedIndexChanged);
             // 
@@ -470,7 +483,7 @@ namespace Zeratool_player_C_Sharp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(606, 346);
+            this.ClientSize = new System.Drawing.Size(584, 377);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.comboBoxPlayers);
             this.Controls.Add(this.tabControlSettings);
@@ -534,5 +547,6 @@ namespace Zeratool_player_C_Sharp
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ComboBox comboBoxSplittersMKV;
         private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Button btnSaveFilters;
     }
 }
