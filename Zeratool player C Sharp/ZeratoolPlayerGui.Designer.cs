@@ -82,6 +82,7 @@ namespace Zeratool_player_C_Sharp
             this.panelControls.Name = "panelControls";
             this.panelControls.Size = new System.Drawing.Size(386, 84);
             this.panelControls.TabIndex = 0;
+            this.panelControls.VisibleChanged += new System.EventHandler(this.panelControls_VisibleChanged);
             this.panelControls.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelControls_MouseDown);
             // 
             // btnLog

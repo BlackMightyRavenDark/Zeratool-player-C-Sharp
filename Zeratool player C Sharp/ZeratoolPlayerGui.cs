@@ -21,10 +21,7 @@ namespace Zeratool_player_C_Sharp
         public static readonly Color COLOR_ACTIVE = Color.Blue;
         public static readonly Color COLOR_INACTIVE = Color.SkyBlue;
 
-        private ZeratoolPlayerEngine _playerEngine;
-        private ZeratoolPlaylist _playlist;
-
-        public ZeratoolPlayerEngine PlayerEngine => _playerEngine;
+        public ZeratoolPlayerEngine PlayerEngine { get; private set; } = null;
         public PlayerState State => PlayerEngine.State;
         public DirectShowGraphMode GraphMode { get { return PlayerEngine.GraphMode; } set { SetGraphMode(value); } }
         public DirectShowGraphMode PrefferedGraphMode { get; set; } = DirectShowGraphMode.Manual;
@@ -33,13 +30,12 @@ namespace Zeratool_player_C_Sharp
         public int Volume { get { return PlayerEngine.Volume; } set { SetVolume(value); } }
         public double TrackDuration => PlayerEngine.Duration;
         public double TrackPosition { get { return PlayerEngine.Position; } set { SetTrackPosition(value); } }
-        public ZeratoolPlaylist Playlist => _playlist;
+        public ZeratoolPlaylist Playlist { get; private set; } = null;
         public bool IsMaximized => _isMaximized;
         public bool IsFullscreen => _isFullscreenMode;
         public bool IsTitleBarVisible { get { return lblTitleBar.Visible || panelZ.Visible; } set { SetTitleBarVisible(value); } }
         public bool IsControlsVisible { get { return panelControls.Visible; } set { SetPanelControlsVisible(value); } }
      
-
         public enum PlayerAction { Play, Pause, OpenFile, Fullscreen, OpenPlaylist, OpenSettings, OpenLog }
 
         //for dragging.
@@ -50,7 +46,7 @@ namespace Zeratool_player_C_Sharp
         public delegate void DragStartDelegate(object sender, int x, int y);
         public delegate void DragDragDelegate(object sender, int x, int y);
         public delegate void DragEndDelegate(object sender);
-        public delegate void DropFilesDelegate(object sender, List<string> droppedFiles);
+        public delegate void FilesDroppedDelegate(object sender, List<string> droppedFiles);
         public delegate void MinMaxDelegate(object sender, ref bool maximized);
         public delegate void ClosingDelegate(object sender);
         public delegate void ActionDelegate(object sender, PlayerAction triggeredAction, int errorCode);
@@ -62,7 +58,7 @@ namespace Zeratool_player_C_Sharp
         public DragStartDelegate DragStart;
         public DragDragDelegate DragDrag;
         public DragEndDelegate DragEnd;
-        public DropFilesDelegate DropFiles;
+        public FilesDroppedDelegate FilesDropped;
         public MinMaxDelegate MinMax;
         public ClosingDelegate Closing;
         public ActionDelegate ActionTriggered;
@@ -85,10 +81,10 @@ namespace Zeratool_player_C_Sharp
         {
             timerTrack.Enabled = false;
             timerSystemTime.Enabled = false;
-            if (_playerEngine != null)
+            if (PlayerEngine != null)
             {
-                _playerEngine.Clear();
-                _playerEngine = null;
+                PlayerEngine.Clear();
+                PlayerEngine = null;
             }
             System.Diagnostics.Debug.WriteLine($"Player {Title} disposed");
         }
@@ -102,9 +98,9 @@ namespace Zeratool_player_C_Sharp
         {
             _title = lblTitleBar.Text;
 
-            _playerEngine = new ZeratoolPlayerEngine();
-            _playerEngine.GraphMode = PrefferedGraphMode;
-            _playlist = new ZeratoolPlaylist(_playerEngine);
+            PlayerEngine = new ZeratoolPlayerEngine();
+            PlayerEngine.GraphMode = PrefferedGraphMode;
+            Playlist = new ZeratoolPlaylist(PlayerEngine);
 
             Playlist.IndexChanged += (s, index) =>
             {
@@ -143,7 +139,7 @@ namespace Zeratool_player_C_Sharp
                         ResizeOutputWindow();
                     }
                     btnPlay.BackgroundImage = Resources.play_active.ToBitmap();
-                    timerTrack.Enabled = true;
+                    timerTrack.Enabled = IsControlsVisible;
                 }
                 UpdateTrackPositionIndicator();
                 volumeBar.Refresh();
@@ -165,8 +161,6 @@ namespace Zeratool_player_C_Sharp
             };
             
             PlayerEngine.VideoOutputWindow = panelVideoScreen;
-
-            timerSystemTime.Enabled = true;
         }
 
         private void ZeratoolPlayerGui_Load(object sender, EventArgs e)
@@ -189,6 +183,17 @@ namespace Zeratool_player_C_Sharp
             });
             panelCorner.Region = new Region(graphicsPath);
             graphicsPath.Dispose();
+
+            timerTrack.Enabled = IsControlsVisible && State == PlayerState.Playing;
+        }
+
+        private void ZeratoolPlayerGui_Resize(object sender, EventArgs e)
+        {
+            if (panelControls.Visible)
+            {
+                UpdateTrackIndicators();
+            }
+            ResizeOutputWindow();
         }
 
         public int Play()
@@ -199,9 +204,17 @@ namespace Zeratool_player_C_Sharp
             }
 
             int res = PlayerEngine.Play();
-            
-            btnPlay.BackgroundImage = res == S_OK ? Resources.play_active.ToBitmap() : Resources.play_inactive.ToBitmap();
-            btnPause.BackgroundImage = Resources.pause_inactive.ToBitmap();
+
+            if (res == S_OK)
+            {
+                btnPlay.BackgroundImage = Resources.play_active.ToBitmap();
+                btnPause.BackgroundImage = Resources.pause_inactive.ToBitmap();
+                timerTrack.Enabled = IsControlsVisible;
+            }
+            else
+            {
+                btnPlay.BackgroundImage = Resources.play_inactive.ToBitmap();
+            }
 
             ActionTriggered?.Invoke(this, PlayerAction.Play, res);
             return res;
@@ -234,10 +247,17 @@ namespace Zeratool_player_C_Sharp
                 btnPlay.BackgroundImage = Resources.play_inactive.ToBitmap();
                 btnPause.BackgroundImage = Resources.pause_active.ToBitmap();
 
+                timerTrack.Enabled = false;
+
                 seekBar.Refresh();
                 UpdateTrackPositionIndicator();
+
+                ActionTriggered?.Invoke(this, PlayerAction.Pause, S_OK);
             }
-            ActionTriggered?.Invoke(this, PlayerAction.Pause, res ? S_OK : S_FALSE);
+            else
+            {
+                ActionTriggered?.Invoke(this, PlayerAction.Pause, S_FALSE);
+            }
             return res;
         }
 
@@ -363,15 +383,36 @@ namespace Zeratool_player_C_Sharp
 
         private void panelVideoScreen_DragDrop(object sender, DragEventArgs e)
         {
-            if (DropFiles != null)
+            if (FilesDropped != null && e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                string[] strings = (string[])e.Data.GetData(DataFormats.FileDrop);
+                List<string> list = new List<string>();
+                list.AddRange(strings);
+                FilesDropped.Invoke(this, list);
+            }
+        }
+
+        private void panelControls_MouseDown(object sender, MouseEventArgs e)
+        {
+            Activate();
+        }
+
+        private void panelControls_VisibleChanged(object sender, EventArgs e)
+        {
+            if (panelControls.Visible)
+            {
+                if (State == PlayerState.Playing)
                 {
-                    string[] strings = (string[])e.Data.GetData(DataFormats.FileDrop);
-                    List<string> list = new List<string>();
-                    list.AddRange(strings);
-                    DropFiles.Invoke(this, list);
+                    timerTrack.Enabled = true;
                 }
+                timerSystemTime.Enabled = true;
+                UpdateTrackIndicators();
+                UpdateSystemTimeIndicator();
+            }
+            else
+            {
+                timerTrack.Enabled = false;
+                timerSystemTime.Enabled = false;
             }
         }
 
@@ -411,11 +452,6 @@ namespace Zeratool_player_C_Sharp
         private void SetPanelControlsVisible(bool flag)
         {
             panelControls.Visible = flag;
-            if (flag)
-            {
-                UpdateTrackIndicators();
-                UpdateSystemTimeIndicator();
-            }
         }
 
         public void ToggleFullscreenMode()
@@ -547,9 +583,9 @@ namespace Zeratool_player_C_Sharp
             brush.Dispose();
             if (Volume > 0)
             {
-                int x1 = (int)(volumeBar.Width / 100.0 * Volume);
-                Rectangle r = new Rectangle(0, 0, x1, volumeBar.Height);
-                e.Graphics.FillRectangle(_playerEngine.AudioRendered ? Brushes.Lime : Brushes.LightGray, r);
+                float rectWidth = volumeBar.Width / 100.0f * Volume;
+                RectangleF r = new RectangleF(0.0f, 0.0f, rectWidth, volumeBar.Height);
+                e.Graphics.FillRectangle(PlayerEngine.AudioRendered ? Brushes.Lime : Brushes.LightGray, r);
             }
 
             string t = $"Volume: {Volume}%";
@@ -557,8 +593,8 @@ namespace Zeratool_player_C_Sharp
             Font fnt = new Font("Tahoma", 10.0f);
             SizeF size = e.Graphics.MeasureString(t, fnt);
 
-            int x = volumeBar.Width / 2 - (int)size.Width / 2;
-            int y = volumeBar.Height / 2 - (int)size.Height / 2;
+            float x = volumeBar.Width / 2.0f - size.Width / 2.0f;
+            float y = volumeBar.Height / 2.0f - size.Height / 2.0f;
             e.Graphics.DrawString(t, fnt, Brushes.Black, x, y);
 
             fnt.Dispose();
@@ -604,7 +640,7 @@ namespace Zeratool_player_C_Sharp
                 e.Graphics.FillRectangle(Brushes.White, thumbRect);
                 e.Graphics.DrawRectangle(Pens.Black, thumbRect);
 
-                int y = (int)(seekBar.Height / 2 - size.Height / 2);
+                int y = (int)(seekBar.Height / 2.0f - size.Height / 2.0f);
                 e.Graphics.DrawString(elapsedString, fnt, Brushes.White, x - size.Width - 2, y);
                 e.Graphics.DrawString(remainingString, fnt, Brushes.Black, x + 4, y);
 
@@ -621,10 +657,7 @@ namespace Zeratool_player_C_Sharp
 
         private void timerTrack_Tick(object sender, EventArgs e)
         {
-            if (panelControls.Visible)
-            {
-                UpdateTrackIndicators();
-            }
+            UpdateTrackIndicators();
         }
 
         private void seekBar_MouseDown(object sender, MouseEventArgs e)
@@ -669,26 +702,12 @@ namespace Zeratool_player_C_Sharp
             }
         }
 
-        private void panelControls_MouseDown(object sender, MouseEventArgs e)
-        {
-            Activate();
-        }
-
         private void btnSettings_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.X >= 0 && e.X <= btnSettings.Width && e.Y >= 0 && e.Y <= btnSettings.Height)
             {
                 ActionTriggered?.Invoke(this, PlayerAction.OpenSettings, 0);
             }
-        }
-
-        private void ZeratoolPlayerGui_Resize(object sender, EventArgs e)
-        {
-            if (panelControls.Visible)
-            {
-                UpdateTrackIndicators();
-            }
-            ResizeOutputWindow();
         }
 
         private void seekBar_MouseMove(object sender, MouseEventArgs e)
@@ -763,7 +782,6 @@ namespace Zeratool_player_C_Sharp
                 int h = Clamp(Height + e.Y - oldMousePos.Y, MIN_HEIGHT, Parent.Height - Top - 36);
                 ResizePlayer(w, h);
             }
-
         }
 
         private void panelCorner_MouseDown(object sender, MouseEventArgs e)

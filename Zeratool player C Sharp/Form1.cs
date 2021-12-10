@@ -13,7 +13,7 @@ namespace Zeratool_player_C_Sharp
 {
     public partial class Form1 : Form
     {
-        public const string TITLE = "Zeratool player 0.2.2-alpha";
+        public const string TITLE = "Zeratool player";
         private bool firstShown = true;
         private Point oldPos;
         private Size oldSize;
@@ -30,10 +30,6 @@ namespace Zeratool_player_C_Sharp
 
         private void OnFormCreate()
         {
-            ListAudioRenderers(audioOutputMonikers);
-
-            PlayerCreated += OnPlayerCreated;
-
             config = new MainConfiguration(Application.StartupPath + "\\zeratool.json");
             config.Saving += (s, json) =>
             {
@@ -108,6 +104,10 @@ namespace Zeratool_player_C_Sharp
                     Height = jt.Value<int>();
                 }
             };
+
+            ListAudioRenderers(audioOutputMonikers);
+
+            PlayerCreated += OnPlayerCreated;
 
             formSettings = new FormSettings();
             formPlaylist = new FormPlaylist();
@@ -248,7 +248,6 @@ namespace Zeratool_player_C_Sharp
             }
         }
 
-
         private void Form1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             int x = Clamp(e.X, 0, Width - ZeratoolPlayerGui.MIN_WIDTH - 16);
@@ -259,7 +258,7 @@ namespace Zeratool_player_C_Sharp
 
         private void OnPlayerCreated(ZeratoolPlayerGui z, bool isMaximizedToParent)
         {
-            z.DropFiles += OnPlayerDropFiles;
+            z.FilesDropped += OnPlayerFilesDropped;
 
             z.Activated += (s) =>
             {
@@ -450,7 +449,7 @@ namespace Zeratool_player_C_Sharp
             players.Add(z);
         }
 
-        private void OnPlayerDropFiles(object sender, List<string> droppedFiles)
+        private void OnPlayerFilesDropped(object sender, List<string> droppedFiles)
         {
             ZeratoolPlayerGui z = sender as ZeratoolPlayerGui;
             List<string> playableFiles = GetPlayableFiles(droppedFiles);

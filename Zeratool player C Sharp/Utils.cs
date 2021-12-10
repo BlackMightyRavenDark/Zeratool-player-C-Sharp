@@ -73,16 +73,13 @@ namespace Zeratool_player_C_Sharp
 
         public class PlayerListItem
         {
-            private string _displayName;
-            private ZeratoolPlayerGui _playerObject;
-
-            public string DisplayName => _displayName;
-            public ZeratoolPlayerGui Player => _playerObject;
+            public string DisplayName { get; private set; }
+            public ZeratoolPlayerGui Player { get; private set; }
 
             public PlayerListItem(ZeratoolPlayerGui playerGuiObject, string displayName)
             {
-                _playerObject = playerGuiObject;
-                _displayName = displayName;
+                Player = playerGuiObject;
+                DisplayName = displayName;
             }
 
             public override string ToString()
