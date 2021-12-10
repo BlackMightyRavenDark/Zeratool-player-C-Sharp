@@ -92,8 +92,9 @@ namespace Zeratool_player_C_Sharp
             return items.Contains(t);
         }
         
-        public void NextTrack()
+        public int NextTrack()
         {
+            int res = DirectShowUtils.S_OK;
             if (Count > 0 && PlayingIndex < Count - 1)
             {
                 PlayingIndex++;
@@ -101,13 +102,15 @@ namespace Zeratool_player_C_Sharp
                 {
                     PlayingIndex = 0;
                 }
-                PlayFile(PlayingIndex);
+                res = PlayFile(PlayingIndex);
                 IndexChanged?.Invoke(this, PlayingIndex);
             }
+            return res;
         }
 
-        public void PreviousTrack()
+        public int PreviousTrack()
         {
+            int res = DirectShowUtils.S_OK;
             if (Count > 0 && PlayingIndex > 0)
             {
                 PlayingIndex--;
@@ -115,18 +118,19 @@ namespace Zeratool_player_C_Sharp
                 {
                     PlayingIndex = Count - 1;
                 }
-                PlayFile(PlayingIndex);
+                res = PlayFile(PlayingIndex);
                 IndexChanged?.Invoke(this, PlayingIndex);
             }
+            return res;
         }
 
-        public void PlayFile(int index)
+        public int PlayFile(int index)
         {
             PlayerEngine.Clear();
             PlayingIndex = index;
             IndexChanged?.Invoke(this, PlayingIndex);
             PlayerEngine.FileName = items[index];
-            PlayerEngine.Play();
+            return PlayerEngine.Play();
         }
 
         public void SetIndex(string fileName)

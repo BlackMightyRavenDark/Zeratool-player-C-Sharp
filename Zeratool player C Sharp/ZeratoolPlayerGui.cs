@@ -793,13 +793,21 @@ namespace Zeratool_player_C_Sharp
         private void btnPreviousTrack_MouseDown(object sender, MouseEventArgs e)
         {
             Activate();
-            Playlist.PreviousTrack();
+            int errorCode = Playlist.PreviousTrack();
+            if (errorCode != S_OK)
+            {
+                ShowError(this, errorCode);
+            }
         }
         
         private void btnNextTrack_MouseDown(object sender, MouseEventArgs e)
         {
             Activate();
-            Playlist.NextTrack();
+            int errorCode = Playlist.NextTrack();
+            if (errorCode != S_OK)
+            {
+                ShowError(this, errorCode);
+            }
         }
 
         private void panelZ_MouseDown(object sender, MouseEventArgs e)

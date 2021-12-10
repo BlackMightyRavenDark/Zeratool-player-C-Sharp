@@ -519,9 +519,9 @@ namespace Zeratool_player_C_Sharp
 
         protected override void WndProc(ref Message m)
         {
-            if (m.Msg == DIRECTSHOW_EVENTS_MESSAGE)
+            if (m.Msg == DIRECTSHOW_EVENTS_MESSAGE && mediaEventEx != null)
             {
-                while (mediaEventEx.GetEvent(
+                while (mediaEventEx != null && mediaEventEx.GetEvent(
                     out EventCode eventCode, out IntPtr param1, out IntPtr param2, 1) == S_OK)
                 {
                     mediaEventEx.FreeEventParams(eventCode, param1, param2);

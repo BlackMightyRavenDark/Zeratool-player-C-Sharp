@@ -103,6 +103,8 @@ namespace Zeratool_player_C_Sharp
 
         public static MainConfiguration config;
 
+        public const string APP_TITLE = "Zeratool player";
+
         public static ZeratoolPlayerGui CreatePlayer(Control parentControl, bool maximized)
         {
             return CreatePlayer(parentControl, 0, 0, ZeratoolPlayerGui.MIN_WIDTH, ZeratoolPlayerGui.MIN_HEIGHT, maximized);
@@ -251,5 +253,31 @@ namespace Zeratool_player_C_Sharp
             return !string.IsNullOrEmpty(ext) && videoFileTypes.Contains(ext.ToLower());
         }
 
+
+        public static void ShowError(ZeratoolPlayerGui playerGui, int errorCode)
+        {
+            switch (errorCode)
+            {
+                case ERROR_FILE_NAME_NOT_DEFINED:
+                    MessageBox.Show("Не указано имя файла!", APP_TITLE,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
+
+                case ERROR_FILE_NOT_FOUND:
+                    MessageBox.Show($"Файл не найден!\n{playerGui.FileName}", APP_TITLE,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
+
+                case ERROR_NOTHING_RENDERED:
+                    MessageBox.Show($"Не удалось отрендерить файл!\n{playerGui.FileName}", APP_TITLE,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
+
+                default:
+                    MessageBox.Show($"Ошибка {ZeratoolPlayerEngine.ErrorCodeToString(errorCode)}", APP_TITLE,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
+            }
+        }
     }
 }

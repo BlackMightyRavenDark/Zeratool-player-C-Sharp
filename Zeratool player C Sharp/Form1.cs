@@ -13,7 +13,6 @@ namespace Zeratool_player_C_Sharp
 {
     public partial class Form1 : Form
     {
-        public const string TITLE = "Zeratool player";
         private bool firstShown = true;
         private Point oldPos;
         private Size oldSize;
@@ -272,7 +271,7 @@ namespace Zeratool_player_C_Sharp
                     }
                     activePlayer.SetTitleBarBackColor(COLOR_ACTIVE);
                     activePlayer.BringToFront();
-                    Text = $"{activePlayer.Title} | {TITLE}";
+                    Text = $"{activePlayer.Title} | {APP_TITLE}";
                 }
             };
 
@@ -409,7 +408,7 @@ namespace Zeratool_player_C_Sharp
                 ZeratoolPlayerGui playerGui = s as ZeratoolPlayerGui;
                 if (playerGui == activePlayer)
                 {
-                    Text = $"{title} | {TITLE}";
+                    Text = $"{title} | {APP_TITLE}";
                 }
             };
 
@@ -427,7 +426,7 @@ namespace Zeratool_player_C_Sharp
                 ZeratoolPlayerGui playerGui = s as ZeratoolPlayerGui;
                 if (playerGui == activePlayer)
                 {
-                    Text = $"{playerGui.Title} | {TITLE}";
+                    Text = $"{playerGui.Title} | {APP_TITLE}";
                 }
             };
 
@@ -459,7 +458,7 @@ namespace Zeratool_player_C_Sharp
             }
             else
             {
-                MessageBox.Show("Видео-файлы не найдены!", TITLE,
+                MessageBox.Show("Видео-файлы не найдены!", APP_TITLE,
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             z.Activate();
@@ -479,32 +478,6 @@ namespace Zeratool_player_C_Sharp
 
                 default:
                     return S_OK;
-            }
-        }
-
-        private void ShowError(ZeratoolPlayerGui playerGui, int errorCode)
-        {
-            switch (errorCode)
-            {
-                case ERROR_FILE_NAME_NOT_DEFINED:
-                    MessageBox.Show("Не указано имя файла!", TITLE,
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    break;
-
-                case ERROR_FILE_NOT_FOUND:
-                    MessageBox.Show($"Файл не найден!\n{playerGui.FileName}", TITLE,
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    break;
-
-                case ERROR_NOTHING_RENDERED:
-                    MessageBox.Show($"Не удалось отрендерить файл!\n{playerGui.FileName}", TITLE,
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    break;
-
-                default:
-                    MessageBox.Show($"Ошибка {ZeratoolPlayerEngine.ErrorCodeToString(errorCode)}", TITLE,
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    break;
             }
         }
     }
