@@ -167,17 +167,14 @@ namespace Zeratool_player_C_Sharp
                 firstShown = false;
                 if (activePlayer != null)
                 {
-                    if (Environment.GetCommandLineArgs().Length > 1)
+                    string[] args = Environment.GetCommandLineArgs();
+                    if (args.Length > 1)
                     {
-                        string fn = Environment.GetCommandLineArgs()[1];
-                        activePlayer.PlayFile(fn);
+                        activePlayer.PlayFile(args[1]);
                     }
-                    else
+                    else if (!string.IsNullOrEmpty(config.playlistFileName) && File.Exists(config.playlistFileName))
                     {
-                        if (!string.IsNullOrEmpty(config.playlistFileName) && File.Exists(config.playlistFileName))
-                        {
-                            activePlayer.Playlist.LoadFromFile(config.playlistFileName);
-                        }
+                        activePlayer.Playlist.LoadFromFile(config.playlistFileName);
                     }
                 }
             }

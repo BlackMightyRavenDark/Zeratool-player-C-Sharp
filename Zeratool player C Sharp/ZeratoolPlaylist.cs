@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 
 namespace Zeratool_player_C_Sharp
@@ -8,12 +8,10 @@ namespace Zeratool_player_C_Sharp
     public class ZeratoolPlaylist
     {
         private readonly List<string> items = new List<string>();
-        private int _playingIndex = -1;
-        private ZeratoolPlayerEngine _playerEngine;
-        public ZeratoolPlayerEngine PlayerEngine => _playerEngine;
 
+        public ZeratoolPlayerEngine PlayerEngine { get; private set; }
         public int Count => items.Count;
-        public int PlayingIndex { get { return _playingIndex; } }
+        public int PlayingIndex { get; private set; } = -1;
 
         public delegate void ItemAddedDelegate(object sender, string itemString);
         public delegate void ItemRemovedDelegate(object sender, int index, string itemString);
@@ -38,7 +36,7 @@ namespace Zeratool_player_C_Sharp
 
         public ZeratoolPlaylist(ZeratoolPlayerEngine playerEngine)
         {
-            _playerEngine = playerEngine;
+            PlayerEngine = playerEngine;
         }
 
         public int Add(string fileName)
@@ -79,7 +77,7 @@ namespace Zeratool_player_C_Sharp
         public void Clear()
         {
             items.Clear();
-            _playingIndex = -1;
+            PlayingIndex = -1;
             Cleared?.Invoke(this);
             IndexChanged?.Invoke(this, -1);
         }
@@ -96,52 +94,53 @@ namespace Zeratool_player_C_Sharp
         
         public void NextTrack()
         {
-            int id = PlayingIndex + 1;
-            if (id < Count)
+            if (Count > 0 && PlayingIndex < Count - 1)
             {
-                PlayFile(id);
-
-                _playingIndex = id;
-                IndexChanged?.Invoke(this, id);
+                PlayingIndex++;
+                if (PlayingIndex < 0)
+                {
+                    PlayingIndex = 0;
+                }
+                PlayFile(PlayingIndex);
+                IndexChanged?.Invoke(this, PlayingIndex);
             }
         }
 
         public void PreviousTrack()
         {
-            int id = PlayingIndex - 1;
-            if (id >= 0)
+            if (Count > 0 && PlayingIndex > 0)
             {
-                PlayFile(id);
-                _playingIndex = id;
-                IndexChanged?.Invoke(this, id);
+                PlayingIndex--;
+                if (PlayingIndex >= Count)
+                {
+                    PlayingIndex = Count - 1;
+                }
+                PlayFile(PlayingIndex);
+                IndexChanged?.Invoke(this, PlayingIndex);
             }
         }
 
         public void PlayFile(int index)
         {
-            _playerEngine.Clear();
-            _playingIndex = index;
-            IndexChanged?.Invoke(this, _playingIndex);
-            _playerEngine.FileName = items[index];
-            _playerEngine.Play();
+            PlayerEngine.Clear();
+            PlayingIndex = index;
+            IndexChanged?.Invoke(this, PlayingIndex);
+            PlayerEngine.FileName = items[index];
+            PlayerEngine.Play();
         }
 
         public void SetIndex(string fileName)
         {
             int id = items.IndexOf(fileName);
-            if (_playingIndex != id)
-            {
-                _playingIndex = id;
-                IndexChanged?.Invoke(this, _playingIndex);
-            }
+            SetIndex(id);
         }
 
         public void SetIndex(int index)
         {
-            if (_playingIndex != index)
+            if (PlayingIndex != index)
             {
-                _playingIndex = index;
-                IndexChanged?.Invoke(this, _playingIndex);
+                PlayingIndex = index;
+                IndexChanged?.Invoke(this, PlayingIndex);
             }
         }
 
@@ -186,17 +185,15 @@ namespace Zeratool_player_C_Sharp
                     if (jt != null)
                     {
                         int id = jt.Value<int>();
-                        _playingIndex = (id >= Count || id < 0) ? 0 : id;
-
+                        PlayingIndex = (id >= Count || id < 0) ? 0 : id;
                     }
                 }
                 else
                 {
-                    _playingIndex = -1;
+                    PlayingIndex = -1;
                 }
-                
             }
-            IndexChanged?.Invoke(this, _playingIndex);
+            IndexChanged?.Invoke(this, PlayingIndex);
         }
 
         public override string ToString()
