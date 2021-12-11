@@ -8,7 +8,7 @@ using static Zeratool_player_C_Sharp.DirectShowUtils;
 
 namespace Zeratool_player_C_Sharp
 {
-    public class FiltersConfiguraion
+    public sealed class FiltersConfiguraion
     {
         public List<FilterItem> mediaSplittersAVI = new List<FilterItem>();
         public List<FilterItem> mediaSplittersMPG = new List<FilterItem>();
@@ -354,7 +354,7 @@ namespace Zeratool_player_C_Sharp
         }
     }
 
-    public class FilterItem
+    public sealed class FilterItem
     {
         public Guid Guid { get; private set; }
         public string DisplayName { get; private set; }
@@ -366,7 +366,7 @@ namespace Zeratool_player_C_Sharp
         }
     }
 
-    public class MonikerItem
+    public sealed class MonikerItem
     {
         public IMoniker Moniker { get; private set; }
         public IPropertyBag PropertyBag { get; private set; }

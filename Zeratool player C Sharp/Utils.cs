@@ -1,19 +1,18 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Reflection;
-using System.IO;
 using Shell32;
 using Newtonsoft.Json.Linq;
 using static Zeratool_player_C_Sharp.ZeratoolPlayerEngine;
-using static Zeratool_player_C_Sharp.DirectShowUtils;
 
 namespace Zeratool_player_C_Sharp
 {
     public static class Utils
     {
-        public class MainConfiguration
+        public sealed class MainConfiguration
         {
             public string configFileName;
             public string selfPath;
@@ -71,7 +70,7 @@ namespace Zeratool_player_C_Sharp
             }
         }
 
-        public class PlayerListItem
+        public sealed class PlayerListItem
         {
             public string DisplayName { get; private set; }
             public ZeratoolPlayerGui Player { get; private set; }
@@ -147,6 +146,19 @@ namespace Zeratool_player_C_Sharp
         }
 
         public static int Clamp(int x, int min, int max)
+        {
+            if (x < min)
+            {
+                x = min;
+            }
+            else if (x > max)
+            {
+                x = max;
+            }
+            return x;
+        }
+
+        public static double Clamp(double x, double min, double max)
         {
             if (x < min)
             {

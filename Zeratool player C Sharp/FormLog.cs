@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using Newtonsoft.Json.Linq;
 using static Zeratool_player_C_Sharp.Utils;
-using static Zeratool_player_C_Sharp.ZeratoolPlayerEngine;
 
 namespace Zeratool_player_C_Sharp
 {
@@ -179,7 +178,7 @@ namespace Zeratool_player_C_Sharp
                 {
                     ListViewItem item = new ListViewItem(logItem.DateTime.ToString("yyyy.MM.dd, HH:mm:ss"));
                     item.SubItems.Add(logItem.Event);
-                    item.SubItems.Add(logItem.Result);
+                    item.SubItems.Add(logItem.ShortResultDescription);
                     lvLog.Items.Add(item);
                 }
             }
@@ -193,10 +192,9 @@ namespace Zeratool_player_C_Sharp
             {
                 ListViewItem item = new ListViewItem(logItem.DateTime.ToString("yyyy.MM.dd, HH:mm:ss"));
                 item.SubItems.Add(logItem.Event);
-                item.SubItems.Add(logItem.Result);
+                item.SubItems.Add(logItem.ShortResultDescription);
                 lvLog.Items.Add(item);
             }
         }
-
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using DirectShowLib;
@@ -12,23 +12,6 @@ namespace Zeratool_player_C_Sharp
 {
     public class ZeratoolPlayerEngine : Control
     {
-        public class ZeratoolLogItem
-        {
-            private DateTime _dateTime;
-            private string _event;
-            private string _result;
-            public DateTime DateTime => _dateTime;
-            public string Event => _event;
-            public string Result => _result;
-
-            public ZeratoolLogItem(DateTime dateTime, string eventDescription, string resultDescription)
-            {
-                _dateTime = dateTime;
-                _event = eventDescription;
-                _result = resultDescription;
-            }
-        }
-
         private IGraphBuilder graphBuilder = null;
         private ICaptureGraphBuilder2 captureGraphBuilder2 = null;
         private IVideoWindow videoWindow = null;
@@ -56,14 +39,12 @@ namespace Zeratool_player_C_Sharp
         public enum DirectShowGraphMode { Automatic, Intellectual, Manual };
         public enum PlayerState { Null, Playing, Paused, Stopped };
 
-        private DateTime creationDate;
+        private readonly DateTime creationDate;
         private DirectShowGraphMode _graphMode = DirectShowGraphMode.Manual;
-        private PlayerState _state = PlayerState.Null;
         private int _videoWidth = 0;
         private int _videoHeight = 0;
         private int _volume = 25;
         private Rectangle _outputScreenRect = new Rectangle(0, 0, 0, 0);
-        private List<ZeratoolLogItem> _log = new List<ZeratoolLogItem>();
 
         public string FileName { get; set; }
         public DirectShowGraphMode GraphMode 
@@ -80,7 +61,7 @@ namespace Zeratool_player_C_Sharp
                 }
             } 
         }
-        public PlayerState State => _state;
+        public PlayerState State { get; private set; } = PlayerState.Null;
         public Control VideoOutputWindow { get; set; }
         public Rectangle OutputScreenRect { get { return _outputScreenRect; } set { SetScreenRect(value); } }
         public Size VideoSize => new Size(_videoWidth, _videoHeight);
@@ -111,11 +92,7 @@ namespace Zeratool_player_C_Sharp
             {
                 if (mediaPosition != null)
                 {
-                    double newPos = value;
-                    if (newPos < 0.0)
-                        newPos = 0.0;
-                    else if (newPos > Duration)
-                        newPos = Duration;
+                    double newPos = Clamp(value, 0.0, Duration);
                     mediaPosition.put_CurrentPosition(newPos);
                 }
             }         
@@ -127,11 +104,8 @@ namespace Zeratool_player_C_Sharp
                 return _volume;
             }
             set
-            { 
-                if (value < 0)
-                    value = 0;
-                else if (value > 100)
-                    value = 100;
+            {
+                value = Clamp(value, 0, 100);
                 if (_volume != value)
                 {
                     _volume = value;
@@ -148,7 +122,7 @@ namespace Zeratool_player_C_Sharp
 
         public readonly FiltersConfiguraion filters = new FiltersConfiguraion();
 
-        public List<ZeratoolLogItem> Log => _log;
+        public List<ZeratoolLogItem> Log { get; private set; }
 
         public delegate void ClearedDelegate(object sender);
         public delegate void TrackRenderedDelegate(object sender, int errorCode);
@@ -165,6 +139,7 @@ namespace Zeratool_player_C_Sharp
         public ZeratoolPlayerEngine()
         {
             creationDate = DateTime.Now;
+            Log = new List<ZeratoolLogItem>();
             ClearLog();
             filters.SetDefaults();
         }
@@ -271,7 +246,7 @@ namespace Zeratool_player_C_Sharp
                         mediaEventEx.SetNotifyWindow(Handle, DIRECTSHOW_EVENTS_MESSAGE, new IntPtr(0));
                     }
 
-                    _state = PlayerState.Stopped;
+                    State = PlayerState.Stopped;
                     TrackRendered?.Invoke(this, errorCode);
 
                     AddToLog("Graph build", ErrorCodeToString(errorCode));
@@ -430,7 +405,7 @@ namespace Zeratool_player_C_Sharp
 
             mediaPosition = (IMediaPosition)graphBuilder;
 
-            _state = PlayerState.Stopped;
+            State = PlayerState.Stopped;
 
             return S_OK;
         }
@@ -941,7 +916,7 @@ namespace Zeratool_player_C_Sharp
 
             mediaPosition = (IMediaPosition)graphBuilder;
 
-            _state = PlayerState.Stopped;
+            State = PlayerState.Stopped;
 
             return S_OK;
         }
@@ -1169,7 +1144,7 @@ namespace Zeratool_player_C_Sharp
             }
             if (res == S_OK)
             {
-                _state = PlayerState.Playing;
+                State = PlayerState.Playing;
                 mediaControl.Run();
                 return S_OK;
             }
@@ -1181,7 +1156,7 @@ namespace Zeratool_player_C_Sharp
             if (State != PlayerState.Null && mediaControl != null)
             {
                 mediaControl.Pause();
-                _state = PlayerState.Paused;
+                State = PlayerState.Paused;
                 return true;
             }
             return false;
@@ -1192,7 +1167,7 @@ namespace Zeratool_player_C_Sharp
             if (State != PlayerState.Null && mediaControl != null)
             {
                 mediaControl.Stop();
-                _state = PlayerState.Stopped;
+                State = PlayerState.Stopped;
                 return true;
             }
             return false;
@@ -1313,23 +1288,16 @@ namespace Zeratool_player_C_Sharp
                 graphBuilder = null;
             }
 
-            _state = PlayerState.Null;
+            State = PlayerState.Null;
 
             Cleared?.Invoke(this);
         }
 
         public static int GetDecibelsVolume(int volume)
         {
-            long vol = volume * UInt16.MaxValue / 100;
-            int db = (int)Math.Truncate(100 * 33.22 * Math.Log((vol + 1e-6) / UInt16.MaxValue) / Math.Log(10));
-            if (db < -10000)
-            {
-                db = -10000;
-            }
-            else if (db > 0)
-            {
-                db = 0;
-            }
+            long vol = volume * ushort.MaxValue / 100;
+            int db = (int)Math.Truncate(100 * 33.22 * Math.Log((vol + 1e-6) / ushort.MaxValue) / Math.Log(10));
+            db = Clamp(db, -10000, 0);
             return db;
         }
 
@@ -1347,6 +1315,20 @@ namespace Zeratool_player_C_Sharp
                 default:
                     return DirectShowUtils.ErrorCodeToString(errorCode);
             }
+        }
+    }
+
+    public sealed class ZeratoolLogItem
+    {
+        public DateTime DateTime { get; private set; }
+        public string Event { get; private set; }
+        public string ShortResultDescription { get; private set; }
+
+        public ZeratoolLogItem(DateTime dateTime, string eventDescription, string shortResultDesultDescription)
+        {
+            DateTime = dateTime;
+            Event = eventDescription;
+            ShortResultDescription = shortResultDesultDescription;
         }
     }
 }
