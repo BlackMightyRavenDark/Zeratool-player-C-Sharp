@@ -220,47 +220,5 @@ namespace Zeratool_player_C_Sharp
                 default: return $"Error {errorCode}";
             }
         }
-
-
-
-
-
-        //Helper classes
-        public class FilterItem
-        {
-            private Guid guid;
-            private string name;
-            public string DisplayName => name;
-
-            public FilterItem(Guid guid, string displayName)
-            {
-                this.guid = guid;
-                this.name = displayName;
-            }
-
-            public Guid GetGuid()
-            {
-                return this.guid;
-            }
-        }
-
-        public class MonikerItem
-        {
-            private IMoniker _moniker;
-            private IPropertyBag _propertyBag;
-            private string _displayName;
-            
-            public string DisplayName => _displayName;
-
-            public IMoniker Moniker => _moniker;
-
-            public MonikerItem(IMoniker moniker, IPropertyBag propertyBag, string displayName)
-            {
-                _moniker = moniker;
-                _propertyBag = propertyBag;
-                _displayName = displayName;
-            }
-
-        }
     }
 }
