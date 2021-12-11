@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using Newtonsoft.Json.Linq;
 using static Zeratool_player_C_Sharp.Utils;
-using static Zeratool_player_C_Sharp.ZeratoolPlayerEngine;
 using static Zeratool_player_C_Sharp.ZeratoolPlayerGui;
 using static Zeratool_player_C_Sharp.DirectShowUtils;
 
@@ -201,7 +200,7 @@ namespace Zeratool_player_C_Sharp
             {
                 case Keys.Space:
                 case Keys.Insert:
-                    PlayerPlayPause(controlledPlayer);
+                    controlledPlayer.TogglePlayPause();
                     break;
 
                 case Keys.Left:
@@ -340,7 +339,7 @@ namespace Zeratool_player_C_Sharp
                     case PlayerAction.Play:
                         if (errorCode != S_OK)
                         {
-                            ShowError(playerGui, errorCode);
+                            ShowErrorMessage(playerGui, errorCode);
                         }
                         break;
 
@@ -462,23 +461,6 @@ namespace Zeratool_player_C_Sharp
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             z.Activate();
-        }
-
-        private int PlayerPlayPause(ZeratoolPlayerGui playerGui)
-        {
-            switch (playerGui.State)
-            {
-                case PlayerState.Null:
-                case PlayerState.Paused:
-                case PlayerState.Stopped:
-                    return playerGui.Play();
-
-                case PlayerState.Playing:
-                    return playerGui.Pause() ? S_OK : S_FALSE;
-
-                default:
-                    return S_OK;
-            }
         }
     }
 }

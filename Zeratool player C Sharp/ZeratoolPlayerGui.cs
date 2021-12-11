@@ -454,6 +454,23 @@ namespace Zeratool_player_C_Sharp
             panelControls.Visible = flag;
         }
 
+        public int TogglePlayPause()
+        {
+            switch (State)
+            {
+                case PlayerState.Null:
+                case PlayerState.Stopped:
+                case PlayerState.Paused:
+                    return Play();
+
+                case PlayerState.Playing:
+                    return Pause() ? S_OK : S_FALSE;
+
+                default:
+                    return S_OK;
+            }
+        }
+
         public void ToggleFullscreenMode()
         {
             if (IsMaximized)
@@ -796,7 +813,7 @@ namespace Zeratool_player_C_Sharp
             int errorCode = Playlist.PreviousTrack();
             if (errorCode != S_OK)
             {
-                ShowError(this, errorCode);
+                ShowErrorMessage(this, errorCode);
             }
         }
         
@@ -806,7 +823,7 @@ namespace Zeratool_player_C_Sharp
             int errorCode = Playlist.NextTrack();
             if (errorCode != S_OK)
             {
-                ShowError(this, errorCode);
+                ShowErrorMessage(this, errorCode);
             }
         }
 

@@ -253,8 +253,7 @@ namespace Zeratool_player_C_Sharp
             return !string.IsNullOrEmpty(ext) && videoFileTypes.Contains(ext.ToLower());
         }
 
-
-        public static void ShowError(ZeratoolPlayerGui playerGui, int errorCode)
+        public static void ShowErrorMessage(ZeratoolPlayerGui playerGui, int errorCode)
         {
             switch (errorCode)
             {

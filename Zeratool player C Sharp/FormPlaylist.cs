@@ -294,7 +294,7 @@ namespace Zeratool_player_C_Sharp
                 int errorCode = activePlayer.Playlist.PlayFile(lbPlaylist.SelectedIndex);
                 if (errorCode != DirectShowUtils.S_OK)
                 {
-                    ShowError(activePlayer, errorCode);
+                    ShowErrorMessage(activePlayer, errorCode);
                 }
             }
         }
