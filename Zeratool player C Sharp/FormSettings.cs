@@ -64,6 +64,8 @@ namespace Zeratool_player_C_Sharp
                     this.Center(Screen.PrimaryScreen.WorkingArea);
                 }
             };
+
+            ListKeyboardShortcuts();
         }
 
         private void FormSettings_FormClosing(object sender, FormClosingEventArgs e)
@@ -173,6 +175,17 @@ namespace Zeratool_player_C_Sharp
                 comboBoxAudioRenderers.Items.Add(item.DisplayName);
             }
             comboBoxAudioRenderers.SelectedIndex = playerEngine.filters.prefferedAudioRendererId;
+        }
+
+        private void ListKeyboardShortcuts()
+        {
+            listViewKeyboard.Items.Clear();
+            foreach (KeyboardShortcut keyboardShortcut in keyBindings.keyboardShortcuts)
+            {
+                ListViewItem listViewItem = new ListViewItem(keyboardShortcut.ToString());
+                listViewItem.SubItems.Add(keyboardShortcut.Title);
+                listViewKeyboard.Items.Add(listViewItem);
+            }
         }
 
         private void OnPlayerCreated(ZeratoolPlayerGui z, bool maximized)

@@ -196,23 +196,32 @@ namespace Zeratool_player_C_Sharp
 
         private void PlayerHandleKeyboard(ZeratoolPlayerGui controlledPlayer, KeyEventArgs e)
         {
+            KeyboardShortcutAction keyboardShortcutAction = keyBindings.FindShortcutAction(e.KeyData);
+            if (keyboardShortcutAction != KeyboardShortcutAction.None)
+            {
+                switch (keyboardShortcutAction)
+                {
+                    case KeyboardShortcutAction.SeekForward:
+                        {
+                            double step = 3.0;
+                            if (controlledPlayer.TrackDuration - controlledPlayer.TrackPosition > step)
+                            {
+                                controlledPlayer.Seek(step);
+                            }
+                            break;
+                        }
+
+                    case KeyboardShortcutAction.SeekBackward:
+                        controlledPlayer.Seek(-3.0);
+                        break;
+                }
+            }
+
             switch (e.KeyCode)
             {
                 case Keys.Space:
                 case Keys.Insert:
                     controlledPlayer.TogglePlayPause();
-                    break;
-
-                case Keys.Left:
-                    controlledPlayer.Seek(e.Modifiers == Keys.Shift ? -10.0 : -3.0);
-                    break;
-
-                case Keys.Right:
-                    double step = e.Modifiers == Keys.Shift ? 10.0 : 3.0;
-                    if (controlledPlayer.TrackDuration - controlledPlayer.TrackPosition > step)
-                    {
-                        controlledPlayer.Seek(step);
-                    }
                     break;
 
                 case Keys.Up:

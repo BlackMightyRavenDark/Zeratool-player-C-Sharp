@@ -99,6 +99,7 @@ namespace Zeratool_player_C_Sharp
         public static ZeratoolPlayerGui activePlayer = null;
         public static List<MonikerItem> audioOutputMonikers = new List<MonikerItem>();
         public static List<string> videoFileTypes = new List<string>() { ".avi", ".mpg", ".mpeg", ".ts", ".mp4", ".mkv", ".webm" };
+        public static readonly KeyBindings keyBindings = new KeyBindings();
 
         public static MainConfiguration config;
 

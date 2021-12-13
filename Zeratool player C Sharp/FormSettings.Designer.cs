@@ -63,6 +63,10 @@ namespace Zeratool_player_C_Sharp
             this.rbGraphModeManual = new System.Windows.Forms.RadioButton();
             this.rbGraphModeIntellectual = new System.Windows.Forms.RadioButton();
             this.rbGraphModeAutomatic = new System.Windows.Forms.RadioButton();
+            this.tabPageKeyboard = new System.Windows.Forms.TabPage();
+            this.listViewKeyboard = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.comboBoxPlayers = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.tabControlSettings.SuspendLayout();
@@ -73,6 +77,7 @@ namespace Zeratool_player_C_Sharp
             this.tabPageVideo.SuspendLayout();
             this.tabPageAudio.SuspendLayout();
             this.gbGraphDracula.SuspendLayout();
+            this.tabPageKeyboard.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControlSettings
@@ -81,6 +86,7 @@ namespace Zeratool_player_C_Sharp
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControlSettings.Controls.Add(this.tabPageDirectShow);
+            this.tabControlSettings.Controls.Add(this.tabPageKeyboard);
             this.tabControlSettings.Location = new System.Drawing.Point(0, 29);
             this.tabControlSettings.Name = "tabControlSettings";
             this.tabControlSettings.SelectedIndex = 0;
@@ -458,6 +464,46 @@ namespace Zeratool_player_C_Sharp
             this.rbGraphModeAutomatic.UseVisualStyleBackColor = true;
             this.rbGraphModeAutomatic.CheckedChanged += new System.EventHandler(this.rbGraphModeAutomatic_CheckedChanged);
             // 
+            // tabPageKeyboard
+            // 
+            this.tabPageKeyboard.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.tabPageKeyboard.Controls.Add(this.listViewKeyboard);
+            this.tabPageKeyboard.Location = new System.Drawing.Point(4, 22);
+            this.tabPageKeyboard.Name = "tabPageKeyboard";
+            this.tabPageKeyboard.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageKeyboard.Size = new System.Drawing.Size(576, 322);
+            this.tabPageKeyboard.TabIndex = 1;
+            this.tabPageKeyboard.Text = "Клавиатура";
+            // 
+            // listViewKeyboard
+            // 
+            this.listViewKeyboard.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listViewKeyboard.BackColor = System.Drawing.SystemColors.Control;
+            this.listViewKeyboard.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2});
+            this.listViewKeyboard.FullRowSelect = true;
+            this.listViewKeyboard.HideSelection = false;
+            this.listViewKeyboard.Location = new System.Drawing.Point(0, 0);
+            this.listViewKeyboard.MultiSelect = false;
+            this.listViewKeyboard.Name = "listViewKeyboard";
+            this.listViewKeyboard.Size = new System.Drawing.Size(568, 314);
+            this.listViewKeyboard.TabIndex = 0;
+            this.listViewKeyboard.UseCompatibleStateImageBehavior = false;
+            this.listViewKeyboard.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Клавиша";
+            this.columnHeader1.Width = 101;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Действие";
+            this.columnHeader2.Width = 455;
+            // 
             // comboBoxPlayers
             // 
             this.comboBoxPlayers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -506,6 +552,7 @@ namespace Zeratool_player_C_Sharp
             this.tabPageAudio.PerformLayout();
             this.gbGraphDracula.ResumeLayout(false);
             this.gbGraphDracula.PerformLayout();
+            this.tabPageKeyboard.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -548,5 +595,9 @@ namespace Zeratool_player_C_Sharp
         private System.Windows.Forms.ComboBox comboBoxSplittersMKV;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Button btnSaveFilters;
+        private System.Windows.Forms.TabPage tabPageKeyboard;
+        private System.Windows.Forms.ListView listViewKeyboard;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
     }
 }
