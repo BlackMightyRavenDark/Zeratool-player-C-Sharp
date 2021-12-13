@@ -13,7 +13,7 @@ namespace Zeratool_player_C_Sharp
             SetDefaults();
         }
 
-        public void SetDefaults()
+        private void SetDefaults()
         {
             keyboardShortcuts.Clear();
 

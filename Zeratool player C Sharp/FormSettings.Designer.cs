@@ -65,8 +65,8 @@ namespace Zeratool_player_C_Sharp
             this.rbGraphModeAutomatic = new System.Windows.Forms.RadioButton();
             this.tabPageKeyboard = new System.Windows.Forms.TabPage();
             this.listViewKeyboard = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderKey = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderAction = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.comboBoxPlayers = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.tabControlSettings.SuspendLayout();
@@ -482,27 +482,29 @@ namespace Zeratool_player_C_Sharp
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listViewKeyboard.BackColor = System.Drawing.SystemColors.Control;
             this.listViewKeyboard.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2});
+            this.columnHeaderKey,
+            this.columnHeaderAction});
             this.listViewKeyboard.FullRowSelect = true;
             this.listViewKeyboard.HideSelection = false;
-            this.listViewKeyboard.Location = new System.Drawing.Point(0, 0);
+            this.listViewKeyboard.Location = new System.Drawing.Point(5, 0);
             this.listViewKeyboard.MultiSelect = false;
             this.listViewKeyboard.Name = "listViewKeyboard";
             this.listViewKeyboard.Size = new System.Drawing.Size(568, 314);
             this.listViewKeyboard.TabIndex = 0;
             this.listViewKeyboard.UseCompatibleStateImageBehavior = false;
             this.listViewKeyboard.View = System.Windows.Forms.View.Details;
+            this.listViewKeyboard.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listViewKeyboard_KeyDown);
+            this.listViewKeyboard.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewKeyboard_MouseDoubleClick);
             // 
-            // columnHeader1
+            // columnHeaderKey
             // 
-            this.columnHeader1.Text = "Клавиша";
-            this.columnHeader1.Width = 101;
+            this.columnHeaderKey.Text = "Клавиша";
+            this.columnHeaderKey.Width = 165;
             // 
-            // columnHeader2
+            // columnHeaderAction
             // 
-            this.columnHeader2.Text = "Действие";
-            this.columnHeader2.Width = 455;
+            this.columnHeaderAction.Text = "Действие";
+            this.columnHeaderAction.Width = 397;
             // 
             // comboBoxPlayers
             // 
@@ -597,7 +599,7 @@ namespace Zeratool_player_C_Sharp
         private System.Windows.Forms.Button btnSaveFilters;
         private System.Windows.Forms.TabPage tabPageKeyboard;
         private System.Windows.Forms.ListView listViewKeyboard;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ColumnHeader columnHeaderKey;
+        private System.Windows.Forms.ColumnHeader columnHeaderAction;
     }
 }

@@ -77,6 +77,22 @@ namespace Zeratool_player_C_Sharp
             }
         }
 
+        private void listViewKeyboard_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && listViewKeyboard.SelectedIndices.Count > 0)
+            {
+                SetKeyboardShortcut(listViewKeyboard.SelectedIndices[0]);
+            }
+        }
+
+        private void listViewKeyboard_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter && listViewKeyboard.SelectedIndices.Count > 0)
+            {
+                SetKeyboardShortcut(listViewKeyboard.SelectedIndices[0]);
+            }
+        }
+
         private void ListPlayers()
         {
             comboBoxPlayers.Items.Clear();
@@ -184,6 +200,7 @@ namespace Zeratool_player_C_Sharp
             {
                 ListViewItem listViewItem = new ListViewItem(keyboardShortcut.ToString());
                 listViewItem.SubItems.Add(keyboardShortcut.Title);
+                listViewItem.Tag = keyboardShortcut;
                 listViewKeyboard.Items.Add(listViewItem);
             }
         }
@@ -448,6 +465,20 @@ namespace Zeratool_player_C_Sharp
             }
             MessageBox.Show("Не выбран плеер!", "Ошибка!",
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void SetKeyboardShortcut(int listViewSelectedId)
+        {
+            KeyboardShortcut keyboardShortcut = (KeyboardShortcut)(listViewKeyboard.Items[listViewSelectedId].Tag);
+            FormKeyListener formKeyListener = new FormKeyListener(keyboardShortcut);
+            if (formKeyListener.ShowDialog() == DialogResult.OK)
+            {
+                KeyboardShortcut newShortcut =
+                    new KeyboardShortcut(formKeyListener.ResultKeys, keyboardShortcut.ShortcutAction, keyboardShortcut.Title);
+                listViewKeyboard.Items[listViewSelectedId].Tag = newShortcut;
+                listViewKeyboard.Items[listViewSelectedId].Text = newShortcut.ToString();
+                keyBindings.keyboardShortcuts[listViewSelectedId] = newShortcut;
+            }
         }
     }
 }
