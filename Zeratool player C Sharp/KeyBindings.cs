@@ -17,8 +17,16 @@ namespace Zeratool_player_C_Sharp
         {
             keyboardShortcuts.Clear();
 
+            keyboardShortcuts.Add(new KeyboardShortcut(Keys.Space, KeyboardShortcutAction.PlayPauseToggle, "Плей / Пауза"));
             keyboardShortcuts.Add(new KeyboardShortcut(Keys.Left, KeyboardShortcutAction.SeekBackward, "Перемотка назад"));
             keyboardShortcuts.Add(new KeyboardShortcut(Keys.Right, KeyboardShortcutAction.SeekForward, "Перемотка вперёд"));
+            keyboardShortcuts.Add(new KeyboardShortcut(Keys.Shift | Keys.Left, KeyboardShortcutAction.JumpBackward, "Прыжок назад"));
+            keyboardShortcuts.Add(new KeyboardShortcut(Keys.Shift | Keys.Right, KeyboardShortcutAction.JumpForward, "Прыжок вперёд"));
+            keyboardShortcuts.Add(new KeyboardShortcut(Keys.Up, KeyboardShortcutAction.VolumeUp, "Прибавить громкость"));
+            keyboardShortcuts.Add(new KeyboardShortcut(Keys.Down, KeyboardShortcutAction.VolumeDown, "Убавить громкость"));
+            keyboardShortcuts.Add(new KeyboardShortcut(Keys.PageDown, KeyboardShortcutAction.FullscreenToggle, "Полный экран"));
+            keyboardShortcuts.Add(new KeyboardShortcut(Keys.Delete, KeyboardShortcutAction.ControlPanelVisibilityToggle, "Показать / скрыть панель управления"));
+            keyboardShortcuts.Add(new KeyboardShortcut(Keys.R, KeyboardShortcutAction.RebuildGraph, "Перерендерить"));
         }
 
         public KeyboardShortcutAction FindShortcutAction(Keys keys)
@@ -37,8 +45,16 @@ namespace Zeratool_player_C_Sharp
     public enum KeyboardShortcutAction
     {
         None, //no action
+        PlayPauseToggle,
         SeekForward,
-        SeekBackward
+        SeekBackward,
+        JumpForward,
+        JumpBackward,
+        VolumeUp,
+        VolumeDown,
+        FullscreenToggle,
+        ControlPanelVisibilityToggle,
+        RebuildGraph
     }
 
     public sealed class KeyboardShortcut

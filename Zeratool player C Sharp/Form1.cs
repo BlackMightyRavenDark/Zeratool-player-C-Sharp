@@ -201,6 +201,10 @@ namespace Zeratool_player_C_Sharp
             {
                 switch (keyboardShortcutAction)
                 {
+                    case KeyboardShortcutAction.PlayPauseToggle:
+                        controlledPlayer.TogglePlayPause();
+                        break;
+
                     case KeyboardShortcutAction.SeekForward:
                         {
                             double step = 3.0;
@@ -214,41 +218,49 @@ namespace Zeratool_player_C_Sharp
                     case KeyboardShortcutAction.SeekBackward:
                         controlledPlayer.Seek(-3.0);
                         break;
+
+                    case KeyboardShortcutAction.JumpForward:
+                        {
+                            double step = 10.0;
+                            if (controlledPlayer.TrackDuration - controlledPlayer.TrackPosition > step)
+                            {
+                                controlledPlayer.Seek(step);
+                            }
+                            break;
+                        }
+
+                    case KeyboardShortcutAction.JumpBackward:
+                        controlledPlayer.Seek(-10.0);
+                        break;
+
+                    case KeyboardShortcutAction.VolumeUp:
+                        controlledPlayer.Volume += 5;
+                        break;
+
+                    case KeyboardShortcutAction.VolumeDown:
+                        controlledPlayer.Volume -= 5;
+                        break;
+
+                    case KeyboardShortcutAction.FullscreenToggle:
+                        controlledPlayer.ToggleFullscreenMode();
+                        break;
+
+                    case KeyboardShortcutAction.ControlPanelVisibilityToggle:
+                        controlledPlayer.IsControlsVisible = !controlledPlayer.IsControlsVisible;
+                        controlledPlayer.ResizeOutputWindow();
+                        break;
+
+                    case KeyboardShortcutAction.RebuildGraph:
+                        {
+                            double pos = controlledPlayer.TrackPosition;
+                            controlledPlayer.Clear();
+                            if (controlledPlayer.Play() == S_OK && pos > 0.0)
+                            {
+                                controlledPlayer.TrackPosition = pos;
+                            }
+                            break;
+                        }
                 }
-            }
-
-            switch (e.KeyCode)
-            {
-                case Keys.Space:
-                case Keys.Insert:
-                    controlledPlayer.TogglePlayPause();
-                    break;
-
-                case Keys.Up:
-                    controlledPlayer.Volume += 5;
-                    break;
-
-                case Keys.Down:
-                    controlledPlayer.Volume -= 5;
-                    break;
-
-                case Keys.R:
-                    double pos = controlledPlayer.TrackPosition;
-                    controlledPlayer.Clear();
-                    if (controlledPlayer.Play() == S_OK && pos > 0.0)
-                    {
-                        controlledPlayer.TrackPosition = pos;
-                    }
-                    break;
-
-                case Keys.Delete:
-                    controlledPlayer.IsControlsVisible = !controlledPlayer.IsControlsVisible;
-                    controlledPlayer.ResizeOutputWindow();
-                    break;
-
-                case Keys.PageDown:
-                    controlledPlayer.ToggleFullscreenMode();
-                    break;
             }
         }
 
