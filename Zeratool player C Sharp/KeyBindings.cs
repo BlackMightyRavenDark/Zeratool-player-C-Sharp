@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
 using System.Windows.Forms;
+using Newtonsoft.Json.Linq;
 
 namespace Zeratool_player_C_Sharp
 {
@@ -8,12 +11,7 @@ namespace Zeratool_player_C_Sharp
         public static readonly KeysConverter keysConverter = new KeysConverter();
         public readonly List<KeyboardShortcut> keyboardShortcuts = new List<KeyboardShortcut>();
 
-        public KeyBindings()
-        {
-            SetDefaults();
-        }
-
-        private void SetDefaults()
+        public void SetDefaults()
         {
             keyboardShortcuts.Clear();
 
@@ -39,6 +37,54 @@ namespace Zeratool_player_C_Sharp
                 }
             }
             return KeyboardShortcutAction.None;
+        }
+
+        public void SaveToJson(string fileName)
+        {
+            JArray jArray = new JArray();
+            foreach (KeyboardShortcut ks in keyboardShortcuts)
+            {
+                JObject j = new JObject();
+                j["title"] = ks.Title;
+                j["action"] = ks.ShortcutAction.ToString();
+                j["key"] = keysConverter.ConvertToString(ks);
+                jArray.Add(j);
+            }
+            JObject json = new JObject();
+            json.Add(new JProperty("keyList", jArray));
+            if (File.Exists(fileName))
+            {
+                File.Delete(fileName);
+            }
+            File.WriteAllText(fileName, json.ToString());
+        }
+
+        public bool LoadFromJson(string fileName)
+        {
+            keyboardShortcuts.Clear();
+            try
+            {
+                JObject json = JObject.Parse(File.ReadAllText(fileName));
+                JArray jArray = json.Value<JArray>("keyList");
+                foreach (JObject j in jArray)
+                {
+                    string action = j.Value<string>("action");
+                    if (Enum.TryParse(action, out KeyboardShortcutAction keyboardShortcutAction))
+                    {
+                        string title = j.Value<string>("title");
+                        string key = j.Value<string>("key");
+                        Keys keys = (Keys)keysConverter.ConvertFromString(key);
+                        keyboardShortcuts.Add(new KeyboardShortcut(keys, keyboardShortcutAction, title));
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                SetDefaults();
+                return false;
+            }
         }
     }
 

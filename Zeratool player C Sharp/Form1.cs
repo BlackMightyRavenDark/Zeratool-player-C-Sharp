@@ -103,6 +103,19 @@ namespace Zeratool_player_C_Sharp
                 }
             };
 
+            if (!string.IsNullOrEmpty(config.keyboardConfigFileName) && !string.IsNullOrWhiteSpace(config.keyboardConfigFileName) &&
+                File.Exists(config.keyboardConfigFileName))
+            {
+                if (!keyBindings.LoadFromJson(config.keyboardConfigFileName))
+                {
+                    File.Delete(config.keyboardConfigFileName);
+                }
+            }
+            else
+            {
+                keyBindings.SetDefaults();
+            }
+
             ListAudioRenderers(audioOutputMonikers);
 
             PlayerCreated += OnPlayerCreated;

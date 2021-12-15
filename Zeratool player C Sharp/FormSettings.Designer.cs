@@ -29,6 +29,7 @@ namespace Zeratool_player_C_Sharp
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSettings));
             this.tabControlSettings = new System.Windows.Forms.TabControl();
             this.tabPageDirectShow = new System.Windows.Forms.TabPage();
@@ -64,11 +65,14 @@ namespace Zeratool_player_C_Sharp
             this.rbGraphModeIntellectual = new System.Windows.Forms.RadioButton();
             this.rbGraphModeAutomatic = new System.Windows.Forms.RadioButton();
             this.tabPageKeyboard = new System.Windows.Forms.TabPage();
+            this.btnSetDefaultsKeyboardConfig = new System.Windows.Forms.Button();
+            this.btnSaveKeyboard = new System.Windows.Forms.Button();
             this.listViewKeyboard = new System.Windows.Forms.ListView();
             this.columnHeaderKey = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderAction = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.comboBoxPlayers = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.tabControlSettings.SuspendLayout();
             this.tabPageDirectShow.SuspendLayout();
             this.groupBoxFilters.SuspendLayout();
@@ -467,6 +471,8 @@ namespace Zeratool_player_C_Sharp
             // tabPageKeyboard
             // 
             this.tabPageKeyboard.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.tabPageKeyboard.Controls.Add(this.btnSetDefaultsKeyboardConfig);
+            this.tabPageKeyboard.Controls.Add(this.btnSaveKeyboard);
             this.tabPageKeyboard.Controls.Add(this.listViewKeyboard);
             this.tabPageKeyboard.Location = new System.Drawing.Point(4, 22);
             this.tabPageKeyboard.Name = "tabPageKeyboard";
@@ -474,6 +480,29 @@ namespace Zeratool_player_C_Sharp
             this.tabPageKeyboard.Size = new System.Drawing.Size(576, 322);
             this.tabPageKeyboard.TabIndex = 1;
             this.tabPageKeyboard.Text = "Клавиатура";
+            // 
+            // btnSetDefaultsKeyboardConfig
+            // 
+            this.btnSetDefaultsKeyboardConfig.Location = new System.Drawing.Point(6, 296);
+            this.btnSetDefaultsKeyboardConfig.Name = "btnSetDefaultsKeyboardConfig";
+            this.btnSetDefaultsKeyboardConfig.Size = new System.Drawing.Size(90, 23);
+            this.btnSetDefaultsKeyboardConfig.TabIndex = 2;
+            this.btnSetDefaultsKeyboardConfig.Text = "По-умолчанию";
+            this.toolTip1.SetToolTip(this.btnSetDefaultsKeyboardConfig, "Восстановить настройки по-умолчанию");
+            this.btnSetDefaultsKeyboardConfig.UseVisualStyleBackColor = true;
+            this.btnSetDefaultsKeyboardConfig.Click += new System.EventHandler(this.btnSetDefaultsKeyboardConfig_Click);
+            // 
+            // btnSaveKeyboard
+            // 
+            this.btnSaveKeyboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSaveKeyboard.Location = new System.Drawing.Point(493, 296);
+            this.btnSaveKeyboard.Name = "btnSaveKeyboard";
+            this.btnSaveKeyboard.Size = new System.Drawing.Size(75, 23);
+            this.btnSaveKeyboard.TabIndex = 1;
+            this.btnSaveKeyboard.Text = "Сохранить";
+            this.toolTip1.SetToolTip(this.btnSaveKeyboard, "Сохранить настройки клавиатуры");
+            this.btnSaveKeyboard.UseVisualStyleBackColor = true;
+            this.btnSaveKeyboard.Click += new System.EventHandler(this.btnSaveKeyboard_Click);
             // 
             // listViewKeyboard
             // 
@@ -489,7 +518,7 @@ namespace Zeratool_player_C_Sharp
             this.listViewKeyboard.Location = new System.Drawing.Point(5, 0);
             this.listViewKeyboard.MultiSelect = false;
             this.listViewKeyboard.Name = "listViewKeyboard";
-            this.listViewKeyboard.Size = new System.Drawing.Size(568, 314);
+            this.listViewKeyboard.Size = new System.Drawing.Size(568, 290);
             this.listViewKeyboard.TabIndex = 0;
             this.listViewKeyboard.UseCompatibleStateImageBehavior = false;
             this.listViewKeyboard.View = System.Windows.Forms.View.Details;
@@ -601,5 +630,8 @@ namespace Zeratool_player_C_Sharp
         private System.Windows.Forms.ListView listViewKeyboard;
         private System.Windows.Forms.ColumnHeader columnHeaderKey;
         private System.Windows.Forms.ColumnHeader columnHeaderAction;
+        private System.Windows.Forms.Button btnSaveKeyboard;
+        private System.Windows.Forms.Button btnSetDefaultsKeyboardConfig;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

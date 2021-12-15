@@ -15,6 +15,7 @@ namespace Zeratool_player_C_Sharp
         public sealed class MainConfiguration
         {
             public string configFileName;
+            public string keyboardConfigFileName;
             public string selfPath;
             public string filtersConfigFileName;
             public int lastVolume;
@@ -55,6 +56,7 @@ namespace Zeratool_player_C_Sharp
                 graphMode = DirectShowGraphMode.Manual;
                 playlistFileName = selfPath + "\\LastPlaylist.json";
                 filtersConfigFileName = selfPath + "\\filters.json";
+                keyboardConfigFileName = selfPath + "\\keyboard.json";
             }
 
             public void Load()

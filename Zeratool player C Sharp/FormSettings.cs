@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using static Zeratool_player_C_Sharp.Utils;
 using static Zeratool_player_C_Sharp.ZeratoolPlayerEngine;
 using static Zeratool_player_C_Sharp.DirectShowUtils;
+using System.IO;
 
 namespace Zeratool_player_C_Sharp
 {
@@ -478,6 +479,27 @@ namespace Zeratool_player_C_Sharp
                 listViewKeyboard.Items[listViewSelectedId].Tag = newShortcut;
                 listViewKeyboard.Items[listViewSelectedId].Text = newShortcut.ToString();
                 keyBindings.keyboardShortcuts[listViewSelectedId] = newShortcut;
+            }
+        }
+
+        private void btnSaveKeyboard_Click(object sender, EventArgs e)
+        {
+            keyBindings.SaveToJson(config.keyboardConfigFileName);
+            MessageBox.Show("Настройки сохранены.", "Zeratool player", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void btnSetDefaultsKeyboardConfig_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Восстановить настройки клавиатуры по-умолчанию?", "Zeratool player",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                keyBindings.SetDefaults();
+                ListKeyboardShortcuts();
+                if (!string.IsNullOrEmpty(config.keyboardConfigFileName) && !string.IsNullOrWhiteSpace(config.keyboardConfigFileName) &&
+                    File.Exists(config.keyboardConfigFileName))
+                {
+                    File.Delete(config.keyboardConfigFileName);
+                }
             }
         }
     }
