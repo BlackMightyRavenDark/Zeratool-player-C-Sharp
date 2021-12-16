@@ -142,33 +142,39 @@ namespace Zeratool_player_C_Sharp
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            config.Save();
-            Hide();
-            foreach (ZeratoolPlayerGui z in players)
+            if (e.CloseReason != CloseReason.ApplicationExitCall)
             {
-                z.Stop();
+                config.Save();
+                Hide();
+                foreach (ZeratoolPlayerGui z in players)
+                {
+                    z.Stop();
+                }
             }
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (activePlayer != null && activePlayer.IsMaximized)
+            if (e.CloseReason != CloseReason.ApplicationExitCall)
             {
-                if (File.Exists(config.playlistFileName))
+                if (activePlayer != null && activePlayer.IsMaximized)
                 {
-                    File.Delete(config.playlistFileName);
+                    if (File.Exists(config.playlistFileName))
+                    {
+                        File.Delete(config.playlistFileName);
+                    }
+                    if (activePlayer.Playlist.Count > 0)
+                    {
+                        activePlayer.Playlist.SaveToFile(config.playlistFileName);
+                    }
                 }
-                if (activePlayer.Playlist.Count > 0)
-                {
-                    activePlayer.Playlist.SaveToFile(config.playlistFileName);
-                }
-            }
 
-            foreach (ZeratoolPlayerGui z in players)
-            {
-                z.Dispose();
+                foreach (ZeratoolPlayerGui z in players)
+                {
+                    z.Dispose();
+                }
+                players.Clear();
             }
-            players.Clear();
         }
 
         private void Form1_Shown(object sender, EventArgs e)
