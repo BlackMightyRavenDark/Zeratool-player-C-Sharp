@@ -105,7 +105,7 @@ namespace Zeratool_player_C_Sharp
 
         public static MainConfiguration config;
 
-        public const string APP_TITLE = "Zeratool player";
+        public const string APP_TITLE = "Zeratool player 0.3.0-alpha";
 
         public static ZeratoolPlayerGui CreatePlayer(Control parentControl, bool maximized)
         {
