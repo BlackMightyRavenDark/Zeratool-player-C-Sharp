@@ -32,7 +32,7 @@ namespace Zeratool_player_C_Sharp
             public MainConfiguration(string fileName)
             {
                 configFileName = fileName;
-                selfPath = Application.StartupPath;
+                selfPath = Path.GetDirectoryName(Application.ExecutablePath);
 
                 LoadDefaults();
             }
