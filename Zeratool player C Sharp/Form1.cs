@@ -317,6 +317,7 @@ namespace Zeratool_player_C_Sharp
             z.Closing += (s) =>
             {
                 ZeratoolPlayerGui playerGui = s as ZeratoolPlayerGui;
+                playerGui.Clear();
                 players.Remove(playerGui);
                 if (playerGui == activePlayer)
                 {
@@ -330,7 +331,7 @@ namespace Zeratool_player_C_Sharp
                     }
                 }
                 System.Diagnostics.Debug.WriteLine($"Player {playerGui.Title} closed");
-                if (playerGui.IsFullscreen)
+                if (playerGui.IsMaximized)
                 {
                     Close();
                 }

@@ -693,7 +693,7 @@ namespace Zeratool_player_C_Sharp
                 if (e.X >= 0 && e.X <= btnClose.Width && e.Y >= 0 && e.Y <= btnClose.Height)
                 {
                     Closing?.Invoke(this);
-                    if (!IsDisposed)
+                    if (!IsDisposed && !IsMaximized)
                     {
                         Dispose();
                     }
