@@ -20,6 +20,7 @@ namespace Zeratool_player_C_Sharp
             keyboardShortcuts.Add(new KeyboardShortcut(Keys.Right, KeyboardShortcutAction.SeekForward, "Перемотка вперёд"));
             keyboardShortcuts.Add(new KeyboardShortcut(Keys.Shift | Keys.Left, KeyboardShortcutAction.JumpBackward, "Прыжок назад"));
             keyboardShortcuts.Add(new KeyboardShortcut(Keys.Shift | Keys.Right, KeyboardShortcutAction.JumpForward, "Прыжок вперёд"));
+            keyboardShortcuts.Add(new KeyboardShortcut(Keys.Back, KeyboardShortcutAction.SeekToBeginning, "Перемотать в начало"));
             keyboardShortcuts.Add(new KeyboardShortcut(Keys.Up, KeyboardShortcutAction.VolumeUp, "Прибавить громкость"));
             keyboardShortcuts.Add(new KeyboardShortcut(Keys.Down, KeyboardShortcutAction.VolumeDown, "Убавить громкость"));
             keyboardShortcuts.Add(new KeyboardShortcut(Keys.PageDown, KeyboardShortcutAction.FullscreenToggle, "Полный экран"));
@@ -96,6 +97,7 @@ namespace Zeratool_player_C_Sharp
         SeekBackward,
         JumpForward,
         JumpBackward,
+        SeekToBeginning,
         VolumeUp,
         VolumeDown,
         FullscreenToggle,

@@ -252,6 +252,10 @@ namespace Zeratool_player_C_Sharp
                         controlledPlayer.Seek(-10.0);
                         break;
 
+                    case KeyboardShortcutAction.SeekToBeginning:
+                        controlledPlayer.TrackPosition = 0.0;
+                        break;
+
                     case KeyboardShortcutAction.VolumeUp:
                         controlledPlayer.Volume += 5;
                         break;
