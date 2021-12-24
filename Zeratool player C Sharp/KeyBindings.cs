@@ -28,6 +28,19 @@ namespace Zeratool_player_C_Sharp
             keyboardShortcuts.Add(new KeyboardShortcut(Keys.R, KeyboardShortcutAction.RebuildGraph, "Перерендерить"));
         }
 
+
+        public KeyboardShortcut FindShortcut(Keys keys)
+        {
+            foreach (KeyboardShortcut ks in keyboardShortcuts)
+            {
+                if (ks.Keys == keys)
+                {
+                    return ks;
+                }
+            }
+            return null;
+        }
+
         public KeyboardShortcutAction FindShortcutAction(Keys keys)
         {
             foreach (KeyboardShortcut ks in keyboardShortcuts)

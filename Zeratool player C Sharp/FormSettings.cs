@@ -474,6 +474,13 @@ namespace Zeratool_player_C_Sharp
             FormKeyListener formKeyListener = new FormKeyListener(keyboardShortcut);
             if (formKeyListener.ShowDialog() == DialogResult.OK)
             {
+                KeyboardShortcut shortcut = keyBindings.FindShortcut(formKeyListener.ResultKeys);
+                if (shortcut != null && shortcut.ShortcutAction != KeyboardShortcutAction.None)
+                {
+                    MessageBox.Show($"Эта клавиша или комбинация клавиш уже назначена на следующее действие:\n{shortcut.Title}", "Ошибка!",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
                 KeyboardShortcut newShortcut =
                     new KeyboardShortcut(formKeyListener.ResultKeys, keyboardShortcut.ShortcutAction, keyboardShortcut.Title);
                 listViewKeyboard.Items[listViewSelectedId].Tag = newShortcut;
