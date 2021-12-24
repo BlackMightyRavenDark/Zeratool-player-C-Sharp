@@ -215,10 +215,10 @@ namespace Zeratool_player_C_Sharp
 
         private void PlayerHandleKeyboard(ZeratoolPlayerGui controlledPlayer, KeyEventArgs e)
         {
-            KeyboardShortcutAction keyboardShortcutAction = keyBindings.FindShortcutAction(e.KeyData);
-            if (keyboardShortcutAction != KeyboardShortcutAction.None)
+            KeyboardShortcut keyboardShortcut = keyBindings.FindShortcut(e.KeyData);
+            if (keyboardShortcut != null && keyboardShortcut.ShortcutAction != KeyboardShortcutAction.None)
             {
-                switch (keyboardShortcutAction)
+                switch (keyboardShortcut.ShortcutAction)
                 {
                     case KeyboardShortcutAction.PlayPauseToggle:
                         controlledPlayer.TogglePlayPause();
