@@ -123,6 +123,7 @@ namespace Zeratool_player_C_Sharp
             formSettings = new FormSettings();
             formPlaylist = new FormPlaylist();
             formLog = new FormLog();
+            formBookmarks = new FormBookmarks();
 
             config.Load();
             if (!this.IsOnScreen())
@@ -422,6 +423,14 @@ namespace Zeratool_player_C_Sharp
                             formLog.Show();
                         }
                         formLog.BringToFront();
+                        break;
+
+                    case PlayerAction.OpenBookmarks:
+                        if (!formBookmarks.Visible)
+                        {
+                            formBookmarks.Show();
+                        }
+                        formBookmarks.BringToFront();
                         break;
                     
                     case PlayerAction.Fullscreen:

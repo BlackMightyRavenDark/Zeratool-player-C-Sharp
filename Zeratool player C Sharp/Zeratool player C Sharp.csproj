@@ -55,6 +55,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FormBookmarks.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormBookmarks.Designer.cs">
+      <DependentUpon>FormBookmarks.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ZeratoolBookmarks.cs" />
     <Compile Include="CustomPanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -107,6 +114,9 @@
     <Compile Include="ZeratoolPlaylist.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormBookmarks.resx">
+      <DependentUpon>FormBookmarks.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormKeyListener.resx">
       <DependentUpon>FormKeyListener.cs</DependentUpon>

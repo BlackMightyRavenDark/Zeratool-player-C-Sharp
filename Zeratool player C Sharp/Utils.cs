@@ -96,6 +96,7 @@ namespace Zeratool_player_C_Sharp
         public static FormSettings formSettings;
         public static FormPlaylist formPlaylist;
         public static FormLog formLog;
+        public static FormBookmarks formBookmarks;
 
         public static readonly List<ZeratoolPlayerGui> players = new List<ZeratoolPlayerGui>();
         public static ZeratoolPlayerGui activePlayer = null;
@@ -105,7 +106,7 @@ namespace Zeratool_player_C_Sharp
 
         public static MainConfiguration config;
 
-        public const string APP_TITLE = "Zeratool player 0.3.2-alpha";
+        public const string APP_TITLE = "Zeratool player";
 
         public static ZeratoolPlayerGui CreatePlayer(Control parentControl, bool maximized)
         {

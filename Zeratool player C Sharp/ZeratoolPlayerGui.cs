@@ -16,7 +16,7 @@ namespace Zeratool_player_C_Sharp
         private string _title;
         private bool _isMaximized = false;
         private bool _isFullscreenMode = false;
-        public const int MIN_WIDTH = 386;
+        public const int MIN_WIDTH = 408;
         public const int MIN_HEIGHT = 200;
         public static readonly Color COLOR_ACTIVE = Color.Blue;
         public static readonly Color COLOR_INACTIVE = Color.SkyBlue;
@@ -36,7 +36,7 @@ namespace Zeratool_player_C_Sharp
         public bool IsTitleBarVisible { get { return lblTitleBar.Visible || panelZ.Visible; } set { SetTitleBarVisible(value); } }
         public bool IsControlsVisible { get { return panelControls.Visible; } set { SetPanelControlsVisible(value); } }
      
-        public enum PlayerAction { Play, Pause, OpenFile, Fullscreen, OpenPlaylist, OpenSettings, OpenLog }
+        public enum PlayerAction { Play, Pause, OpenFile, Fullscreen, OpenPlaylist, OpenSettings, OpenLog, OpenBookmarks }
 
         //for dragging.
         private Point oldWindowPos;
@@ -836,6 +836,12 @@ namespace Zeratool_player_C_Sharp
         {
             Activate();
             ActionTriggered?.Invoke(this, PlayerAction.OpenLog, 0);
+        }
+
+        private void btnOpenBookmarks_Click(object sender, EventArgs e)
+        {
+            Activate();
+            ActionTriggered?.Invoke(this, PlayerAction.OpenBookmarks, 0);
         }
     }
 }
