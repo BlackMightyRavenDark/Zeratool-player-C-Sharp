@@ -35,6 +35,7 @@ namespace Zeratool_player_C_Sharp
             this.btnAddBookmark = new System.Windows.Forms.Button();
             this.comboBoxPlayers = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.btnRemoveBookmark = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // listViewBookmarks
@@ -57,25 +58,28 @@ namespace Zeratool_player_C_Sharp
             this.listViewBookmarks.TabIndex = 0;
             this.listViewBookmarks.UseCompatibleStateImageBehavior = false;
             this.listViewBookmarks.View = System.Windows.Forms.View.Details;
+            this.listViewBookmarks.Resize += new System.EventHandler(this.listViewBookmarks_Resize);
             // 
             // columnHeaderBookmarkTimecode
             // 
             this.columnHeaderBookmarkTimecode.Text = "Время";
-            this.columnHeaderBookmarkTimecode.Width = 100;
+            this.columnHeaderBookmarkTimecode.Width = 65;
             // 
             // columnHeaderBookmarkTitle
             // 
             this.columnHeaderBookmarkTitle.Text = "Название";
-            this.columnHeaderBookmarkTitle.Width = 304;
+            this.columnHeaderBookmarkTitle.Width = 257;
             // 
             // btnAddBookmark
             // 
+            this.btnAddBookmark.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnAddBookmark.Location = new System.Drawing.Point(8, 163);
             this.btnAddBookmark.Name = "btnAddBookmark";
             this.btnAddBookmark.Size = new System.Drawing.Size(75, 23);
             this.btnAddBookmark.TabIndex = 1;
             this.btnAddBookmark.Text = "Добавить";
             this.btnAddBookmark.UseVisualStyleBackColor = true;
+            this.btnAddBookmark.Click += new System.EventHandler(this.btnAddBookmark_Click);
             // 
             // comboBoxPlayers
             // 
@@ -100,12 +104,24 @@ namespace Zeratool_player_C_Sharp
             this.label1.TabIndex = 3;
             this.label1.Text = "Плеер:";
             // 
+            // btnRemoveBookmark
+            // 
+            this.btnRemoveBookmark.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRemoveBookmark.Location = new System.Drawing.Point(327, 163);
+            this.btnRemoveBookmark.Name = "btnRemoveBookmark";
+            this.btnRemoveBookmark.Size = new System.Drawing.Size(75, 23);
+            this.btnRemoveBookmark.TabIndex = 4;
+            this.btnRemoveBookmark.Text = "Удалить";
+            this.btnRemoveBookmark.UseVisualStyleBackColor = true;
+            this.btnRemoveBookmark.Click += new System.EventHandler(this.btnRemoveBookmark_Click);
+            // 
             // FormBookmarks
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(414, 191);
+            this.Controls.Add(this.btnRemoveBookmark);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBoxPlayers);
             this.Controls.Add(this.btnAddBookmark);
@@ -115,7 +131,6 @@ namespace Zeratool_player_C_Sharp
             this.Name = "FormBookmarks";
             this.Text = "Отметины";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormBookmarks_FormClosing);
-            this.Load += new System.EventHandler(this.FormBookmarks_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -129,5 +144,6 @@ namespace Zeratool_player_C_Sharp
         private System.Windows.Forms.Button btnAddBookmark;
         private System.Windows.Forms.ComboBox comboBoxPlayers;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnRemoveBookmark;
     }
 }

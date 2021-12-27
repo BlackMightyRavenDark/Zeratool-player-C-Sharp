@@ -31,6 +31,7 @@ namespace Zeratool_player_C_Sharp
         public double TrackDuration => PlayerEngine.Duration;
         public double TrackPosition { get { return PlayerEngine.Position; } set { SetTrackPosition(value); } }
         public ZeratoolPlaylist Playlist { get; private set; } = null;
+        public ZeratoolBookmarks Bookmarks { get; private set; } = null;
         public bool IsMaximized => _isMaximized;
         public bool IsFullscreen => _isFullscreenMode;
         public bool IsTitleBarVisible { get { return lblTitleBar.Visible || panelZ.Visible; } set { SetTitleBarVisible(value); } }
@@ -101,6 +102,7 @@ namespace Zeratool_player_C_Sharp
             PlayerEngine = new ZeratoolPlayerEngine();
             PlayerEngine.GraphMode = PrefferedGraphMode;
             Playlist = new ZeratoolPlaylist(PlayerEngine);
+            Bookmarks = new ZeratoolBookmarks();
 
             Playlist.IndexChanged += (s, index) =>
             {

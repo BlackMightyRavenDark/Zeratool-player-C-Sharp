@@ -21,7 +21,9 @@ namespace Zeratool_player_C_Sharp
         }
 
         public delegate void BookmarkAddedDelegate(object sender, BookmarkItem bookmarkItem);
+        public delegate void BookmarkRemovedDelegate(object sender, int index);
         public BookmarkAddedDelegate BookmarkAdded;
+        public BookmarkRemovedDelegate BookmarkRemoved;
 
         public int Add(TimeSpan time, string shortDescription)
         {
@@ -32,9 +34,21 @@ namespace Zeratool_player_C_Sharp
                 items.Add(item);
                 items.Sort(new BookmarkItemComparer());
                 BookmarkAdded?.Invoke(this, item);
-                return Count - 1;
+                id = IndexOf(time);
+                return id;
             }
-            return -1;
+            return id;
+        }
+
+        public void RemoveAt(int index)
+        {
+            if (index < 0 || index >= Count)
+            {
+                throw new IndexOutOfRangeException();
+            }
+
+            items.RemoveAt(index);
+            BookmarkRemoved?.Invoke(this, index);
         }
 
         public int IndexOf(TimeSpan time)
@@ -59,9 +73,9 @@ namespace Zeratool_player_C_Sharp
             return new TimeSpan(long.MaxValue);
         }
 
-        public static string TimeToString(DateTime time)
+        public static string TimeToString(DateTime time, string format = "HH:mm:ss.f")
         {
-            return time.ToString("HH:mm:ss");
+            return time.ToString(format);
         }
     }
 
