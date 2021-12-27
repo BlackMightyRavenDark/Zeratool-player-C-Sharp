@@ -141,6 +141,7 @@ namespace Zeratool_player_C_Sharp
 
         private void comboBoxPlayers_SelectedIndexChanged(object sender, EventArgs e)
         {
+            listViewBookmarks.Items.Clear();
             if (comboBoxPlayers.SelectedIndex >= 0)
             {
                 ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
@@ -165,6 +166,11 @@ namespace Zeratool_player_C_Sharp
         private void OnPlayerClosing(object sender)
         {
             ListPlayers();
+            listViewBookmarks.Items.Clear();
+            if (activePlayer != null)
+            {
+                activePlayer.Activate();
+            }
         }
 
         private void OnPlayerActivated(object sender)
@@ -176,6 +182,7 @@ namespace Zeratool_player_C_Sharp
             {
                 comboBoxPlayers.SelectedIndex = id;
             }
+            ListBookmarks(z);
         }
 
         private void OnPlayerTitleChanged(object sender, string title)
