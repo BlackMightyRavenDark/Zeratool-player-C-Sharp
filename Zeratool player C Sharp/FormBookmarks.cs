@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
+using Newtonsoft.Json.Linq;
 using static Zeratool_player_C_Sharp.ZeratoolPlayerEngine;
 using static Zeratool_player_C_Sharp.Utils;
 
@@ -7,15 +9,72 @@ namespace Zeratool_player_C_Sharp
 {
     public partial class FormBookmarks : Form
     {
+        private Point oldPos;
+        private Size oldSize;
+
         public FormBookmarks()
         {
             InitializeComponent();
+
+            //force to create a window to access its position.
+            IntPtr hwnd = Handle;
+
             OnFormCreated();
         }
 
         private void OnFormCreated()
         {
             PlayerCreated += OnPlayerCreated;
+
+            config.Saving += (object s, JObject json) =>
+            {
+                if (WindowState == FormWindowState.Normal)
+                {
+                    json["bookmarksLeft"] = Left;
+                    json["bookmarksTop"] = Top;
+                    json["bookmarksWidth"] = Width;
+                    json["bookmarksHeight"] = Height;
+                }
+                else
+                {
+                    json["bookmarksLeft"] = oldPos.X;
+                    json["bookmarksTop"] = oldPos.Y;
+                    json["bookmarksWidth"] = oldSize.Width;
+                    json["bookmarksHeight"] = oldSize.Height;
+                }
+            };
+
+            config.Loading += (object s, JObject json) =>
+            {
+                JToken jt = json.Value<JToken>("bookmarksLeft");
+                if (jt != null)
+                {
+                    Left = jt.Value<int>();
+                }
+                jt = json.Value<JToken>("bookmarksTop");
+                if (jt != null)
+                {
+                    Top = jt.Value<int>();
+                }
+                jt = json.Value<JToken>("bookmarksWidth");
+                if (jt != null)
+                {
+                    Width = jt.Value<int>();
+                }
+                jt = json.Value<JToken>("bookmarksHeight");
+                if (jt != null)
+                {
+                    Height = jt.Value<int>();
+                }
+
+                if (!this.IsOnScreen())
+                {
+                    this.Center(Screen.PrimaryScreen.WorkingArea);
+                }
+
+                oldPos = new Point(Left, Top);
+                oldSize = new Size(Width, Height);
+            };
         }
 
         private void FormBookmarks_FormClosing(object sender, FormClosingEventArgs e)
