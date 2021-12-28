@@ -55,6 +55,7 @@ namespace Zeratool_player_C_Sharp
         public delegate void TrackFinishedDelegate(object sender);
         public delegate void TitleChangedDelegate(object sender, string title);
         public delegate void VolumeChangedDelegate(object sender);
+        public delegate void BookmarkAddedDelegate(object sender, BookmarkItem bookmarkItem, int positionIndex);
         public ActivatedDelegate Activated;
         public DragStartDelegate DragStart;
         public DragDragDelegate DragDrag;
@@ -67,7 +68,7 @@ namespace Zeratool_player_C_Sharp
         public TrackFinishedDelegate TrackFinished;
         public TitleChangedDelegate TitleChanged;
         public VolumeChangedDelegate VolumeChanged;
-
+        public BookmarkAddedDelegate BookmarkAdded;
 
         public ZeratoolPlayerGui()
         {
@@ -558,6 +559,17 @@ namespace Zeratool_player_C_Sharp
                 Rectangle videoRect = new Rectangle(0, 0, size.Width, size.Height);
                 Rectangle r = CenterRect(ResizeRect(videoRect, panelVideoScreen.ClientSize), panelVideoScreen.ClientRectangle);
                 PlayerEngine.SetScreenRect(r);
+            }
+        }
+
+        public void PutCurrentMomentToBookmarks()
+        {
+            if (State == PlayerState.Playing || State == PlayerState.Paused)
+            {
+                TimeSpan timeCode = TimeSpan.FromSeconds(TrackPosition);
+                string shortDescription = ZeratoolBookmarks.TimeToString(new DateTime(timeCode.Ticks));
+                int id = Bookmarks.Add(timeCode, shortDescription);
+                BookmarkAdded?.Invoke(this, Bookmarks[id], id);
             }
         }
 

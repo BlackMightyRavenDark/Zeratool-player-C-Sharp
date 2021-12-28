@@ -25,6 +25,7 @@ namespace Zeratool_player_C_Sharp
             keyboardShortcuts.Add(new KeyboardShortcut(Keys.Down, KeyboardShortcutAction.VolumeDown, "Убавить громкость"));
             keyboardShortcuts.Add(new KeyboardShortcut(Keys.PageDown, KeyboardShortcutAction.FullscreenToggle, "Полный экран"));
             keyboardShortcuts.Add(new KeyboardShortcut(Keys.Delete, KeyboardShortcutAction.ControlPanelVisibilityToggle, "Показать / скрыть панель управления"));
+            keyboardShortcuts.Add(new KeyboardShortcut(Keys.B, KeyboardShortcutAction.AddBookmark, "Добавить отметину"));
             keyboardShortcuts.Add(new KeyboardShortcut(Keys.R, KeyboardShortcutAction.RebuildGraph, "Перерендерить"));
         }
 
@@ -102,6 +103,7 @@ namespace Zeratool_player_C_Sharp
         VolumeDown,
         FullscreenToggle,
         ControlPanelVisibilityToggle,
+        AddBookmark,
         RebuildGraph
     }
 

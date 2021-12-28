@@ -98,14 +98,7 @@ namespace Zeratool_player_C_Sharp
             ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
             if (z.State == PlayerState.Playing || z.State == PlayerState.Paused)
             {
-                TimeSpan timeSpan = TimeSpan.FromSeconds(z.TrackPosition);
-                string timeCode = new DateTime(timeSpan.Ticks).ToString("HH:mm:ss.f");
-                int id = z.Bookmarks.Add(timeSpan, timeCode);
-                ListBookmarks(z);
-                if (id >= 0 && listViewBookmarks.Items.Count > 0)
-                {
-                    listViewBookmarks.SelectedIndices.Add(id);
-                }
+                z.PutCurrentMomentToBookmarks();
             }
             else
             {
@@ -158,6 +151,7 @@ namespace Zeratool_player_C_Sharp
             z.Activated += OnPlayerActivated;
             z.TitleChanged += OnPlayerTitleChanged;
             z.Closing += OnPlayerClosing;
+            z.BookmarkAdded += OnPlayerBookmarkAdded;
 
             string t = $"Player [{players.Count - 1}]: {z.Title}";
             comboBoxPlayers.Items.Add(new PlayerListItem(z, t));
@@ -193,6 +187,25 @@ namespace Zeratool_player_C_Sharp
             comboBoxPlayers.Items[id] = new PlayerListItem(z, t);
         }
 
+        private void OnPlayerBookmarkAdded(object sender, BookmarkItem bookmarkItem, int positionIndex)
+        {
+            if (comboBoxPlayers.SelectedIndex >= 0)
+            {
+                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
+
+                if (z == (ZeratoolPlayerGui)sender)
+                {
+                    string timeCode = ZeratoolBookmarks.TimeToString(new DateTime(bookmarkItem.TimeCode.Ticks));
+                    ListViewItem listViewItem = new ListViewItem(timeCode);
+                    listViewItem.SubItems.Add(bookmarkItem.ShortDescription);
+
+                    listViewBookmarks.Items.Insert(positionIndex, listViewItem);
+                    listViewBookmarks.SelectedIndices.Clear();
+                    listViewBookmarks.SelectedIndices.Add(positionIndex);
+                }
+            }
+        }
+
         private void ListPlayers()
         {
             comboBoxPlayers.Items.Clear();
@@ -212,17 +225,22 @@ namespace Zeratool_player_C_Sharp
             }
         }
 
-        private void ListBookmarks(ZeratoolPlayerGui playerGui)
+        private int ListBookmarks(ZeratoolPlayerGui playerGui)
         {
             listViewBookmarks.Items.Clear();
-            for (int i = 0; i < playerGui.Bookmarks.Count; i++)
+            int bookmarkCount = playerGui.Bookmarks.Count;
+            if (bookmarkCount > 0)
             {
-                BookmarkItem bookmarkItem = playerGui.Bookmarks[i];
-                string timeCode = ZeratoolBookmarks.TimeToString(new DateTime(bookmarkItem.TimeCode.Ticks));
-                ListViewItem listViewItem = new ListViewItem(timeCode);
-                listViewItem.SubItems.Add(bookmarkItem.ShortDescription);
-                listViewBookmarks.Items.Add(listViewItem);
+                for (int i = 0; i < bookmarkCount; i++)
+                {
+                    BookmarkItem bookmarkItem = playerGui.Bookmarks[i];
+                    string timeCode = ZeratoolBookmarks.TimeToString(new DateTime(bookmarkItem.TimeCode.Ticks));
+                    ListViewItem listViewItem = new ListViewItem(timeCode);
+                    listViewItem.SubItems.Add(bookmarkItem.ShortDescription);
+                    listViewBookmarks.Items.Add(listViewItem);
+                }
             }
+            return bookmarkCount;
         }
 
         private void listViewBookmarks_Resize(object sender, EventArgs e)

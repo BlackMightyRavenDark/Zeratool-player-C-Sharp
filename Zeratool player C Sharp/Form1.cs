@@ -274,6 +274,10 @@ namespace Zeratool_player_C_Sharp
                         controlledPlayer.ResizeOutputWindow();
                         break;
 
+                    case KeyboardShortcutAction.AddBookmark:
+                        controlledPlayer.PutCurrentMomentToBookmarks();
+                        break;
+
                     case KeyboardShortcutAction.RebuildGraph:
                         {
                             double pos = controlledPlayer.TrackPosition;
