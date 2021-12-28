@@ -202,6 +202,8 @@ namespace Zeratool_player_C_Sharp
                     listViewBookmarks.Items.Insert(positionIndex, listViewItem);
                     listViewBookmarks.SelectedIndices.Clear();
                     listViewBookmarks.SelectedIndices.Add(positionIndex);
+
+                    listViewBookmarks.EnsureVisible(positionIndex);
                 }
             }
         }
