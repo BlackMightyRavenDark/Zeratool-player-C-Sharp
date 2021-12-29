@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using Newtonsoft.Json.Linq;
 using static Zeratool_player_C_Sharp.ZeratoolPlayerEngine;
 using static Zeratool_player_C_Sharp.DirectShowUtils;
 using static Zeratool_player_C_Sharp.Utils;
@@ -25,7 +26,7 @@ namespace Zeratool_player_C_Sharp
         public PlayerState State => PlayerEngine.State;
         public DirectShowGraphMode GraphMode { get { return PlayerEngine.GraphMode; } set { SetGraphMode(value); } }
         public DirectShowGraphMode PrefferedGraphMode { get; set; } = DirectShowGraphMode.Manual;
-        public string FileName { get { return PlayerEngine.FileName; } }
+        public string FileName { get { return PlayerEngine.FileName; } set { SetFileName(value); } }
         public string Title { get { return _title; } set { SetTitle(value); } }
         public int Volume { get { return PlayerEngine.Volume; } set { SetVolume(value); } }
         public double TrackDuration => PlayerEngine.Duration;
@@ -54,6 +55,7 @@ namespace Zeratool_player_C_Sharp
         public delegate void TrackRenderedDelegate(object sender, int errorCode);
         public delegate void TrackFinishedDelegate(object sender);
         public delegate void TitleChangedDelegate(object sender, string title);
+        public delegate void FileNameChangedDelegate(object sender, string fileName);
         public delegate void VolumeChangedDelegate(object sender);
         public delegate void BookmarkAddedDelegate(object sender, BookmarkItem bookmarkItem, int positionIndex);
         public ActivatedDelegate Activated;
@@ -67,6 +69,7 @@ namespace Zeratool_player_C_Sharp
         public TrackRenderedDelegate TrackRendered;
         public TrackFinishedDelegate TrackFinished;
         public TitleChangedDelegate TitleChanged;
+        public FileNameChangedDelegate FileNameChanged;
         public VolumeChangedDelegate VolumeChanged;
         public BookmarkAddedDelegate BookmarkAdded;
 
@@ -103,15 +106,36 @@ namespace Zeratool_player_C_Sharp
             PlayerEngine = new ZeratoolPlayerEngine();
             PlayerEngine.GraphMode = PrefferedGraphMode;
             Playlist = new ZeratoolPlaylist(PlayerEngine);
-            Bookmarks = new ZeratoolBookmarks();
+            Bookmarks = new ZeratoolBookmarks(this);
+
+            FileNameChanged += (s, fn) =>
+            {
+                Bookmarks.Clear();
+                if (File.Exists(config.bookmarksFileName))
+                {
+                    JArray jBookmarksArray = ZeratoolBookmarks.FindOrCreateTrackBookmarks(config.bookmarksFileName, FileName);
+                    if (jBookmarksArray == null)
+                    {
+                        MessageBox.Show("Не удалось загрузить список отметин!\nВозможно, что он повреждён!", "Ошибка!",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    if (jBookmarksArray.Count > 0)
+                    {
+                        Bookmarks.AddRange(jBookmarksArray.ToObject<List<BookmarkItem>>());
+                    }
+                }
+            };
 
             Playlist.IndexChanged += (s, index) =>
             {
                 if (index >= 0)
                 {
                     ZeratoolPlaylist zeratoolPlaylist = s as ZeratoolPlaylist;
-                    PlayerEngine.FileName = zeratoolPlaylist[zeratoolPlaylist.PlayingIndex];
-                    Title = Path.GetFileName(PlayerEngine.FileName);
+                    string fn = zeratoolPlaylist[zeratoolPlaylist.PlayingIndex];
+                    Title = Path.GetFileName(fn);
+                    FileName = fn;
                 }
                 else
                 {
@@ -230,7 +254,7 @@ namespace Zeratool_player_C_Sharp
             {
                 Playlist.SetIndex(playlistIndex);
                 string fn = Playlist[playlistIndex];
-                PlayerEngine.FileName = fn;
+                FileName = fn;
                 Title = Path.GetFileName(fn);
                 return Play();
             }
@@ -424,6 +448,21 @@ namespace Zeratool_player_C_Sharp
             Activated?.Invoke(this);
         }
 
+        private void SetFileName(string fileName)
+        {
+            if (State != PlayerState.Null)
+            {
+                throw new Exception("Нельзя менять имя файла во время проигрывания трека!");
+            }
+
+            if (fileName != FileName)
+            {
+                PlayerEngine.FileName = fileName;
+
+                FileNameChanged?.Invoke(this, fileName);
+            }
+        }
+
         private void SetTitle(string title)
         {
             string newTitle = string.IsNullOrEmpty(title) ? "<No name>" : title;
@@ -498,7 +537,7 @@ namespace Zeratool_player_C_Sharp
             Playlist.Clear();
             Playlist.Add(fileName);
             Playlist.SetIndex(0);
-            PlayerEngine.FileName = fileName;
+            FileName = fileName;
             Title = Path.GetFileName(fileName);
             return Play();
         }
@@ -569,7 +608,10 @@ namespace Zeratool_player_C_Sharp
                 TimeSpan timeCode = TimeSpan.FromSeconds(TrackPosition);
                 string shortDescription = ZeratoolBookmarks.TimeToString(new DateTime(timeCode.Ticks));
                 int id = Bookmarks.Add(timeCode, shortDescription);
-                BookmarkAdded?.Invoke(this, Bookmarks[id], id);
+                if (id >= 0)
+                {
+                    BookmarkAdded?.Invoke(this, Bookmarks[id], id);
+                }
             }
         }
 

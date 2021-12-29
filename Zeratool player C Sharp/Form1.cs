@@ -275,7 +275,9 @@ namespace Zeratool_player_C_Sharp
                         break;
 
                     case KeyboardShortcutAction.AddBookmark:
+                        controlledPlayer.BookmarkAdded += OnPlayerBookmarkAdded;
                         controlledPlayer.PutCurrentMomentToBookmarks();
+                        controlledPlayer.BookmarkAdded -= OnPlayerBookmarkAdded;
                         break;
 
                     case KeyboardShortcutAction.RebuildGraph:
@@ -519,6 +521,15 @@ namespace Zeratool_player_C_Sharp
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             z.Activate();
+        }
+
+        private void OnPlayerBookmarkAdded(object sender, BookmarkItem bookmarkItem, int positionIndex)
+        {
+            if (!(sender as ZeratoolPlayerGui).Bookmarks.SaveToJsonFile(config.bookmarksFileName))
+            {
+                MessageBox.Show("Не удалось сохранить список отметин!\nВозможно, что файл повреждён!", "Ошибка!",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

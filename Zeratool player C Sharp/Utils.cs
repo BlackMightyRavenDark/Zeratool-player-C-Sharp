@@ -21,6 +21,7 @@ namespace Zeratool_player_C_Sharp
             public int lastVolume;
             public bool titleBarVisible;
             public string playlistFileName;
+            public string bookmarksFileName;
             public bool playlistCycleCurrentTrack;
             public DirectShowGraphMode graphMode;
 
@@ -57,6 +58,7 @@ namespace Zeratool_player_C_Sharp
                 playlistFileName = selfPath + "\\LastPlaylist.json";
                 filtersConfigFileName = selfPath + "\\filters.json";
                 keyboardConfigFileName = selfPath + "\\keyboard.json";
+                bookmarksFileName = selfPath + "\\bookmarks.json";
             }
 
             public void Load()

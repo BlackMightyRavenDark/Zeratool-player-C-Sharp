@@ -99,6 +99,12 @@ namespace Zeratool_player_C_Sharp
             if (z.State == PlayerState.Playing || z.State == PlayerState.Paused)
             {
                 z.PutCurrentMomentToBookmarks();
+
+                if (!z.Bookmarks.SaveToJsonFile(config.bookmarksFileName))
+                {
+                    MessageBox.Show("Не удалось сохранить список отметин!\nВозможно, что файл повреждён!", "Ошибка!",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             else
             {
@@ -129,6 +135,12 @@ namespace Zeratool_player_C_Sharp
             {
                 int selectedId = id < listViewBookmarks.Items.Count ? id : listViewBookmarks.Items.Count - 1;
                 listViewBookmarks.SelectedIndices.Add(selectedId);
+            }
+
+            if (!z.Bookmarks.SaveToJsonFile(config.bookmarksFileName))
+            {
+                MessageBox.Show("Не удалось сохранить список отметин!\nВозможно, что файл повреждён!", "Ошибка!",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
