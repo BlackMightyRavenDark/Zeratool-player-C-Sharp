@@ -16,6 +16,12 @@ namespace Zeratool_player_C_Sharp
             return s;
         }
 
+        public static void DrawCircle(this Graphics graphics, Pen pen, int x, int y, int radius)
+        {
+            int halfRadius = radius / 2;
+            graphics.DrawEllipse(pen, x - halfRadius, y - halfRadius, radius, radius);
+        }
+
         public static void FillCircle(this Graphics graphics, Brush brush, int x, int y, int radius)
         {
             int halfRadius = radius / 2;

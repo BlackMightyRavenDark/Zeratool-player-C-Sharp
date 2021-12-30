@@ -99,6 +99,7 @@ namespace Zeratool_player_C_Sharp
             if (z.State == PlayerState.Playing || z.State == PlayerState.Paused)
             {
                 z.PutCurrentMomentToBookmarks();
+                z.RefreshSeekBar();
 
                 if (!z.Bookmarks.SaveToJsonFile(config.bookmarksFileName))
                 {
@@ -130,6 +131,7 @@ namespace Zeratool_player_C_Sharp
             ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
             int id = listViewBookmarks.SelectedIndices[0];
             z.Bookmarks.RemoveAt(id);
+            z.RefreshSeekBar();
             ListBookmarks(z);
             if (listViewBookmarks.Items.Count > 0)
             {

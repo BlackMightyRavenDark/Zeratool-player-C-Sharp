@@ -277,6 +277,7 @@ namespace Zeratool_player_C_Sharp
                     case KeyboardShortcutAction.AddBookmark:
                         controlledPlayer.BookmarkAdded += OnPlayerBookmarkAdded;
                         controlledPlayer.PutCurrentMomentToBookmarks();
+                        controlledPlayer.RefreshSeekBar();
                         controlledPlayer.BookmarkAdded -= OnPlayerBookmarkAdded;
                         break;
 

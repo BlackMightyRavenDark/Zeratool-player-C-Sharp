@@ -578,7 +578,7 @@ namespace Zeratool_player_C_Sharp
 
         private void UpdateTrackIndicators()
         {
-            seekBar.Refresh();
+            RefreshSeekBar();
             UpdateTrackPositionIndicator();
         }
 
@@ -586,6 +586,11 @@ namespace Zeratool_player_C_Sharp
         {
             string t = DateTime.Now.ToString("HH:mm:ss");
             lblSystemTime.Text = t;
+        }
+
+        public void RefreshSeekBar()
+        {
+            seekBar.Refresh();
         }
 
         public void ResizeOutputWindow()
@@ -708,18 +713,41 @@ namespace Zeratool_player_C_Sharp
 
                 Font fnt = new Font("Tahoma", 11.0f);
                 SizeF size = e.Graphics.MeasureString(elapsedString, fnt);
+                size.Height -= 2.0f;
 
                 Rectangle thumbRect = new Rectangle(x - 3, 0, 6, seekBar.Height);
                 e.Graphics.FillRectangle(Brushes.White, thumbRect);
                 e.Graphics.DrawRectangle(Pens.Black, thumbRect);
 
-                int y = (int)(seekBar.Height / 2.0f - size.Height / 2.0f);
+                int y = (int)(seekBar.Height - size.Height);
                 e.Graphics.DrawString(elapsedString, fnt, Brushes.White, x - size.Width - 2, y);
                 e.Graphics.DrawString(remainingString, fnt, Brushes.Black, x + 4, y);
 
                 fnt.Dispose();
 
-                e.Graphics.FillCircle(Brushes.Black, seekBar.Width / 2, seekBar.Height / 2, 6);               
+                DrawBookmarks(e);
+
+                e.Graphics.FillCircle(Brushes.Black, seekBar.Width / 2, seekBar.Height / 2, 6);
+            }
+        }
+
+        private void DrawBookmarks(PaintEventArgs e)
+        {
+            if (Bookmarks.Count > 0)
+            {
+                int circleSize = 6;
+                int lastPosX = -1;
+                int yPos = 3;
+                for (int i = 0; i < Bookmarks.Count; i++)
+                {
+                    int xPos = (int)(seekBar.Width / TrackDuration * Bookmarks[i].TimeCode.TotalSeconds);
+                    if (xPos - lastPosX >= circleSize)
+                    {
+                        e.Graphics.FillCircle(Brushes.Yellow, xPos, yPos, circleSize);
+                        e.Graphics.DrawCircle(Pens.Black, xPos, yPos, circleSize);
+                        lastPosX = xPos;
+                    }
+                }
             }
         }
 
