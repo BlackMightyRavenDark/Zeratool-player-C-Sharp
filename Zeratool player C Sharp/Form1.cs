@@ -172,6 +172,7 @@ namespace Zeratool_player_C_Sharp
 
                 foreach (ZeratoolPlayerGui z in players)
                 {
+                    z.Clear();
                     z.Dispose();
                 }
                 players.Clear();
@@ -276,8 +277,10 @@ namespace Zeratool_player_C_Sharp
 
                     case KeyboardShortcutAction.AddBookmark:
                         controlledPlayer.BookmarkAdded += OnPlayerBookmarkAdded;
-                        controlledPlayer.PutCurrentMomentToBookmarks();
-                        controlledPlayer.RefreshSeekBar();
+                        if (controlledPlayer.PutCurrentMomentToBookmarks() >= 0)
+                        {
+                            controlledPlayer.RefreshSeekBar();
+                        }
                         controlledPlayer.BookmarkAdded -= OnPlayerBookmarkAdded;
                         break;
 

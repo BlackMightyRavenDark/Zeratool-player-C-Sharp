@@ -606,7 +606,7 @@ namespace Zeratool_player_C_Sharp
             }
         }
 
-        public void PutCurrentMomentToBookmarks()
+        public int PutCurrentMomentToBookmarks()
         {
             if (State == PlayerState.Playing || State == PlayerState.Paused)
             {
@@ -616,8 +616,10 @@ namespace Zeratool_player_C_Sharp
                 if (id >= 0)
                 {
                     BookmarkAdded?.Invoke(this, Bookmarks[id], id);
+                    return id;
                 }
             }
+            return -1;
         }
 
         private void AfterMinMax()
@@ -727,7 +729,10 @@ namespace Zeratool_player_C_Sharp
 
                 DrawBookmarks(e);
 
-                e.Graphics.FillCircle(Brushes.Black, seekBar.Width / 2, seekBar.Height / 2, 6);
+                int xCenter = seekBar.Width / 2;
+                int yCenter = seekBar.Height / 2;
+                e.Graphics.FillCircle(Brushes.Black, xCenter, yCenter, 6);
+                e.Graphics.DrawCircle(Pens.White, xCenter, yCenter, 6);
             }
         }
 
