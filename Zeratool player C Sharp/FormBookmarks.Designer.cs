@@ -58,6 +58,7 @@ namespace Zeratool_player_C_Sharp
             this.listViewBookmarks.TabIndex = 0;
             this.listViewBookmarks.UseCompatibleStateImageBehavior = false;
             this.listViewBookmarks.View = System.Windows.Forms.View.Details;
+            this.listViewBookmarks.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewBookmarks_MouseDoubleClick);
             this.listViewBookmarks.Resize += new System.EventHandler(this.listViewBookmarks_Resize);
             // 
             // columnHeaderBookmarkTimecode

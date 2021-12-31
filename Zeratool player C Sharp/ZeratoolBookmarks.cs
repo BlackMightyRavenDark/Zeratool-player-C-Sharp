@@ -203,7 +203,7 @@ namespace Zeratool_player_C_Sharp
             string fmt = timeCode.Contains(".") ? "HH:mm:ss.f" : "HH:mm:ss";
             if (DateTime.TryParseExact(timeCode, fmt, null, System.Globalization.DateTimeStyles.None, out DateTime dt))
             {
-                return new TimeSpan(dt.Ticks);
+                return new TimeSpan(0, dt.Hour, dt.Minute, dt.Second, dt.Millisecond);
             }
             return new TimeSpan(long.MaxValue);
         }

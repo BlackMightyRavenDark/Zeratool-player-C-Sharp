@@ -146,6 +146,43 @@ namespace Zeratool_player_C_Sharp
             }
         }
 
+        private void listViewBookmarks_Resize(object sender, EventArgs e)
+        {
+            columnHeaderBookmarkTitle.Width = listViewBookmarks.Width - columnHeaderBookmarkTimecode.Width - 30;
+        }
+
+        private void listViewBookmarks_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                if (comboBoxPlayers.SelectedIndex >= 0 && listViewBookmarks.SelectedIndices.Count > 0)
+                {
+                    ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
+                    if (z.State == PlayerState.Playing || z.State == PlayerState.Paused)
+                    {
+                        int selectedIndex = listViewBookmarks.SelectedIndices[0];
+                        string timeCodeString = listViewBookmarks.Items[selectedIndex].Text;
+                        TimeSpan timeSpan = ZeratoolBookmarks.ParseTimeCode(timeCodeString);
+                        if (timeSpan == TimeSpan.MaxValue)
+                        {
+                            MessageBox.Show("Ошибка!", "Ошибка!",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
+                        if (timeSpan.TotalSeconds > z.TrackDuration)
+                        {
+                            MessageBox.Show($"Не удалось найти позицию {timeCodeString}!", "Ошибка!",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
+                        z.TrackPosition = timeSpan.TotalSeconds;
+                    }
+                }
+            }
+        }
+
         private void comboBoxPlayers_SelectedIndexChanged(object sender, EventArgs e)
         {
             listViewBookmarks.Items.Clear();
@@ -261,11 +298,6 @@ namespace Zeratool_player_C_Sharp
                 }
             }
             return bookmarkCount;
-        }
-
-        private void listViewBookmarks_Resize(object sender, EventArgs e)
-        {
-            columnHeaderBookmarkTitle.Width = listViewBookmarks.Width - columnHeaderBookmarkTimecode.Width - 30;
         }
     }
 }
