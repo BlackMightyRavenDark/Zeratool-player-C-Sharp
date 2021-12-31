@@ -103,7 +103,6 @@ namespace Zeratool_player_C_Sharp
                     PlayingIndex = 0;
                 }
                 res = PlayFile(PlayingIndex);
-                IndexChanged?.Invoke(this, PlayingIndex);
             }
             return res;
         }
@@ -119,7 +118,6 @@ namespace Zeratool_player_C_Sharp
                     PlayingIndex = Count - 1;
                 }
                 res = PlayFile(PlayingIndex);
-                IndexChanged?.Invoke(this, PlayingIndex);
             }
             return res;
         }

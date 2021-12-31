@@ -164,6 +164,10 @@ namespace Zeratool_player_C_Sharp
         {
             z.Activated += OnPlayerActivated;
             z.TitleChanged += OnPlayerTitleChanged;
+            z.FileNameChanged += (s, fileName) =>
+            {
+                ListBookmarks(s as ZeratoolPlayerGui);
+            };
             z.Closing += OnPlayerClosing;
             z.BookmarkAdded += OnPlayerBookmarkAdded;
 
