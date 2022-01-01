@@ -610,13 +610,17 @@ namespace Zeratool_player_C_Sharp
         {
             if (State == PlayerState.Playing || State == PlayerState.Paused)
             {
-                TimeSpan timeCode = TimeSpan.FromSeconds(TrackPosition);
-                string shortDescription = ZeratoolBookmarks.TimeToString(new DateTime(timeCode.Ticks));
-                int id = Bookmarks.Add(timeCode, shortDescription);
-                if (id >= 0)
+                TimeSpan timeCode = ZeratoolBookmarks.RoundMilliseconds(TrackPosition);
+                int timeCodeIndex = Bookmarks.IndexOf(timeCode);
+                if (timeCodeIndex < 0)
                 {
-                    BookmarkAdded?.Invoke(this, Bookmarks[id], id);
-                    return id;
+                    string shortDescription = ZeratoolBookmarks.TimeToString(new DateTime(timeCode.Ticks));
+                    int id = Bookmarks.Add(timeCode, shortDescription);
+                    if (id >= 0)
+                    {
+                        BookmarkAdded?.Invoke(this, Bookmarks[id], id);
+                        return id;
+                    }
                 }
             }
             return -1;

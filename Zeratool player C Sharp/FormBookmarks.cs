@@ -95,8 +95,8 @@ namespace Zeratool_player_C_Sharp
                 return;
             }
 
-            ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
-            if (z.State == PlayerState.Playing || z.State == PlayerState.Paused)
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+            if (z != null && (z.State == PlayerState.Playing || z.State == PlayerState.Paused))
             {
                 z.PutCurrentMomentToBookmarks();
                 z.RefreshSeekBar();

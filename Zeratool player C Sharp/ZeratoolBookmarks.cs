@@ -208,6 +208,17 @@ namespace Zeratool_player_C_Sharp
             return new TimeSpan(long.MaxValue);
         }
 
+        public static TimeSpan RoundMilliseconds(TimeSpan time)
+        {
+            int milliseconds = (time.Milliseconds + 50) / 100 * 100;
+            return new TimeSpan(time.Days, time.Hours, time.Minutes, time.Seconds, milliseconds);
+        }
+
+        public static TimeSpan RoundMilliseconds(double seconds)
+        {
+            return RoundMilliseconds(TimeSpan.FromSeconds(seconds));
+        }
+
         public static string TimeToString(DateTime time, string format = "HH:mm:ss.f")
         {
             return time.ToString(format);
