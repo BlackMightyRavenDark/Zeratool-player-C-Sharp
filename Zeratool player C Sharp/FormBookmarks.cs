@@ -116,7 +116,8 @@ namespace Zeratool_player_C_Sharp
 
         private void btnRemoveBookmark_Click(object sender, EventArgs e)
         {
-            if (comboBoxPlayers.SelectedIndex < 0)
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+            if (z == null)
             {
                 MessageBox.Show("Не выбран плеер!", "Ошибка!",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -128,7 +129,7 @@ namespace Zeratool_player_C_Sharp
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
+
             int id = listViewBookmarks.SelectedIndices[0];
             z.Bookmarks.RemoveAt(id);
             z.RefreshSeekBar();
@@ -157,8 +158,8 @@ namespace Zeratool_player_C_Sharp
             {
                 if (comboBoxPlayers.SelectedIndex >= 0 && listViewBookmarks.SelectedIndices.Count > 0)
                 {
-                    ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
-                    if (z.State == PlayerState.Playing || z.State == PlayerState.Paused)
+                    ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+                    if (z != null && z.State == PlayerState.Playing || z.State == PlayerState.Paused)
                     {
                         int selectedIndex = listViewBookmarks.SelectedIndices[0];
                         string timeCodeString = listViewBookmarks.Items[selectedIndex].Text;
@@ -186,14 +187,11 @@ namespace Zeratool_player_C_Sharp
         private void comboBoxPlayers_SelectedIndexChanged(object sender, EventArgs e)
         {
             listViewBookmarks.Items.Clear();
-            if (comboBoxPlayers.SelectedIndex >= 0)
-            {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
 
-                if (activePlayer != z)
-                {
-                    z.Activate();
-                }
+            if (z != null && z != activePlayer)
+            {
+                z.Activate();
             }
         }
 
@@ -244,22 +242,19 @@ namespace Zeratool_player_C_Sharp
 
         private void OnPlayerBookmarkAdded(object sender, BookmarkItem bookmarkItem, int positionIndex)
         {
-            if (comboBoxPlayers.SelectedIndex >= 0)
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+
+            if (z != null && z == (ZeratoolPlayerGui)sender)
             {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
+                string timeCode = ZeratoolBookmarks.TimeToString(new DateTime(bookmarkItem.TimeCode.Ticks));
+                ListViewItem listViewItem = new ListViewItem(timeCode);
+                listViewItem.SubItems.Add(bookmarkItem.ShortDescription);
 
-                if (z == (ZeratoolPlayerGui)sender)
-                {
-                    string timeCode = ZeratoolBookmarks.TimeToString(new DateTime(bookmarkItem.TimeCode.Ticks));
-                    ListViewItem listViewItem = new ListViewItem(timeCode);
-                    listViewItem.SubItems.Add(bookmarkItem.ShortDescription);
+                listViewBookmarks.Items.Insert(positionIndex, listViewItem);
+                listViewBookmarks.SelectedIndices.Clear();
+                listViewBookmarks.SelectedIndices.Add(positionIndex);
 
-                    listViewBookmarks.Items.Insert(positionIndex, listViewItem);
-                    listViewBookmarks.SelectedIndices.Clear();
-                    listViewBookmarks.SelectedIndices.Add(positionIndex);
-
-                    listViewBookmarks.EnsureVisible(positionIndex);
-                }
+                listViewBookmarks.EnsureVisible(positionIndex);
             }
         }
 

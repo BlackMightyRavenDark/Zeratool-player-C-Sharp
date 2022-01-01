@@ -12,86 +12,6 @@ namespace Zeratool_player_C_Sharp
 {
     public static class Utils
     {
-        public sealed class MainConfiguration
-        {
-            public string configFileName;
-            public string keyboardConfigFileName;
-            public string selfPath;
-            public string filtersConfigFileName;
-            public int lastVolume;
-            public bool titleBarVisible;
-            public string playlistFileName;
-            public string bookmarksFileName;
-            public bool playlistCycleCurrentTrack;
-            public DirectShowGraphMode graphMode;
-
-            public delegate void SavingDelegate(object sender, JObject root);
-            public delegate void LoadingDelegate(object sender, JObject root);
-            public SavingDelegate Saving;
-            public LoadingDelegate Loading;
-
-            public MainConfiguration(string fileName)
-            {
-                configFileName = fileName;
-                selfPath = Path.GetDirectoryName(Application.ExecutablePath);
-
-                LoadDefaults();
-            }
-
-            public void Save()
-            {
-                if (File.Exists(configFileName))
-                {
-                    File.Delete(configFileName);
-                }
-                JObject json = new JObject();
-                Saving?.Invoke(this, json);
-                File.WriteAllText(configFileName, json.ToString());
-            }
-
-            public void LoadDefaults()
-            {
-                lastVolume = 25;
-                titleBarVisible = true;
-                playlistCycleCurrentTrack = false;
-                graphMode = DirectShowGraphMode.Manual;
-                playlistFileName = selfPath + "\\LastPlaylist.json";
-                filtersConfigFileName = selfPath + "\\filters.json";
-                keyboardConfigFileName = selfPath + "\\keyboard.json";
-                bookmarksFileName = selfPath + "\\bookmarks.json";
-            }
-
-            public void Load()
-            {
-                if (File.Exists(configFileName))
-                {
-                    JObject json = JObject.Parse(File.ReadAllText(configFileName));
-                    if (json != null)
-                    {
-                        Loading?.Invoke(this, json);
-                    }
-                }
-            }
-        }
-
-        public sealed class PlayerListItem
-        {
-            public string DisplayName { get; private set; }
-            public ZeratoolPlayerGui Player { get; private set; }
-
-            public PlayerListItem(ZeratoolPlayerGui playerGuiObject, string displayName)
-            {
-                Player = playerGuiObject;
-                DisplayName = displayName;
-            }
-
-            public override string ToString()
-            {
-                return DisplayName;
-            }
-        }
-
-
         public delegate void PlayerCreatedDelegate(ZeratoolPlayerGui playerGui, bool isMaximized);
         public static PlayerCreatedDelegate PlayerCreated;
 
@@ -271,6 +191,20 @@ namespace Zeratool_player_C_Sharp
             return !string.IsNullOrEmpty(ext) && videoFileTypes.Contains(ext.ToLower());
         }
 
+        public static ZeratoolPlayerGui GetPlayerFromComboBox(ComboBox comboBox)
+        {
+            if (comboBox.SelectedIndex < 0)
+            {
+                return null;
+            }
+            PlayerListItem playerListItem = (PlayerListItem)comboBox.Items[comboBox.SelectedIndex];
+            if (playerListItem == null)
+            {
+                return null;
+            }
+            return playerListItem.Player;
+        }
+
         public static void ShowErrorMessage(ZeratoolPlayerGui playerGui, int errorCode)
         {
             switch (errorCode)
@@ -295,6 +229,85 @@ namespace Zeratool_player_C_Sharp
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     break;
             }
+        }
+    }
+
+    public sealed class MainConfiguration
+    {
+        public string configFileName;
+        public string keyboardConfigFileName;
+        public string selfPath;
+        public string filtersConfigFileName;
+        public int lastVolume;
+        public bool titleBarVisible;
+        public string playlistFileName;
+        public string bookmarksFileName;
+        public bool playlistCycleCurrentTrack;
+        public DirectShowGraphMode graphMode;
+
+        public delegate void SavingDelegate(object sender, JObject root);
+        public delegate void LoadingDelegate(object sender, JObject root);
+        public SavingDelegate Saving;
+        public LoadingDelegate Loading;
+
+        public MainConfiguration(string fileName)
+        {
+            configFileName = fileName;
+            selfPath = Path.GetDirectoryName(Application.ExecutablePath);
+
+            LoadDefaults();
+        }
+
+        public void Save()
+        {
+            if (File.Exists(configFileName))
+            {
+                File.Delete(configFileName);
+            }
+            JObject json = new JObject();
+            Saving?.Invoke(this, json);
+            File.WriteAllText(configFileName, json.ToString());
+        }
+
+        public void LoadDefaults()
+        {
+            lastVolume = 25;
+            titleBarVisible = true;
+            playlistCycleCurrentTrack = false;
+            graphMode = DirectShowGraphMode.Manual;
+            playlistFileName = selfPath + "\\LastPlaylist.json";
+            filtersConfigFileName = selfPath + "\\filters.json";
+            keyboardConfigFileName = selfPath + "\\keyboard.json";
+            bookmarksFileName = selfPath + "\\bookmarks.json";
+        }
+
+        public void Load()
+        {
+            if (File.Exists(configFileName))
+            {
+                JObject json = JObject.Parse(File.ReadAllText(configFileName));
+                if (json != null)
+                {
+                    Loading?.Invoke(this, json);
+                }
+            }
+        }
+    }
+
+    public sealed class PlayerListItem
+    {
+        public string DisplayName { get; private set; }
+        public ZeratoolPlayerGui Player { get; private set; }
+
+        public PlayerListItem(ZeratoolPlayerGui playerGuiObject, string displayName)
+        {
+            Player = playerGuiObject;
+            DisplayName = displayName;
+        }
+
+        public override string ToString()
+        {
+            return DisplayName;
         }
     }
 }

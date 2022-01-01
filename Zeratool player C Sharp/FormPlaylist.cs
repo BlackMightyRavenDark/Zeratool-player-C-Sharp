@@ -101,144 +101,6 @@ namespace Zeratool_player_C_Sharp
             }
         }
 
-        private void OnPlayerCreated(ZeratoolPlayerGui z, bool maximized)
-        {
-            z.Activated += OnPlayerActivated;
-            z.TitleChanged += OnPlayerTitleChanged;
-            z.Closing += OnPlayerClosing;
-            z.Playlist.ItemAdded += OnPlayerPlaylistItemAdded;
-            z.Playlist.ItemRemoved += OnPlayerPlaylistItemRemoved;
-            z.Playlist.Cleared += OnPlayerPlaylistCleared;
-            z.TrackRendered += (s, errorCode) =>
-            {
-                if (comboBoxPlayers.SelectedIndex >= 0)
-                {
-                    ZeratoolPlayerGui playerGui = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
-
-                    if (s as ZeratoolPlayerEngine == playerGui.PlayerEngine)
-                    {
-                        lbPlaylist.SelectedIndex = playerGui.Playlist.PlayingIndex;
-                        lbPlaylist.Refresh();
-                    }
-
-                }
-            };
-
-            z.Playlist.IndexChanged += (s, index) =>
-            {
-                if (comboBoxPlayers.SelectedIndex >= 0)
-                {
-                    ZeratoolPlayerGui playerGui = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
-
-                    if (s as ZeratoolPlaylist == playerGui.Playlist)
-                    {
-                        lbPlaylist.SelectedIndex = playerGui.Playlist.PlayingIndex;
-                        lbPlaylist.Refresh();
-                    }
-                }
-            };
-
-            string t = $"Player [{players.Count - 1}]: {z.Title}";
-            comboBoxPlayers.Items.Add(new PlayerListItem(z, t));
-
-        }
-
-        private void OnPlayerClosing(object sender)
-        {
-            ListPlayers();
-        }
-
-        private void OnPlayerActivated(object sender)
-        {
-            ZeratoolPlayerGui z = sender as ZeratoolPlayerGui;
-            int id = FindPlayerInComboBox(comboBoxPlayers, z);
-            comboBoxPlayers.SelectedIndex = id;
-            lbPlaylist.Items.Clear();
-            if (z.Playlist.Count > 0)
-            {
-                lbPlaylist.Items.AddRange(z.Playlist.ToArray());
-            }
-        }
-
-        private void OnPlayerTitleChanged(object sender, string title)
-        {
-            ZeratoolPlayerGui z = sender as ZeratoolPlayerGui;
-            int id = FindPlayerInComboBox(comboBoxPlayers, z);
-            string t = $"Player [{id}]: {title}";
-            comboBoxPlayers.Items[id] = new PlayerListItem(z, t);
-        }
-
-        private void OnPlayerPlaylistCleared(object sender)
-        {
-            if (comboBoxPlayers.SelectedIndex >= 0)
-            {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
-
-                if (sender as ZeratoolPlaylist == z.Playlist)
-                {
-                    lbPlaylist.Items.Clear();
-                }
-            }
-        }
-
-        private void OnPlayerPlaylistItemAdded(object sender, string fileName)
-        {
-            if (comboBoxPlayers.SelectedIndex >= 0)
-            {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
-
-                if (sender as ZeratoolPlaylist == z.Playlist)
-                {
-                    lbPlaylist.Items.Add(fileName);
-                }
-            }
-        }
-
-        private void OnPlayerPlaylistItemRemoved(object sender, int index, string fileName)
-        {
-            if (comboBoxPlayers.SelectedIndex >= 0)
-            {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
-
-                if (sender as ZeratoolPlaylist == z.Playlist)
-                {
-                    lbPlaylist.Items.RemoveAt(index);
-                }
-            }
-        }
-
-        private void ListPlayers()
-        {
-            comboBoxPlayers.Items.Clear();
-            if (players.Count > 0)
-            {
-                for (int i = 0; i < players.Count; i++)
-                {
-                    ZeratoolPlayerGui z = players[i];
-                    string t = $"Player [{i}]: {z.Title}";
-                    comboBoxPlayers.Items.Add(new PlayerListItem(z, t));
-                }
-                if (activePlayer != null)
-                {
-                    int id = FindPlayerInComboBox(comboBoxPlayers, activePlayer);
-                    comboBoxPlayers.SelectedIndex = id;
-                }
-            }
-        }
-
-        private void comboBoxPlayers_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (comboBoxPlayers.SelectedIndex >= 0)
-            {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
-
-                if (activePlayer != z)
-                {
-                    z.Activate();
-                }
-            }
-        }
-
         private void lbPlaylist_DragEnter(object sender, DragEventArgs e)
         {
             e.Effect = DragDropEffects.Copy;
@@ -302,6 +164,124 @@ namespace Zeratool_player_C_Sharp
         private void chkCycleCurrentTrack_CheckedChanged(object sender, EventArgs e)
         {
             config.playlistCycleCurrentTrack = chkCycleCurrentTrack.Checked;
+        }
+
+        private void OnPlayerCreated(ZeratoolPlayerGui z, bool maximized)
+        {
+            z.Activated += OnPlayerActivated;
+            z.TitleChanged += OnPlayerTitleChanged;
+            z.Closing += OnPlayerClosing;
+            z.Playlist.ItemAdded += OnPlayerPlaylistItemAdded;
+            z.Playlist.ItemRemoved += OnPlayerPlaylistItemRemoved;
+            z.Playlist.Cleared += OnPlayerPlaylistCleared;
+            z.TrackRendered += (s, errorCode) =>
+            {
+                ZeratoolPlayerGui playerGui = GetPlayerFromComboBox(comboBoxPlayers);
+
+                if (playerGui != null && (s as ZeratoolPlayerEngine) == playerGui.PlayerEngine)
+                {
+                    lbPlaylist.SelectedIndex = playerGui.Playlist.PlayingIndex;
+                    lbPlaylist.Refresh();
+                }
+            };
+
+            z.Playlist.IndexChanged += (s, index) =>
+            {
+                ZeratoolPlayerGui playerGui = GetPlayerFromComboBox(comboBoxPlayers);
+
+                if (playerGui != null && (s as ZeratoolPlaylist) == playerGui.Playlist)
+                {
+                    lbPlaylist.SelectedIndex = playerGui.Playlist.PlayingIndex;
+                    lbPlaylist.Refresh();
+                }
+            };
+
+            string t = $"Player [{players.Count - 1}]: {z.Title}";
+            comboBoxPlayers.Items.Add(new PlayerListItem(z, t));
+        }
+
+        private void OnPlayerClosing(object sender)
+        {
+            ListPlayers();
+        }
+
+        private void OnPlayerActivated(object sender)
+        {
+            ZeratoolPlayerGui z = sender as ZeratoolPlayerGui;
+            int id = FindPlayerInComboBox(comboBoxPlayers, z);
+            comboBoxPlayers.SelectedIndex = id;
+            lbPlaylist.Items.Clear();
+            if (z.Playlist.Count > 0)
+            {
+                lbPlaylist.Items.AddRange(z.Playlist.ToArray());
+            }
+        }
+
+        private void OnPlayerTitleChanged(object sender, string title)
+        {
+            ZeratoolPlayerGui z = sender as ZeratoolPlayerGui;
+            int id = FindPlayerInComboBox(comboBoxPlayers, z);
+            string t = $"Player [{id}]: {title}";
+            comboBoxPlayers.Items[id] = new PlayerListItem(z, t);
+        }
+
+        private void OnPlayerPlaylistCleared(object sender)
+        {
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+
+            if (z != null && (sender as ZeratoolPlaylist) == z.Playlist)
+            {
+                lbPlaylist.Items.Clear();
+            }
+        }
+
+        private void OnPlayerPlaylistItemAdded(object sender, string fileName)
+        {
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+
+            if (z != null && (sender as ZeratoolPlaylist) == z.Playlist)
+            {
+                lbPlaylist.Items.Add(fileName);
+            }
+        }
+
+        private void OnPlayerPlaylistItemRemoved(object sender, int index, string fileName)
+        {
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+
+            if (z != null && (sender as ZeratoolPlaylist) == z.Playlist)
+            {
+                lbPlaylist.Items.RemoveAt(index);
+            }
+        }
+
+        private void ListPlayers()
+        {
+            comboBoxPlayers.Items.Clear();
+            if (players.Count > 0)
+            {
+                for (int i = 0; i < players.Count; i++)
+                {
+                    ZeratoolPlayerGui z = players[i];
+                    string t = $"Player [{i}]: {z.Title}";
+                    comboBoxPlayers.Items.Add(new PlayerListItem(z, t));
+                }
+                if (activePlayer != null)
+                {
+                    int id = FindPlayerInComboBox(comboBoxPlayers, activePlayer);
+                    comboBoxPlayers.SelectedIndex = id;
+                }
+            }
+        }
+
+        private void comboBoxPlayers_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+
+            if (z != null && z != activePlayer)
+            {
+                z.Activate();
+            }
         }
     }
 }

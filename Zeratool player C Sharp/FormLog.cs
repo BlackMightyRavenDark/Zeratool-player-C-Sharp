@@ -87,14 +87,11 @@ namespace Zeratool_player_C_Sharp
 
         private void comboBoxPlayers_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxPlayers.SelectedIndex >= 0)
-            {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
 
-                if (activePlayer != z)
-                {
-                    z.Activate();
-                }
+            if (z != null && z != activePlayer)
+            {
+                z.Activate();
             }
         }
 
@@ -157,30 +154,24 @@ namespace Zeratool_player_C_Sharp
 
         private void OnPlayerLogCleared(object sender)
         {
-            if (comboBoxPlayers.SelectedIndex >= 0)
-            {
-                ZeratoolPlayerGui playerGui = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
 
-                if (sender as ZeratoolPlayerEngine == playerGui.PlayerEngine)
-                {
-                    ListLog(playerGui.PlayerEngine);
-                }
+            if (z != null && (sender as ZeratoolPlayerEngine) == z.PlayerEngine)
+            {
+                ListLog(z.PlayerEngine);
             }
         }
 
         private void OnPlayerLogItemAdded(object sender, ZeratoolLogItem logItem)
         {
-            if (comboBoxPlayers.SelectedIndex >= 0)
-            {
-                ZeratoolPlayerGui playerGui = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
 
-                if (sender as ZeratoolPlayerEngine == playerGui.PlayerEngine)
-                {
-                    ListViewItem item = new ListViewItem(logItem.DateTime.ToString("yyyy.MM.dd, HH:mm:ss"));
-                    item.SubItems.Add(logItem.Event);
-                    item.SubItems.Add(logItem.ShortResultDescription);
-                    lvLog.Items.Add(item);
-                }
+            if (z != null && (sender as ZeratoolPlayerEngine) == z.PlayerEngine)
+            {
+                ListViewItem item = new ListViewItem(logItem.DateTime.ToString("yyyy.MM.dd, HH:mm:ss"));
+                item.SubItems.Add(logItem.Event);
+                item.SubItems.Add(logItem.ShortResultDescription);
+                lvLog.Items.Add(item);
             }
         }
 

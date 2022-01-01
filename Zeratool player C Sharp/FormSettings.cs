@@ -246,53 +246,47 @@ namespace Zeratool_player_C_Sharp
 
         private void OnPlayerTrackRendered(object sender, int errorCode)
         {
-            if (comboBoxPlayers.Items.Count > 0)
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+            if (z != null && (sender as ZeratoolPlayerGui) == z)
             {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
-                if (sender as ZeratoolPlayerGui == z)
-                {
-                    RefreshParameters(z);
-                }
+                RefreshParameters(z);
             }
         }
 
         private void rbGraphModeAutomatic_CheckedChanged(object sender, EventArgs e)
         {
-            if (comboBoxPlayers.Items.Count > 0)
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+            if (z != null)
             {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
-                z.PrefferedGraphMode = ZeratoolPlayerEngine.DirectShowGraphMode.Automatic;
+                z.PrefferedGraphMode = DirectShowGraphMode.Automatic;
             }
         }
 
         private void rbGraphModeIntellectual_CheckedChanged(object sender, EventArgs e)
         {
-            if (comboBoxPlayers.Items.Count > 0)
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+            if (z != null)
             {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
-                z.PrefferedGraphMode = ZeratoolPlayerEngine.DirectShowGraphMode.Intellectual;
+                z.PrefferedGraphMode = DirectShowGraphMode.Intellectual;
             }
         }
 
         private void rbGraphModeManual_CheckedChanged(object sender, EventArgs e)
         {
-            if (comboBoxPlayers.Items.Count > 0)
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+            if (z != null)
             {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
-                z.PrefferedGraphMode = ZeratoolPlayerEngine.DirectShowGraphMode.Manual;
+                z.PrefferedGraphMode = DirectShowGraphMode.Manual;
             }
         }
 
         private void comboBoxPlayers_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxPlayers.SelectedIndex >= 0)
-            {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
 
-                if (activePlayer != z)
-                {
-                    z.Activate();
-                }
+            if (z != null && z != activePlayer)
+            {
+                z.Activate();
             }
         }
 
@@ -300,19 +294,19 @@ namespace Zeratool_player_C_Sharp
         {
             switch (z.GraphMode)
             {
-                case ZeratoolPlayerEngine.DirectShowGraphMode.Automatic:
+                case DirectShowGraphMode.Automatic:
                     rbGraphModeAutomatic.ForeColor = Color.Red;
                     rbGraphModeIntellectual.ForeColor = Color.Black;
                     rbGraphModeManual.ForeColor = Color.Black;
                     break;
 
-                case ZeratoolPlayerEngine.DirectShowGraphMode.Intellectual:
+                case DirectShowGraphMode.Intellectual:
                     rbGraphModeAutomatic.ForeColor = Color.Black;
                     rbGraphModeIntellectual.ForeColor = Color.Red;
                     rbGraphModeManual.ForeColor = Color.Black;
                     break;
 
-                case ZeratoolPlayerEngine.DirectShowGraphMode.Manual:
+                case DirectShowGraphMode.Manual:
                     rbGraphModeAutomatic.ForeColor = Color.Black;
                     rbGraphModeIntellectual.ForeColor = Color.Black;
                     rbGraphModeManual.ForeColor = Color.Red;
@@ -321,15 +315,15 @@ namespace Zeratool_player_C_Sharp
 
             switch (z.PrefferedGraphMode)
             {
-                case ZeratoolPlayerEngine.DirectShowGraphMode.Automatic:
+                case DirectShowGraphMode.Automatic:
                     rbGraphModeAutomatic.Checked = true;
                     break;
 
-                case ZeratoolPlayerEngine.DirectShowGraphMode.Intellectual:
+                case DirectShowGraphMode.Intellectual:
                     rbGraphModeIntellectual.Checked = true;
                     break;
 
-                case ZeratoolPlayerEngine.DirectShowGraphMode.Manual:
+                case DirectShowGraphMode.Manual:
                     rbGraphModeManual.Checked = true;
                     break;
             }
@@ -341,12 +335,15 @@ namespace Zeratool_player_C_Sharp
             {
                 btnRebuildGraph.Enabled = false;
 
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
-                double pos = z.TrackPosition;
-                z.Clear();
-                if (z.Play() == S_OK)
+                ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+                if (z != null)
                 {
-                    z.TrackPosition = pos;
+                    double pos = z.TrackPosition;
+                    z.Clear();
+                    if (z.Play() == S_OK && pos > 0.0)
+                    {
+                        z.TrackPosition = pos;
+                    }
                 }
 
                 btnRebuildGraph.Enabled = true;
@@ -355,90 +352,90 @@ namespace Zeratool_player_C_Sharp
 
         private void comboBoxSplittersAVI_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxPlayers.SelectedIndex >= 0)
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+            if (z != null)
             {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
                 z.PlayerEngine.filters.mediaSplitterAviId = comboBoxSplittersAVI.SelectedIndex - 1;
             }
         }
 
         private void comboBoxSplittersMPG_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxPlayers.SelectedIndex >= 0)
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+            if (z != null)
             {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
                 z.PlayerEngine.filters.mediaSplitterMpgId = comboBoxSplittersMPG.SelectedIndex - 1;
             }
         }
 
         private void comboBoxSplittersTS_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxPlayers.SelectedIndex >= 0)
-            {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+            if (z != null)
+            { 
                 z.PlayerEngine.filters.mediaSplitterTsId = comboBoxSplittersTS.SelectedIndex - 1;
             }
         }
 
         private void comboBoxSplittersMP4_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxPlayers.SelectedIndex >= 0)
-            {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+            if (z != null)
+            { 
                 z.PlayerEngine.filters.mediaSplitterMp4Id = comboBoxSplittersMP4.SelectedIndex - 1;
             }
         }
 
         private void comboBoxSplittersMKV_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxPlayers.SelectedIndex >= 0)
-            {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+            if (z != null)
+            { 
                 z.PlayerEngine.filters.mediaSplitterMkvId = comboBoxSplittersMKV.SelectedIndex - 1;
             }
         }
 
         private void comboBoxSplittersOther_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxPlayers.SelectedIndex >= 0)
-            {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+            if (z != null)
+            { 
                 z.PlayerEngine.filters.mediaSplitterOtherId = comboBoxSplittersOther.SelectedIndex - 1;
             }
         }
 
         private void comboBoxVideoDecoders_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxPlayers.SelectedIndex >= 0)
-            {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+            if (z != null)
+            { 
                 z.PlayerEngine.filters.prefferedVideoDecoderId = comboBoxVideoDecoders.SelectedIndex - 1;
             }
         }
 
         private void comboBoxVideoRenderers_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxPlayers.SelectedIndex >= 0)
-            {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+            if (z != null)
+            { 
                 z.PlayerEngine.filters.prefferedVideoRendererId = comboBoxVideoRenderers.SelectedIndex;
             }
         }
 
         private void comboBoxAudioDecoders_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxPlayers.SelectedIndex >= 0)
-            {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+            if (z != null)
+            { 
                 z.PlayerEngine.filters.prefferedAudioDecoderId = comboBoxAudioDecoders.SelectedIndex - 1;
             }
         }
 
         private void comboBoxAudioRenderers_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxPlayers.SelectedIndex >= 0)
-            {
-                ZeratoolPlayerGui z = (comboBoxPlayers.Items[comboBoxPlayers.SelectedIndex] as PlayerListItem).Player;
+            ZeratoolPlayerGui z = GetPlayerFromComboBox(comboBoxPlayers);
+            if (z != null)
+            { 
                 z.PlayerEngine.filters.prefferedAudioRendererId = comboBoxAudioRenderers.SelectedIndex;
             }
         }
