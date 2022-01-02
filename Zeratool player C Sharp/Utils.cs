@@ -25,6 +25,7 @@ namespace Zeratool_player_C_Sharp
         public static List<MonikerItem> audioOutputMonikers = new List<MonikerItem>();
         public static List<string> videoFileTypes = new List<string>() { ".avi", ".mpg", ".mpeg", ".ts", ".mp4", ".mkv", ".webm" };
         public static readonly KeyBindings keyBindings = new KeyBindings();
+        public static Timestamps timestamps = null;
 
         public static MainConfiguration config;
 
@@ -242,6 +243,7 @@ namespace Zeratool_player_C_Sharp
         public bool titleBarVisible;
         public string playlistFileName;
         public string bookmarksFileName;
+        public string timestampsFileName;
         public bool playlistCycleCurrentTrack;
         public DirectShowGraphMode graphMode;
 
@@ -279,6 +281,7 @@ namespace Zeratool_player_C_Sharp
             filtersConfigFileName = selfPath + "\\filters.json";
             keyboardConfigFileName = selfPath + "\\keyboard.json";
             bookmarksFileName = selfPath + "\\bookmarks.json";
+            timestampsFileName = selfPath + "\\timestamps.json";
         }
 
         public void Load()

@@ -126,6 +126,9 @@ namespace Zeratool_player_C_Sharp
             formBookmarks = new FormBookmarks();
 
             config.Load();
+
+            timestamps = new Timestamps(config.timestampsFileName);
+            
             if (!this.IsOnScreen())
             {
                 this.Center(Screen.PrimaryScreen.WorkingArea);
@@ -167,6 +170,12 @@ namespace Zeratool_player_C_Sharp
                     if (activePlayer.Playlist.Count > 0)
                     {
                         activePlayer.Playlist.SaveToFile(config.playlistFileName);
+                    }
+
+                    if (activePlayer.State != ZeratoolPlayerEngine.PlayerState.Null)
+                    {
+                        timestamps.SaveTimestamp(activePlayer.FileName, TimeSpan.FromSeconds(activePlayer.TrackPosition));
+                        timestamps.SaveToJsonFile();
                     }
                 }
 
@@ -490,6 +499,15 @@ namespace Zeratool_player_C_Sharp
                 if (playerGui == activePlayer)
                 {
                     Text = $"{playerGui.Title} | {APP_TITLE}";
+
+                    if (errorCode == S_OK)
+                    {
+                        TimeSpan lastStoppedPosition = timestamps.GetTimestamp(playerGui.FileName);
+                        if (lastStoppedPosition > TimeSpan.MinValue && lastStoppedPosition < TimeSpan.MaxValue)
+                        {
+                            playerGui.TrackPosition = lastStoppedPosition.TotalSeconds;
+                        }
+                    }
                 }
             };
 

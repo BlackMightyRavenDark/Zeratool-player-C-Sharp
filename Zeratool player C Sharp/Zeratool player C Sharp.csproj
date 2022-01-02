@@ -61,6 +61,7 @@
     <Compile Include="FormBookmarks.Designer.cs">
       <DependentUpon>FormBookmarks.cs</DependentUpon>
     </Compile>
+    <Compile Include="Timestamps.cs" />
     <Compile Include="ZeratoolBookmarks.cs" />
     <Compile Include="CustomPanel.cs">
       <SubType>Component</SubType>
